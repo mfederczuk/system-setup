@@ -3,4 +3,67 @@
 # vim: syntax=sh
 # code: language=shellscript
 
+function readlink_portable() {
+	local pathname
+
+	case $# in
+		(0)
+			{
+				printf '%s: missing argument: <symlink>\n' "${FUNCNAME[0]}"
+				printf 'usage: %s <symlink>\n' "${FUNCNAME[0]}"
+			} >&2
+			return 3
+			;;
+		(1)
+			if [ -z "$1" ]; then
+				printf '%s: argument must not be empty\n' "${FUNCNAME[0]}" >&2
+				return 9
+			fi
+
+			pathname="$1"
+			;;
+		(*)
+			{
+				printf '%s: too many arguments: %i\n' "${FUNCNAME[0]}" $(($# - 1))
+				printf 'usage: %s <symlink>\n' "${FUNCNAME[0]}"
+			} >&2
+			return 4
+			;;
+	esac
+
+	readonly pathname
+
+
+	if [ ! -L "$pathname" ]; then
+		printf '%s: %s: not a symlink\n' "${FUNCNAME[0]}" "$pathname" >&2
+		return 26
+	fi
+
+
+	# this is rather complicated because POSIX doesn't specifiy a proper utiltiy to read a symlink's target, only `ls`
+	# is capable of it
+
+	local ls_out
+
+	ls_out="$(LC_ALL=POSIX LC_CTYPE=POSIX LC_TIME=POSIX ls -dn -- "$pathname" && printf x)"
+	ls_out="${ls_out%$'\nx'}"
+
+	# removing <file mode>, <number of links>, <owner name>, <group name>, <size> and <date and time> (where both
+	# <owner name> and <group name> are their associated numeric values because of the '-n' option given to `ls`)
+	if [[ ! "$ls_out" =~ ^([^[:space:]$' \t']+[[:space:]$' \t']+[0-9]+' '+[0-9]+' '+[0-9]+' '+[0-9]+' '+[A-Za-z]+' '+[0-9]+' '+([0-9]+':'[0-9]+|[0-9]+)' '+"$pathname -> ") ]]; then
+		printf '%s: emergency stop: unexpected output of ls\n' "${FUNCNAME[0]}" >&2
+		return 123
+	fi
+	ls_out="${ls_out#"${BASH_REMATCH[1]}"}"
+
+	readonly ls_out
+
+
+	if [ -t 1 ]; then
+		printf '%s\n' "$ls_out"
+	else
+		printf '%s' "$ls_out"
+	fi
+}
+
 . 'bash_funcs.d/rmcwd.bash'
