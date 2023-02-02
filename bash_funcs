@@ -66,4 +66,34 @@ function readlink_portable() {
 	fi
 }
 
-. 'bash_funcs.d/rmcwd.bash'
+declare __dotfiles_bash_funcs_sourced_file_parent_dir_pathname
+__dotfiles_bash_funcs_sourced_file_parent_dir_pathname="$(dirname -- "${BASH_SOURCE[0]}" && printf x)"
+__dotfiles_bash_funcs_sourced_file_parent_dir_pathname="${__dotfiles_bash_funcs_sourced_file_parent_dir_pathname%$'\nx'}"
+
+declare __dotfiles_dir_pathname
+if [ -L "${BASH_SOURCE[0]}" ]; then
+	declare __dotfiles_bash_funcs_sourced_file_symlink_target_pathname
+	__dotfiles_bash_funcs_sourced_file_symlink_target_pathname="$(readlink_portable "${BASH_SOURCE[0]}" && printf x)"
+	__dotfiles_bash_funcs_sourced_file_symlink_target_pathname="${__dotfiles_bash_funcs_sourced_file_symlink_target_pathname%x}"
+
+	declare __dotfiles_bash_funcs_sourced_file_symlink_target_parent_dir_pathname
+	__dotfiles_bash_funcs_sourced_file_symlink_target_parent_dir_pathname="$(dirname -- "$__dotfiles_bash_funcs_sourced_file_symlink_target_pathname" && printf x)"
+	__dotfiles_bash_funcs_sourced_file_symlink_target_parent_dir_pathname="${__dotfiles_bash_funcs_sourced_file_symlink_target_parent_dir_pathname%$'\nx'}"
+
+	__dotfiles_dir_pathname="$__dotfiles_bash_funcs_sourced_file_parent_dir_pathname/$__dotfiles_bash_funcs_sourced_file_symlink_target_parent_dir_pathname"
+
+	unset -v __dotfiles_bash_funcs_sourced_file_symlink_target_parent_dir_pathname \
+	         __dotfiles_bash_funcs_sourced_file_symlink_target_pathname
+else
+	__dotfiles_dir_pathname="$__dotfiles_bash_funcs_sourced_file_parent_dir_pathname"
+fi
+
+unset -v __dotfiles_bash_funcs_sourced_file_parent_dir_pathname
+
+if [[ ! "$__dotfiles_dir_pathname" =~ '/' ]]; then
+	__dotfiles_dir_pathname="./$__dotfiles_dir_pathname"
+fi
+
+. "$__dotfiles_dir_pathname/bash_funcs.d/rmcwd.bash"
+
+unset -v __dotfiles_dir_pathname
