@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: CC0-1.0
+
+.bin
+.dir_bin
+.dirinfo
+.direnv
+
+.nobak
+.nobakpattern
+
+.vscode/
+
+*.swp
+__pycache__
+node_modules/
+
+*.todo
+*.todo.*
+todo
+todo.*
+
+*.ignore
+*.ignore.*
+
+*.patch
+*.diff
