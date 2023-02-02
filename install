@@ -1,0 +1,82 @@
+#!/bin/bash
+# -*- sh -*-
+# vim: set syntax=sh
+# code: language=shellscript
+
+# Copyright (c) 2023 Michael Federczuk
+# SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
+
+set -o errexit
+set -o nounset
+
+# enabling POSIX-compliant behavior for GNU programs
+export POSIXLY_CORRECT=yes POSIX_ME_HARDER=yes
+
+if ! uname -a | grep -Eq 'GNU'; then
+	printf 'This script assumes that you are on a GNU/Linux system, which does not appear to be the case. Continue anyway? [y/N] ' >&2
+	read -r ans
+
+	case "$ans" in
+		(['yY']*)
+			# continue
+			;;
+		(*)
+			echo 'Aborting.' >&2
+			exit 32
+			;;
+	esac
+
+	unset -v ans
+fi
+
+# we either are or just assume that we are on a GNU system, so we don't need these anymore
+unset -v POSIX_ME_HARDER POSIXLY_CORRECT
+
+
+declare root_dir_path
+root_dir_path="$(realpath -- "$0")"
+root_dir_path="$(dirname -- "$root_dir_path")"
+readonly root_dir_path
+
+readonly keybox_dir_path_relative_to_root_dir='keybox'
+
+declare keybox_dir_path
+keybox_dir_path="$root_dir_path/$keybox_dir_path_relative_to_root_dir"
+keybox_dir_path="$(realpath -- "$keybox_dir_path")"
+readonly keybox_dir_path
+
+
+declare -a dotfile_paths_relative_to_root_dir=()
+
+while read -r -d ''; do
+	dotfile_paths_relative_to_root_dir+=("$(realpath -s --relative-to="$root_dir_path" -- "$REPLY")")
+done < <(find "$root_dir_path" "$keybox_dir_path" \
+              -mindepth 1 -maxdepth 1 \
+              -type f -not -executable \
+              -not -name .nobak -not -name .nobakpattern \
+              -print0)
+
+unset -v REPLY
+readonly dotfile_paths_relative_to_root_dir
+
+
+# TODO: check if basename of all paths in dotfile_paths_relative_to_root_dir are unique
+
+
+declare root_dir_path_relative_to_home
+root_dir_path_relative_to_home="$(realpath -ms --relative-to="$HOME" -- "$root_dir_path")"
+readonly root_dir_path_relative_to_home
+
+declare dotfile_path_relative_to_root_dir
+for dotfile_path_relative_to_root_dir in "${dotfile_paths_relative_to_root_dir[@]}"; do
+	declare target_path="$root_dir_path_relative_to_home/$dotfile_path_relative_to_root_dir"
+
+	declare link_path
+	link_path="$(basename -- "$target_path")"
+	link_path="$HOME/.$link_path"
+	link_path="$(realpath -s --relative-to=. -- "$link_path")"
+
+	ln -sf -- "$target_path" "$link_path"
+
+	unset -v link_path target_path
+done
