@@ -95,6 +95,7 @@ function rmcwd() {
 
 	#endregion
 
+	#region refusing to remove some common paths
 
 	local cwd_real_pathname || return
 	if command -v realpath > '/dev/null'; then
@@ -130,6 +131,7 @@ function rmcwd() {
 
 	unset -v cwd_real_pathname || return
 
+	#endregion
 
 	local target_pathname || return
 	target_pathname="$(pwd -L && printf x)" || return
@@ -141,12 +143,12 @@ function rmcwd() {
 		return 123
 	fi
 
+	#region moving away from current working directory
 
 	local target_parent_dir_pathname || return
 	target_parent_dir_pathname="$(dirname "$target_pathname" && printf x)" || return
 	target_parent_dir_pathname="${target_parent_dir_pathname%$'\nx'}" || return
 	readonly target_parent_dir_pathname || return
-
 
 	cd "$target_parent_dir_pathname" ||
 		cd '..' ||
@@ -154,6 +156,9 @@ function rmcwd() {
 		cd '/' ||
 		return
 
+	# endregion
+
+	#region main
 
 	if [ -L "$target_pathname" ]; then
 		declare -i exc || return
@@ -184,6 +189,7 @@ function rmcwd() {
 		return $exc
 	fi
 
+	#region file count warning
 
 	local -i file_count_warn_threshhold || return
 	file_count_warn_threshhold="${RMCWD_WARN_FILE_COUNT-0}" || return
@@ -218,6 +224,7 @@ function rmcwd() {
 
 	unset -v file_count_warn_threshhold || return
 
+	#endregion
 
 	local -a rm_extra_opts || return
 	rm_extra_opts=() || return
@@ -243,4 +250,6 @@ function rmcwd() {
 		}
 
 	return $exc
+
+	#endregion
 }
