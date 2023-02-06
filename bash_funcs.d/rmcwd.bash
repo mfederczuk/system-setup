@@ -149,6 +149,7 @@ function rmcwd() {
 	cd "$target_parent_dir_pathname" ||
 		cd '..' ||
 		cd ||
+		cd '/' ||
 		return
 
 
