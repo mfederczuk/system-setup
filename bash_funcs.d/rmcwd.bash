@@ -154,20 +154,32 @@ function rmcwd() {
 
 
 	if [ -L "$target_pathname" ]; then
+		declare -i exc || return
+		exc=0 || return
+
 		printf "Only removing the symlink '%s'.\\n" "$target_pathname" >&2
 
 		rm "$target_pathname" ||
-			cd "$target_pathname" &> '/dev/null' || true
+			{
+				exc=$? || true
+				cd "$target_pathname" &> '/dev/null' || true
+			}
 
-		return
+		return $exc
 	fi
 
 
 	if ! $recursive; then
-		rmdir "$target_pathname" ||
-			cd "$target_pathname" &> '/dev/null' || true
+		declare -i exc || return
+		exc=0 || return
 
-		return
+		rmdir "$target_pathname" ||
+			{
+				exc=$? || true
+				cd "$target_pathname" &> '/dev/null' || true
+			}
+
+		return $exc
 	fi
 
 
@@ -184,6 +196,15 @@ function rmcwd() {
 
 	readonly rm_extra_opts || return
 
+
+	declare -i exc || return
+	exc=0 || return
+
 	rm "${rm_extra_opts[@]}" -R "$target_pathname" ||
-		cd "$target_pathname" &> '/dev/null' || true
+		{
+			exc=$? || true
+			cd "$target_pathname" &> '/dev/null' || true
+		}
+
+	return $exc
 }
