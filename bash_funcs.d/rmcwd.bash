@@ -1,6 +1,8 @@
 # Copyright (c) 2023 Michael Federczuk
 # SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
 
+export RMCWD_WARN_FILE_COUNT=30
+
 function rmcwd() {
 	#region args
 
@@ -181,6 +183,40 @@ function rmcwd() {
 
 		return $exc
 	fi
+
+
+	local -i file_count_warn_threshhold || return
+	file_count_warn_threshhold="${RMCWD_WARN_FILE_COUNT-0}" || return
+
+	if ((file_count_warn_threshhold > 0)); then
+		local -i cwd_file_count || return
+		cwd_file_count="$(find "$target_pathname" -exec printf x \; | wc -c)" || return
+
+		local ans || return
+
+		if ((cwd_file_count >= file_count_warn_threshhold)); then
+			printf "You're about to remove %i files and directories. Continue? [y/N] " $cwd_file_count >&2 || return
+
+			read -r ans || return
+		else
+			ans='y' || return
+		fi
+
+		case "$ans" in
+			(['yY'])
+				# continue
+				;;
+			(*)
+				cd "$target_pathname" &> '/dev/null' || true
+				printf 'Aborted.\n' >&2
+				return 49
+				;;
+		esac
+
+		unset -v ans cwd_file_count || return
+	fi
+
+	unset -v file_count_warn_threshhold || return
 
 
 	local -a rm_extra_opts || return
