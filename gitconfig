@@ -41,3 +41,6 @@ Commit Date: %C(auto,bold)%cd%C(auto) %C(auto,dim)(%cr)%C(auto)%n\
 
 [format]
 	pretty = custom-fuller
+
+[init]
+	defaultBranch = master
