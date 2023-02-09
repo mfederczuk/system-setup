@@ -53,3 +53,32 @@ Commit Date: %C(auto,bold)%cd%C(auto) %C(auto,dim)(%cr)%C(auto)%n\
 
 [init]
 	defaultBranch = master
+
+[commit]
+	gpgSign = true
+
+[diff]
+	noprefix = true
+
+[pull]
+	ff = only
+
+[merge]
+	ff = false
+	tool = vimdiff
+
+[rebase]
+	autoStash = true
+	autoSquash = true
+
+[stash]
+	showIncludeUntracked = true
+	showPatch = true
+	showStat = true
+
+[grep]
+	lineNumber = true
+	patternType = extended
+
+[mergetool]
+	keepBackup = false
