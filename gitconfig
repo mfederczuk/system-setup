@@ -1,6 +1,8 @@
 # vim: set syntax=gitconfig
 # code: language=properties
 
+# TODO: switch to `$XDG_CONFIG_HOME/git/config` in the future
+
 [user]
 	name = Michael Federczuk
 	email = federczuk.michael@protonmail.com
@@ -13,7 +15,7 @@
 
 [core]
 	editor = vim -n
-	excludesfile = ~/.global-gitignore
+	excludesfile = ~/.global-gitignore # TODO: switch to `$XDG_CONFIG_HOME/git/ignore` in the future and remove this var
 
 	# -+X -> enable termcap initialization/deinitialization (disabled by default for whatever reason)
 	pager = less --quit-if-one-screen --ignore-case --quit-on-intr --LONG-PROMPT --RAW-CONTROL-CHARS --chop-long-lines -+X --file-size --
