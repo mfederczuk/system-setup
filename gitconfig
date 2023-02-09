@@ -89,3 +89,25 @@ Commit Date: %C(auto,bold)%cd%C(auto) %C(auto,dim)(%cr)%C(auto)%n\
 	pick = cherry-pick
 	stat = status
 	wip  = wip-dump
+
+	# === shortened commands === #
+
+	# staging
+	addall = add --all --verbose
+	adduv  = add --update --verbose
+	ai     = add --interactive
+	a      = add --verbose
+	patch  = add --patch
+
+	# committing
+	amend = commit --amend
+	fixup = commit --fixup
+
+	# other
+	branchall = branch -avv
+	changes = diff --staged
+	ff = merge --ff-only
+	hist = log --patch --follow --
+	xcopy-changes = xcopy-diff --staged
+
+	# ========================== #
