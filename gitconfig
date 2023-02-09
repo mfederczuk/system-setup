@@ -2,8 +2,8 @@
 # code: language=properties
 
 [user]
-	email = federczuk.michael@protonmail.com
 	name = Michael Federczuk
+	email = federczuk.michael@protonmail.com
 	signingKey = B1299309A8D8D90B
 
 [gpg]
