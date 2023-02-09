@@ -40,4 +40,4 @@ Commit Date: %C(auto,bold)%cd%C(auto) %C(auto,dim)(%cr)%C(auto)%n\
 %w(120,8,8)%C(auto,italic)%B
 
 [format]
-	pretty = custom-medium
+	pretty = custom-fuller
