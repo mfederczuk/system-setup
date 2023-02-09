@@ -18,13 +18,26 @@
 	custom-oneline-name       = %C(auto)%h%d %s %C(reset)%C(dim default)(%C(no-dim magenta)%aN%C(dim default), %C(yellow)%ar%C(default))
 	custom-oneline-name-email = %C(auto)%h%d %s %C(reset)%C(dim default)(%C(no-dim magenta)%aN%C(dim default) <%C(no-dim magenta)%C(bold)%aE%C(no-bold)%C(dim default)>, %C(yellow)%ar%C(default))
 
-	# the leading string "format:" here is important. without it, we get some extra trailing newlines
+	# the leading string "format:" for these formats is important. without it, we get some extra trailing newlines
+
 	custom-medium = format:%C(auto,yellow)commit%C(auto) %H %C(auto,dim yellow){%C(auto)%h%C(auto,dim yellow)}%C(auto)%d%n\
 %C(auto,dim)tree%C(auto) %C(auto,dim)%t%C(auto)%n\
 Author: %aN <%aE>%n\
 Date:   %ad %C(auto,dim)(%ar)%C(auto)%n\
 %n\
 %w(80,4,4)%B
+
+	custom-fuller = format:%C(auto,yellow)commit%C(auto) %H %C(auto,dim yellow){%C(auto)%h%C(auto,dim yellow)}%C(auto)%d%n\
+%n\
+%C(auto,dim)tree%C(auto) %C(auto,dim)%T%C(auto) %C(auto,dim black){%C(auto,dim)%C(reset)%C(auto,dim)%t%C(auto,dim black)}%C(auto)%n\
+%n\
+Author:      %C(auto,bold)%aN%C(auto) <%C(auto,bold)%aE%C(auto)>%n\
+Author Date: %C(auto,bold)%ad%C(auto) %C(auto,dim)(%ar)%C(auto)%n\
+%n\
+Committer:   %C(auto,bold)%cN%C(auto) <%C(auto,bold)%aE%C(auto)>%n\
+Commit Date: %C(auto,bold)%cd%C(auto) %C(auto,dim)(%cr)%C(auto)%n\
+%n\
+%w(120,8,8)%C(auto,italic)%B
 
 [format]
 	pretty = custom-medium
