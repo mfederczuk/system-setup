@@ -25,7 +25,8 @@
 Author: %aN <%aE>%n\
 Date:   %ad %C(auto,dim)(%ar)%C(auto)%n\
 %n\
-%w(80,4,4)%B
+%w(80,4,4)%B\
+%+N
 
 	custom-fuller = format:%C(auto,yellow)commit%C(auto) %H %C(auto,dim yellow){%C(auto)%h%C(auto,dim yellow)}%C(auto)%d%n\
 %n\
@@ -37,7 +38,8 @@ Author Date: %C(auto,bold)%ad%C(auto) %C(auto,dim)(%ar)%C(auto)%n\
 Committer:   %C(auto,bold)%cN%C(auto) <%C(auto,bold)%aE%C(auto)>%n\
 Commit Date: %C(auto,bold)%cd%C(auto) %C(auto,dim)(%cr)%C(auto)%n\
 %n\
-%w(120,8,8)%C(auto,italic)%B
+%w(120,8,8)%C(auto,italic)%B\
+%+N
 
 [format]
 	pretty = custom-fuller
