@@ -82,3 +82,10 @@ Commit Date: %C(auto,bold)%cd%C(auto) %C(auto,dim)(%cr)%C(auto)%n\
 
 [mergetool]
 	keepBackup = false
+
+[alias]
+	# direct aliases
+	go   = switch
+	pick = cherry-pick
+	stat = status
+	wip  = wip-dump
