@@ -111,3 +111,6 @@ Commit Date: %C(auto,bold)%cd%C(auto) %C(auto,dim)(%cr)%C(auto)%n\
 	xcopy-changes = xcopy-diff --staged
 
 	# ========================== #
+
+[include]
+	path = ~/.local/etc/git/secret.gitconfig
