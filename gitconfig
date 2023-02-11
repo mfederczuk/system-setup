@@ -119,4 +119,4 @@ Commit Date: %C(auto,bold)%cd%C(auto) %C(auto,dim)(%cr)%C(auto)%n\
 	set-editor-vim               = config core.editor 'vim -n'
 
 [include]
-	path = ~/.local/etc/git/secret.gitconfig
+	path = ~/.config/git/secret.gitconfig
