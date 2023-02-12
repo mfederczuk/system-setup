@@ -123,6 +123,10 @@ function rmcwd() {
 			printf 'rmcwd: refusing to remove the XDG_CONFIG_HOME base directory\n' >&2
 			return 48
 			;;
+		("${XDG_STATE_HOME-}")
+			printf 'rmcwd: refusing to remove the XDG_STATE_HOME base directory\n' >&2
+			return 48
+			;;
 		("${XDG_CACHE_HOME-}")
 			printf 'rmcwd: refusing to remove the XDG_CACHE_HOME base directory\n' >&2
 			return 48
