@@ -28,14 +28,14 @@ shopt -u sourcepath # disables PATH lookup for the `.` (dot) and `source` builti
 
 #region sourcing other bash files
 
-if [ -f "$HOME/.bash_aliases" ]; then
-	# shellcheck source=bash_aliases
-	. "$HOME/.bash_aliases"
-fi
-
 if [ -f "$HOME/.bash_funcs" ]; then
 	# shellcheck source=bash_funcs
 	. "$HOME/.bash_funcs"
+fi
+
+if [ -f "$HOME/.bash_aliases" ]; then
+	# shellcheck source=bash_aliases
+	. "$HOME/.bash_aliases"
 fi
 
 declare __bashrc__completion_file_pathname
