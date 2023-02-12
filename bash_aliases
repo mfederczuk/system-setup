@@ -263,4 +263,23 @@ fi
 
 #endregion
 
+#region 7z
+
+# for some reason there are like 3 different 7z commands and different Linux distros use only some of these commands
+
+declare __dotfiles_bash_aliases__7z_cmd
+
+for __dotfiles_bash_aliases__7z_cmd in 7z 7za 7zr; do
+	if ! command -v $__dotfiles_bash_aliases__7z_cmd > '/dev/null'; then
+		continue
+	fi
+
+	# shellcheck disable=2139
+	alias "$__dotfiles_bash_aliases__7z_cmd-ultra"="$__dotfiles_bash_aliases__7z_cmd -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on"
+done
+
+unset -v __dotfiles_bash_aliases__7z_cmd
+
+#endregion
+
 unset -v __dotfiles_bash_aliases__is_program_gnu
