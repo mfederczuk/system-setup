@@ -97,12 +97,12 @@ if [[ ! "$__dotfiles_bash_funcs__dotfiles_dir_pathname" =~ ^'/' ]]; then
 	__dotfiles_bash_funcs__dotfiles_dir_pathname="./$__dotfiles_bash_funcs__dotfiles_dir_pathname"
 fi
 
-declare __dotfiles_bash_funcs__bash_func_filename
-for __dotfiles_bash_funcs__bash_func_filename in 'rmcwd.bash' 'cd-dot-dot.bash'; do
+declare __dotfiles_bash_funcs__bash_func_file_pathname
+for __dotfiles_bash_funcs__bash_func_file_pathname in "$__dotfiles_bash_funcs__dotfiles_dir_pathname/bash_funcs.d/"*'.bash'; do
 	# shellcheck disable=1090
-	. "$__dotfiles_bash_funcs__dotfiles_dir_pathname/bash_funcs.d/$__dotfiles_bash_funcs__bash_func_filename"
+	. "$__dotfiles_bash_funcs__bash_func_file_pathname"
 done
-unset -v __dotfiles_bash_funcs__bash_func_filename
+unset -v __dotfiles_bash_funcs__bash_func_file_pathname
 
 unset -v __dotfiles_bash_funcs__dotfiles_dir_pathname \
          __dotfiles_bash_funcs__sourced_file_pathname
