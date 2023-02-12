@@ -160,7 +160,7 @@ function rmcwd() {
 		cd '/' ||
 		return
 
-	# endregion
+	#endregion
 
 	#region main
 

@@ -5,9 +5,9 @@
 
 umask 022
 
-# region environment variables setup
+#region environment variables setup
 
-# region PATH setup
+#region PATH setup
 
 _add_to_path() {
 	_add_to_path_local_side="$1"
@@ -78,7 +78,7 @@ _add_to_path front '.bin' \
 
 export PATH
 
-# endregion
+#endregion
 
 export SHELL="${SHELL:-"$(\command grep -E "^[^:]*:[^:]*:$(id -u):$(id -g)" '/etc/passwd' | \command cut -d: -f7)"}"
 
@@ -95,7 +95,7 @@ export XDG_CACHE_HOME="${XDG_CACHE_HOME:-"$HOME/.cache"}"
 export XDG_DATA_DIRS="${XDG_DATA_DIRS:-"/usr/local/share/:/usr/share/"}"
 export XDG_CONFIG_DIRS="${XDG_CONFIG_DIRS:-"/etc/xdg"}"
 
-# region programming languages / enviroments
+#region programming languages / enviroments
 
 # C & C++
 export CC="${CC:-"cc"}"
@@ -116,11 +116,11 @@ fi
 export DOTNET_ROOT='/opt/dotnet'
 export DOTNET_CLI_TELEMETRY_OPTOUT="${DOTNET_CLI_TELEMETRY_OPTOUT:-1}"
 
-# endregion
+#endregion
 
-# endregion
+#endregion
 
-# region shell specific runcoms
+#region shell specific runcoms
 
 if [ -n "$BASH_VERSION" ]; then
 	if [ -f "$HOME/.bashrc" ]; then
@@ -143,9 +143,9 @@ if [ -n "$FISH_VERSION" ]; then
 	fi
 fi
 
-# endregion
+#endregion
 
-# region cleaning up environment variable PATH
+#region cleaning up environment variable PATH
 
 # squeezing colons
 if \command printf '%s' "$PATH" | \command grep -Eq '::'; then
@@ -159,4 +159,4 @@ PATH="${PATH%:}"
 
 export PATH
 
-# endregion
+#endregion

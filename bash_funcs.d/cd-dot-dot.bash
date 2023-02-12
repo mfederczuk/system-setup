@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
 
 function cd..() {
-	# region args
+	#region args
 
 	local -i stepc || return
 
@@ -39,14 +39,14 @@ function cd..() {
 
 	readonly stepc || return
 
-	# endregion
+	#endregion
 
 	if ((stepc == 0)); then
 		# no-op
 		return
 	fi
 
-	# region building pathname
+	#region building pathname
 
 	local pathname || return
 
@@ -62,7 +62,7 @@ function cd..() {
 
 	readonly pathname || return
 
-	# endregion
+	#endregion
 
 	# shellcheck disable=2164
 	cd -- "$pathname"

@@ -8,7 +8,7 @@ if [[ "$-" != *i* ]]; then
 	return
 fi
 
-# region history setup
+#region history setup
 
 export HISTFILE="$XDG_STATE_HOME/bash/history"
 
@@ -21,12 +21,12 @@ export HISTTIMESTAMP='[%Y-%m-%d %M:%H:%S] '
 export HISTSIZE=$((2**16))
 export HISTFILESIZE=$((HISTSIZE * 2)) # double to account for the timestamp line
 
-# endregion
+#endregion
 
 shopt -s globstar
 shopt -u sourcepath # disables PATH lookup for the `.` (dot) and `source` builtins
 
-# region sourcing other bash files
+#region sourcing other bash files
 
 if [ -f "$HOME/.bash_aliases" ]; then
 	# shellcheck source=bash_aliases
@@ -51,4 +51,4 @@ if [ -d "$HOME/completions" ]; then
 	unset -v __bashrc__completion_file
 fi
 
-# endregion
+#endregion
