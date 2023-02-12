@@ -45,7 +45,7 @@ function readlink_portable() {
 
 	local ls_out
 
-	ls_out="$(LC_ALL=POSIX LC_CTYPE=POSIX LC_TIME=POSIX ls -dn -- "$pathname" && printf x)"
+	ls_out="$(POSIXLY_CORRECT=yes POSIX_ME_HARDER=yes LC_ALL=POSIX LC_CTYPE=POSIX LC_TIME=POSIX ls -dn -- "$pathname" && printf x)"
 	ls_out="${ls_out%$'\nx'}"
 
 	# removing <file mode>, <number of links>, <owner name>, <group name>, <size> and <date and time> (where both
