@@ -38,17 +38,15 @@ if [ -f "$HOME/.bash_funcs" ]; then
 	. "$HOME/.bash_funcs"
 fi
 
-if [ -d "$HOME/completions" ]; then
-	declare __bashrc__completion_file
+declare __bashrc__completion_file
 
-	for __bashrc__completion_file in "$HOME/"{'completions/','.local/etc/bash_completion.d/'}*'.bash'{,'-completion'}; do
-		if [ -f "$__bashrc__completion_file" ]; then
-			# shellcheck disable=1090
-			. "$__bashrc__completion_file"
-		fi
-	done
+for __bashrc__completion_file in "$HOME/"{'completions/','.local/etc/bash_completion.d/'}*'.bash'{,'-completion'}; do
+	if [ -f "$__bashrc__completion_file" ]; then
+		# shellcheck disable=1090
+		. "$__bashrc__completion_file"
+	fi
+done
 
-	unset -v __bashrc__completion_file
-fi
+unset -v __bashrc__completion_file
 
 #endregion
