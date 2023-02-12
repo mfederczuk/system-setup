@@ -311,6 +311,10 @@ unset -v __dotfiles_bash_aliases__7z_cmd
 
 #region other
 
+if command -v gzip > '/dev/null'; then
+	alias gzip='gzip --verbose'
+fi
+
 if command -v free > '/dev/null'; then
 	alias free='free -h'
 fi
