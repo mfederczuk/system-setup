@@ -30,7 +30,7 @@ function __dotfiles_bash_aliases__is_program_gnu() {
 	return 0
 }
 
-#region coreutils
+#region POSIX utilities
 
 function __dotfiles_bash_aliases__is_program_gnu_coreutils() {
 	__dotfiles_bash_aliases__is_program_gnu "$1" 'coreutils'
@@ -107,6 +107,10 @@ if __dotfiles_bash_aliases__is_program_gnu_coreutils chown; then
 fi
 
 #endregion
+
+if __dotfiles_bash_aliases__is_program_gnu diff 'diffutils'; then
+	alias diff='diff --color=auto'
+fi
 
 if __dotfiles_bash_aliases__is_program_gnu_coreutils df; then
 	alias df='df --human-readable --total'
