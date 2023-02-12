@@ -38,6 +38,11 @@ if [ -f "$HOME/.bash_aliases" ]; then
 	. "$HOME/.bash_aliases"
 fi
 
+if [ -f "$XDG_CONFIG_HOME/bash/secret.bash" ]; then
+	# shellcheck disable=1091
+	. "$XDG_CONFIG_HOME/bash/secret.bash"
+fi
+
 declare __bashrc__completion_file_pathname
 
 for __bashrc__completion_file_pathname in "$HOME/"{'completions/','.local/etc/bash_completion.d/'}*'.bash'{,'-completion'}; do
