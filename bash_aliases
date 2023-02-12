@@ -5,10 +5,9 @@
 
 alias dirs='dirs -v'
 
-#region coreutils
-
-function __dotfiles_bash_aliases__is_program_gnu_coreutils() {
+function __dotfiles_bash_aliases__is_program_gnu() {
 	local program_name="$1" || return
+	local package_name="$2" || return
 
 	if ! command -v "$program_name" > '/dev/null'; then
 		return 32
@@ -17,11 +16,17 @@ function __dotfiles_bash_aliases__is_program_gnu_coreutils() {
 	local program_version_info || return
 	program_version_info="$(command "$program_name" --version)" || return 33
 
-	if [[ ! "$program_version_info" =~ ^"$program_name (GNU coreutils)" ]]; then
+	if [[ ! "$program_version_info" =~ ^"$program_name (GNU $package_name)" ]]; then
 		return 34
 	fi
 
 	return 0
+}
+
+#region coreutils
+
+function __dotfiles_bash_aliases__is_program_gnu_coreutils() {
+	__dotfiles_bash_aliases__is_program_gnu "$1" 'coreutils'
 }
 
 if __dotfiles_bash_aliases__is_program_gnu_coreutils ls; then
@@ -106,3 +111,16 @@ fi
 unset -v __dotfiles_bash_aliases__is_program_gnu_coreutils
 
 #endregion
+
+if __dotfiles_bash_aliases__is_program_gnu tar 'tar'; then
+	alias tar.gz='tar --gzip'
+	alias tar.xz='tar --xz'
+	alias tar.zstd='tar --zstd'
+
+	alias untar='tar --extract'
+	alias untar.gz='tar --extract --gzip'
+	alias untar.xz='tar --extract --xz'
+	alias untar.zstd='tar --extract --zstd'
+fi
+
+unset -v __dotfiles_bash_aliases__is_program_gnu
