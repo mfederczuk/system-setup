@@ -309,4 +309,12 @@ unset -v __dotfiles_bash_aliases__7z_cmd
 
 #endregion
 
+#region other
+
+if command -v free > '/dev/null'; then
+	alias free='free -h'
+fi
+
+#endregion
+
 unset -v __dotfiles_bash_aliases__is_program_gnu
