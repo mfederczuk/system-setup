@@ -183,4 +183,9 @@ unset -v __dotfiles_bash_aliases__c_cxx_compiler_args_str \
 
 #endregion
 
+if command -v vlc > '/dev/null'; then
+	alias vlc-no-one-instance='vlc --no-one-instance'
+	alias vlc-one-instance-playlist-enqueue='vlc --one-instance --playlist-enqueue'
+fi
+
 unset -v __dotfiles_bash_aliases__is_program_gnu
