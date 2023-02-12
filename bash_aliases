@@ -106,6 +106,10 @@ if __dotfiles_bash_aliases__is_program_gnu_coreutils chown; then
 	alias chown='chown --verbose --preserve-root'
 fi
 
+if __dotfiles_bash_aliases__is_program_gnu_coreutils chgrp; then
+	alias chgrp='chgrp --verbose --preserve-root'
+fi
+
 #endregion
 
 if __dotfiles_bash_aliases__is_program_gnu diff 'diffutils'; then
