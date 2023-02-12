@@ -1,6 +1,8 @@
 # vim: set syntax=gitconfig
 # code: language=properties
 
+# SPDX-License-Identifier: CC0-1.0
+
 # TODO: switch to `$XDG_CONFIG_HOME/git/config` in the future
 
 [user]
