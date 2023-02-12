@@ -116,6 +116,19 @@ Commit Date: %C(auto,bold)%cd%C(auto) %C(auto,dim)(%cr)%C(auto)%n\
 
 	# ========================== #
 
+	# === "new" commands === #
+
+	# TODO: these aliases should be in their own executable file
+
+	list-all = !{ git --no-pager ls-tree --full-tree -r --name-only HEAD && git -P diff --staged --name-only";" } # TODO: ever needed?
+	null-list-all = !{ git --no-pager ls-tree --full-tree -r --name-only -z HEAD && git -P diff --staged --name-only -z";" } # TODO: only needed for `git-sed`, inline it into it's executable and remove it?
+	sed = !git null-list-all | xargs -0 sed -i
+	purge = !git reset --hard && git clean -d --force
+	reword = !git reset && git commit --amend # TODO: in the future add support for more than just rewording HEAD
+	backup = !git stash push --include-untracked --message 'Backup' && git stash apply
+
+	# ====================== #
+
 	set-editor-codium-workspace  = config core.editor 'codium --wait .'
 	set-editor-codium-new-window = config core.editor 'codium --wait --new-window'
 	set-editor-gedit             = !printf \"\\033[31mgedit is dead. Long live gnome-text-editor\\033[0m\\n\"
