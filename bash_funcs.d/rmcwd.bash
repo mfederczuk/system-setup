@@ -253,3 +253,11 @@ function rmcwd() {
 
 	#endregion
 }
+
+
+function _rmcwd() {
+	# shellcheck disable=2207
+	COMPREPLY=($(compgen -W '-r -i -f' -- "${COMP_WORDS[$COMP_CWORD]}"))
+}
+
+complete -F _rmcwd rmcwd
