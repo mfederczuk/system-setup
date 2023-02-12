@@ -123,4 +123,64 @@ if __dotfiles_bash_aliases__is_program_gnu tar 'tar'; then
 	alias untar.zstd='tar --extract --zstd'
 fi
 
+#region C & C++ compiler
+
+declare -a __dotfiles_bash_aliases__c_cxx_compiler_cmds
+__dotfiles_bash_aliases__c_cxx_compiler_cmds=(
+	cc c++
+	gcc g++
+	clang clang++
+)
+
+declare -a __dotfiles_bash_aliases__c_cxx_compiler_args
+__dotfiles_bash_aliases__c_cxx_compiler_args=(
+	-Wall -Wextra
+	-Wconversion -Werror=infinite-recursion
+	-pedantic -Wpedantic -pedantic-errors -Werror=pedantic
+)
+
+declare __dotfiles_bash_aliases__c_cxx_compiler_args_str
+
+#region joining args into one string
+
+__dotfiles_bash_aliases__c_cxx_compiler_args_str=''
+
+declare __dotfiles_bash_aliases__c_cxx_compiler_arg
+
+for __dotfiles_bash_aliases__c_cxx_compiler_arg in "${__dotfiles_bash_aliases__c_cxx_compiler_args[@]}"; do
+	if [ -n "$__dotfiles_bash_aliases__c_cxx_compiler_args_str" ]; then
+		__dotfiles_bash_aliases__c_cxx_compiler_args_str+=' '
+	fi
+
+	__dotfiles_bash_aliases__c_cxx_compiler_args_str+="$__dotfiles_bash_aliases__c_cxx_compiler_arg"
+done
+
+unset -v __dotfiles_bash_aliases__c_cxx_compiler_arg
+
+#endregion
+
+unset -v __dotfiles_bash_aliases__c_cxx_compiler_args
+
+#region creating the aliases
+
+declare __dotfiles_bash_aliases__c_cxx_compiler_cmd
+
+for __dotfiles_bash_aliases__c_cxx_compiler_cmd in "${__dotfiles_bash_aliases__c_cxx_compiler_cmds[@]}"; do
+	if ! command -v "$__dotfiles_bash_aliases__c_cxx_compiler_cmd" > '/dev/null'; then
+		continue
+	fi
+
+	# shellcheck disable=2139
+	alias "$__dotfiles_bash_aliases__c_cxx_compiler_cmd"="$__dotfiles_bash_aliases__c_cxx_compiler_cmd $__dotfiles_bash_aliases__c_cxx_compiler_args_str"
+done
+
+unset -v __dotfiles_bash_aliases__c_cxx_compiler_cmd
+
+#endregion
+
+unset -v __dotfiles_bash_aliases__c_cxx_compiler_args_str \
+         __dotfiles_bash_aliases__c_cxx_compiler_cmds
+
+#endregion
+
 unset -v __dotfiles_bash_aliases__is_program_gnu
