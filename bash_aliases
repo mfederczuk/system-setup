@@ -8,6 +8,7 @@
 #region Bash builtins
 
 alias dirs='dirs -v'
+alias jobs='jobs -l'
 alias time='command time' # suppress using Bash's built-in `time` command
 
 #endregion
