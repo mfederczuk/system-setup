@@ -3,6 +3,8 @@
 # vim: syntax=sh
 # code: language=shellscript
 
+# SPDX-License-Identifier: CC0-1.0
+
 #region Bash builtins
 
 alias dirs='dirs -v'
