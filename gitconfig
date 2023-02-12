@@ -112,6 +112,7 @@ Commit Date: %C(auto,bold)%cd%C(auto) %C(auto,dim)(%cr)%C(auto)%n\
 	branchall = branch --all --verbose --verbose # yes, 2x --verbose is correct
 	ff = merge --ff-only
 	hist = log --patch --follow --
+	init-commit = commit --message='Initial commit'
 
 	# ========================== #
 
