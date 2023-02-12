@@ -3,6 +3,8 @@
 
 # SPDX-License-Identifier: CC0-1.0
 
+# TODO: switch to `$XDG_CONFIG_HOME/git/ignore` in the future
+
 .bin
 .dir_bin
 .dirinfo
