@@ -131,6 +131,20 @@ unset -v __dotfiles_bash_aliases__is_program_gnu_coreutils
 
 #endregion
 
+#region DNF
+
+if command -v dnf > '/dev/null'; then
+	if command -v try_as_root > '/dev/null'; then
+		alias dnf='try_as_root dnf'
+	elif command -v doas > '/dev/null'; then
+		alias dnf='doas dnf'
+	elif command -v sudo > '/dev/null'; then
+		alias dnf='sudo dnf'
+	fi
+fi
+
+#endregion
+
 #region Git
 
 if command -v git > '/dev/null'; then
