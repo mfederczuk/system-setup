@@ -311,12 +311,41 @@ unset -v __dotfiles_bash_aliases__7z_cmd
 
 #region other
 
+if command -v vim > '/dev/null'; then
+	# -n  ->  no swap file, use memory only
+	# -p  ->  open one tab page for each file
+	alias vim='vim -np'
+fi
+
+if command -v less > '/dev/null'; then
+	# -+X  ->  enable termcap initialization/deinitialization
+	alias less='less --quit-if-one-screen --ignore-case --quit-on-intr --LONG-PROMPT --LINE-NUMBERS --RAW-CONTROL-CHARS --chop-long-lines -+X'
+fi
+
+if command -v tree > '/dev/null'; then
+	# -I <pattern>  ->  ignore <pattern>
+	# -F            ->  same as ls's -F/--classify
+	alias tree='tree -I .git -I node_modules -F --dirsfirst'
+fi
+
+if command -v youtube-dl > '/dev/null'; then
+	alias youtube-dl-to-mp3="youtube-dl --format=bestaudio -x --audio-format=mp3 --audio-quality=0 --prefer-ffmpeg -o '%(title)s.%(ext)s'"
+fi
+
 if command -v gzip > '/dev/null'; then
 	alias gzip='gzip --verbose'
 fi
 
+if command -v xz > '/dev/null'; then
+	alias xz='xz --verbose'
+fi
+
 if command -v free > '/dev/null'; then
 	alias free='free -h'
+fi
+
+if command -v valgrind > '/dev/null'; then
+	alias valgrind='valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes'
 fi
 
 if command -v dos2unix > '/dev/null'; then
