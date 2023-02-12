@@ -14,17 +14,18 @@ alias time='command time' # suppress using Bash's built-in `time` command
 #endregion
 
 function __dotfiles_bash_aliases__is_program_gnu() {
-	local program_name="$1" || return
-	local package_name="$2" || return
+	local binary_name="$1" || return
+	local canonical_program_name="$2" || return
+	local package_name="$3" || return
 
-	if ! command -v "$program_name" > '/dev/null'; then
+	if ! command -v "$binary_name" > '/dev/null'; then
 		return 32
 	fi
 
 	local program_version_info || return
-	program_version_info="$(command "$program_name" --version)" || return 33
+	program_version_info="$(command "$binary_name" --version)" || return 33
 
-	if [[ ! "$program_version_info" =~ ^"$program_name (GNU $package_name)" ]]; then
+	if [[ ! "$program_version_info" =~ ^"$canonical_program_name (GNU $package_name)" ]]; then
 		return 34
 	fi
 
@@ -34,7 +35,7 @@ function __dotfiles_bash_aliases__is_program_gnu() {
 #region POSIX utilities
 
 function __dotfiles_bash_aliases__is_program_gnu_coreutils() {
-	__dotfiles_bash_aliases__is_program_gnu "$1" 'coreutils'
+	__dotfiles_bash_aliases__is_program_gnu "$1" "$1" 'coreutils'
 }
 
 if __dotfiles_bash_aliases__is_program_gnu_coreutils ls; then
@@ -113,7 +114,23 @@ fi
 
 #endregion
 
-if __dotfiles_bash_aliases__is_program_gnu diff 'diffutils'; then
+#region grep
+
+if __dotfiles_bash_aliases__is_program_gnu grep 'grep' 'grep'; then
+	alias grep='grep --color=auto'
+fi
+
+if __dotfiles_bash_aliases__is_program_gnu egrep 'grep' 'grep'; then
+	alias egrep='egrep --color=auto'
+fi
+
+if __dotfiles_bash_aliases__is_program_gnu fgrep 'grep' 'grep'; then
+	alias fgrep='fgrep --color=auto'
+fi
+
+#endregion
+
+if __dotfiles_bash_aliases__is_program_gnu diff 'diff' 'diffutils'; then
 	alias diff='diff --color=auto'
 fi
 
@@ -208,7 +225,7 @@ fi
 
 #region GNU tar
 
-if __dotfiles_bash_aliases__is_program_gnu tar 'tar'; then
+if __dotfiles_bash_aliases__is_program_gnu tar 'tar' 'tar'; then
 	alias tar.gz='tar --gzip'
 	alias tar.xz='tar --xz'
 	alias tar.zstd='tar --zstd'
