@@ -369,6 +369,10 @@ if command -v dos2unix > '/dev/null'; then
 	alias dos2unix='dos2unix --keepdate'
 fi
 
+if command -v update-alternatives > '/dev/null'; then
+	alias update-alternatives-local='update-alternatives --altdir ~/.local/etc/alternatives --admindir ~/.local/var/lib/alternatives'
+fi
+
 #endregion
 
 unset -v __dotfiles_bash_aliases__is_program_gnu
