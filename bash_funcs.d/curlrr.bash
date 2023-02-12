@@ -31,7 +31,7 @@ unset -v __dotfiles_bash_funcs_curlrr__sed_version_info
 function curlrr() {
 	#region checking for required programs
 
-	local cmd
+	local cmd || return
 
 	for cmd in curl sed; do
 		if ! command -v "$cmd" > '/dev/null'; then
@@ -40,7 +40,7 @@ function curlrr() {
 		fi
 	done
 
-	unset -v cmd
+	unset -v cmd || return
 
 	#endregion
 

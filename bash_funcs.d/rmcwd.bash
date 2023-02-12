@@ -67,7 +67,7 @@ function rmcwd() {
 			esac
 		done
 
-		unset -v i
+		unset -v i || return
 	done
 	unset -v arg || return
 

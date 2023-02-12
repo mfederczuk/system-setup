@@ -37,7 +37,7 @@ function cd..() {
 			;;
 	esac
 
-	readonly stepc
+	readonly stepc || return
 
 	# endregion
 
@@ -48,19 +48,19 @@ function cd..() {
 
 	# region building pathname
 
-	local pathname
+	local pathname || return
 
-	local -i i
+	local -i i || return
 	for ((i = 0; i < stepc; ++i)); do
 		if [ -n "$pathname" ]; then
-			pathname+='/'
+			pathname+='/' || return
 		fi
 
-		pathname+='..'
+		pathname+='..' || return
 	done
-	unset -v i
+	unset -v i || return
 
-	readonly pathname
+	readonly pathname || return
 
 	# endregion
 
