@@ -123,6 +123,10 @@ else
 	alias df='df -kt'
 fi
 
+if __dotfiles_bash_aliases__is_program_gnu_coreutils du; then
+	alias du='du --bytes --human-readable'
+fi
+
 unset -v __dotfiles_bash_aliases__is_program_gnu_coreutils
 
 #endregion
