@@ -119,6 +119,66 @@ unset -v __dotfiles_bash_aliases__is_program_gnu_coreutils
 
 #endregion
 
+#region Git
+
+if command -v git > '/dev/null'; then
+	function __dotfiles_bash_aliases__exists_git_command() {
+		local command_name || return
+		command_name="$1" || return
+		readonly command_name || return
+
+		#region checking aliases
+
+		if git --no-pager config --get --system alias."$command_name" > '/dev/null'; then
+			return 0
+		fi
+
+		if git --no-pager config --get --global alias."$command_name" > '/dev/null'; then
+			return 0
+		fi
+
+		#endregion
+
+		# checking custom commands
+		if command -v "git-$command_name" > '/dev/null'; then
+			return 0
+		fi
+
+		# checking official commands
+		if git --no-pager help "$command_name" &> '/dev/null' < '/dev/null'; then
+			return 0
+		fi
+
+		return 32
+	}
+
+
+	if __dotfiles_bash_aliases__exists_git_command addall; then
+		alias addall='git addall'
+	fi
+
+	if __dotfiles_bash_aliases__exists_git_command adduv; then
+		alias adduv='git adduv'
+	fi
+
+	if __dotfiles_bash_aliases__exists_git_command branchall; then
+		alias branchall='git branchall'
+	fi
+
+	if __dotfiles_bash_aliases__exists_git_command graph; then
+		alias graph='git graph'
+	fi
+
+	if __dotfiles_bash_aliases__exists_git_command stat; then
+		alias gstat='git stat'
+	fi
+
+
+	unset -v __dotfiles_bash_aliases__exists_git_command
+fi
+
+#endregion
+
 if __dotfiles_bash_aliases__is_program_gnu tar 'tar'; then
 	alias tar.gz='tar --gzip'
 	alias tar.xz='tar --xz'
