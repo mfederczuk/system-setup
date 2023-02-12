@@ -315,6 +315,10 @@ if command -v free > '/dev/null'; then
 	alias free='free -h'
 fi
 
+if command -v dos2unix > '/dev/null'; then
+	alias dos2unix='dos2unix --keepdate'
+fi
+
 #endregion
 
 unset -v __dotfiles_bash_aliases__is_program_gnu
