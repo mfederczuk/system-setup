@@ -3,7 +3,12 @@
 # vim: syntax=sh
 # code: language=shellscript
 
+#region Bash builtins
+
 alias dirs='dirs -v'
+alias time='command time' # suppress using Bash's built-in `time` command
+
+#endregion
 
 function __dotfiles_bash_aliases__is_program_gnu() {
 	local program_name="$1" || return
