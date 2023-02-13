@@ -14,7 +14,7 @@ function mkdir-cd() {
 			return 3
 			;;
 		(1)
-			if [ -z "$pathname" ]; then
+			if [ -z "$1" ]; then
 				printf '%s: argument must not be empty\n' "${FUNCNAME[0]}" >&2
 				return 9
 			fi
@@ -69,7 +69,7 @@ if command -v codium > '/dev/null'; then
 				return 3
 				;;
 			(1)
-				if [ -z "$pathname" ]; then
+				if [ -z "$1" ]; then
 					printf '%s: argument must not be empty\n' "${FUNCNAME[0]}" >&2
 					return 9
 				fi
