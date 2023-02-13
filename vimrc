@@ -9,6 +9,8 @@ set mouse=a
 set modeline
 set modelines=5
 
+set listchars=space:.,tab:-->,eol:$
+
 " smart home key
 " i found this sometime, somewhere online, but don't remember where and also can't find this exact snippet anymore
 " god fucking knows how this shit works, because i sure as hell don't
