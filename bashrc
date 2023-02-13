@@ -26,6 +26,10 @@ export HISTFILESIZE=$((HISTSIZE * 2)) # double to account for the timestamp line
 shopt -s globstar
 shopt -u sourcepath # disables PATH lookup for the `.` (dot) and `source` builtins
 
+if command -v dircolors > '/dev/null'; then
+	eval "$(dircolors -b)"
+fi
+
 export PS2='\[\033[01;94m\]>\[\033[0m\] '
 
 #region sourcing other bash files
