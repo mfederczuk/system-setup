@@ -95,6 +95,22 @@ export XDG_CACHE_HOME="${XDG_CACHE_HOME:-"$HOME/.cache"}"
 export XDG_DATA_DIRS="${XDG_DATA_DIRS:-"/usr/local/share/:/usr/share/"}"
 export XDG_CONFIG_DIRS="${XDG_CONFIG_DIRS:-"/etc/xdg"}"
 
+#region editors
+
+if command -v vim > '/dev/null'; then
+	export EDITOR='vim'
+	export VISUAL='vim'
+elif command -v nano > '/dev/null'; then
+	export EDITOR='nano'
+	export VISUAL='nano'
+fi
+
+if command -v codium > '/dev/null'; then
+	export GUI_EDITOR='codium -w'
+fi
+
+#endregion
+
 #region programming languages / enviroments
 
 # C & C++
