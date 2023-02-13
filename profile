@@ -134,6 +134,17 @@ export DOTNET_CLI_TELEMETRY_OPTOUT="${DOTNET_CLI_TELEMETRY_OPTOUT:-1}"
 
 #endregion
 
+#region Git
+
+if command -v git > '/dev/null'; then
+	export GIT_PS1_SHOWDIRTYSTATE='yes'
+
+	export GIT_COMPLETION_SHOW_ALL_COMMANDS='1' # exposes completion for plumbing commands
+	export GIT_COMPLETION_SHOW_ALL='1' # exposes completion for rarely used options
+fi
+
+#endregion
+
 #endregion
 
 #region shell specific runcoms
