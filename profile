@@ -138,6 +138,11 @@ export DOTNET_CLI_TELEMETRY_OPTOUT="${DOTNET_CLI_TELEMETRY_OPTOUT:-1}"
 
 #endregion
 
+export PAGER='less --ignore-case --quit-on-intr --LONG-PROMPT --RAW-CONTROL-CHARS --chop-long-lines -+X'
+
+export SYSTEMD_PAGERSECURE='true'
+export SYSTEMD_PAGER='less --quit-if-one-screen --ignore-case --quit-on-intr --LONG-PROMPT --RAW-CONTROL-CHARS --chop-long-lines -+X --file-size'
+
 #region Git
 
 if command -v git > '/dev/null'; then
