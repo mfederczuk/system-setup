@@ -32,11 +32,11 @@ function __dotfiles_bash_aliases__is_program_gnu() {
 	return 0
 }
 
-#region POSIX utilities
-
 function __dotfiles_bash_aliases__is_program_gnu_coreutils() {
 	__dotfiles_bash_aliases__is_program_gnu "$1" "$1" 'coreutils'
 }
+
+#region POSIX utilities
 
 if __dotfiles_bash_aliases__is_program_gnu_coreutils ls; then
 	alias ls='ls -l       --human-readable --classify --color=auto --group-directories-first'
@@ -144,8 +144,6 @@ fi
 if __dotfiles_bash_aliases__is_program_gnu_coreutils du; then
 	alias du='du --bytes --human-readable'
 fi
-
-unset -v __dotfiles_bash_aliases__is_program_gnu_coreutils
 
 #endregion
 
@@ -345,6 +343,11 @@ if command -v tree > '/dev/null'; then
 	alias tree='tree -I .git -I node_modules -F --dirsfirst'
 fi
 
+if __dotfiles_bash_aliases__is_program_gnu_coreutils shred; then
+	# -u  ->  remove file after shredding
+	alias shred='shred -u --zero'
+fi
+
 if command -v youtube-dl > '/dev/null'; then
 	alias youtube-dl-to-mp3="youtube-dl --format=bestaudio -x --audio-format=mp3 --audio-quality=0 --prefer-ffmpeg -o '%(title)s.%(ext)s'"
 fi
@@ -375,4 +378,5 @@ fi
 
 #endregion
 
-unset -v __dotfiles_bash_aliases__is_program_gnu
+unset -v __dotfiles_bash_aliases__is_program_gnu_coreutils \
+         __dotfiles_bash_aliases__is_program_gnu
