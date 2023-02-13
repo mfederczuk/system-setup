@@ -57,3 +57,12 @@ done
 unset -v __bashrc__completion_file_pathname
 
 #endregion
+
+# shellcheck disable=2034
+if command -v git > '/dev/null'; then
+	declare git_empty_blob_hash
+	git_empty_blob_hash="$(git --no-pager hash-object -t blob '/dev/null')"
+
+	declare git_empty_tree_hash
+	git_empty_tree_hash="$(git --no-pager hash-object -t tree '/dev/null')"
+fi
