@@ -2,6 +2,10 @@
 
 # common typo of mine; insult me if i fat-finger it
 
+if ! command -v git > '/dev/null'; then
+	return
+fi
+
 declare __gti_insult_msg
 __gti_insult_msg="You meant 'git', you absolute fridge, you"
 
