@@ -282,6 +282,14 @@ function trace_cmd() {
 complete -F _command trace_cmd
 
 function try_as_root() {
+	if (($# == 0)); then
+		{
+			printf '%s: missing arguments: <arg>...\n' "${FUNCNAME[0]}"
+			printf 'usage: %s <arg>...\n' "${FUNCNAME[0]}"
+		} >&2
+		return 3
+	fi
+
 	if command -v doas > '/dev/null'; then
 		doas "$@"
 		return
