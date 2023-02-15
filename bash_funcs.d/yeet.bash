@@ -221,7 +221,9 @@ function yeet() {
 		local pretty_device_pathname || return
 		pretty_device_pathname="${pretty_device_pathnames[i]}" || return
 
-		try_as_root umount -- "$device_pathname" || return
+		if findmnt --source "$device_pathname" > '/dev/null'; then
+			try_as_root umount -- "$device_pathname" || return
+		fi
 
 		if command -v eject > '/dev/null'; then
 			try_as_root eject -- "$device_pathname" ||
