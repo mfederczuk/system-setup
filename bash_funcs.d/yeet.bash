@@ -229,7 +229,7 @@ function yeet() {
 			try_as_root eject -- "$device_pathname" ||
 				{
 					# shellcheck disable=2016
-					printf 'Failed to eject device %s using `device`. Ignoring and moving on.\n' "$pretty_device_pathname" >&2
+					printf 'Failed to eject device %s using `eject`. Ignoring and moving on.\n' "$pretty_device_pathname" >&2
 				}
 		fi
 
