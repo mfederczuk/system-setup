@@ -216,7 +216,7 @@ if command -v git > '/dev/null'; then
 	fi
 
 
-	unset -v __dotfiles_bash_aliases__exists_git_command
+	unset -f __dotfiles_bash_aliases__exists_git_command
 fi
 
 #endregion
@@ -378,5 +378,5 @@ fi
 
 #endregion
 
-unset -v __dotfiles_bash_aliases__is_program_gnu_coreutils \
+unset -f __dotfiles_bash_aliases__is_program_gnu_coreutils \
          __dotfiles_bash_aliases__is_program_gnu
