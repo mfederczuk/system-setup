@@ -290,14 +290,20 @@ function try_as_root() {
 		return 3
 	fi
 
-	if command -v doas > '/dev/null'; then
-		doas "$@"
-		return
-	fi
+	local uid || return
+	uid="$(id -u)" || return
+	readonly uid || return
 
-	if command -v sudo > '/dev/null'; then
-		sudo "$@"
-		return
+	if [ "$uid" != '0' ]; then
+		if command -v doas > '/dev/null'; then
+			doas "$@"
+			return
+		fi
+
+		if command -v sudo > '/dev/null'; then
+			sudo "$@"
+			return
+		fi
 	fi
 
 	"$@"
