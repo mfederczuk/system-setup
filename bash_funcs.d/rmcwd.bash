@@ -1,7 +1,8 @@
 # Copyright (c) 2023 Michael Federczuk
 # SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
 
-export RMCWD_WARN_FILE_COUNT=30
+declare -i RMCWD_WARN_FILE_COUNT
+RMCWD_WARN_FILE_COUNT=30
 
 function rmcwd() {
 	#region args
