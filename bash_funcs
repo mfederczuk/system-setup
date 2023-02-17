@@ -8,6 +8,41 @@
 # these functions are generally only used in other functions
 # these kind of functions should have an underscore somewhere in the name
 
+function is_truthy() {
+	#region args
+
+	local str || return
+
+	case $# in
+		(0)
+			{
+				printf '%s: missing argument: <str>\n' "${FUNCNAME[0]}"
+				printf 'usage: %s <str>\n' "${FUNCNAME[0]}"
+			} >&2
+			return 3
+			;;
+		(1)
+			str="$1" || return
+			;;
+		(*)
+			{
+				printf '%s: too many arguments: %i\n' "${FUNCNAME[0]}" $(($# - 1))
+				printf 'usage: %s <str>\n' "${FUNCNAME[0]}"
+			} >&2
+			return 4
+			;;
+	esac
+
+	readonly str || return
+
+	#endregion
+
+	test "${str,,}" = 'true' ||
+		[[ "$str" =~ ^['yY'] ]] ||
+		{ [[ "$str" =~ ^(+)?[0-9]+$ ]] && ((10#$str > 0)); }
+}
+complete is_truthy
+
 function readlink_portable() {
 	local pathname
 
@@ -216,11 +251,9 @@ function trace_cmd() {
 		shift 1 || return
 	fi
 
-	case "${TRACE_CMD_DRY_RUN-}" in
-		(['yY']*)
-			dry_run=true || return
-			;;
-	esac
+	if is_truthy "${TRACE_CMD_DRY_RUN-}"; then
+		dry_run=true || return
+	fi
 
 	readonly dry_run || return
 
