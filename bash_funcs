@@ -8,6 +8,10 @@
 # these functions are generally only used in other functions
 # these kind of functions should have an underscore somewhere in the name
 
+declare TRACE_CMD_DRY_RUN
+TRACE_CMD_DRY_RUN='no'
+export TRACE_CMD_DRY_RUN
+
 function is_truthy() {
 	#region args
 
