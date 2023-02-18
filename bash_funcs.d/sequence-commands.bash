@@ -125,4 +125,6 @@ if command -v mkdir-cd-codium > '/dev/null'; then
 	eval "${__dotfiles_bash_funcs_sequence_commands__mkdir_complete}-cd-codium"
 fi
 
+unset -v __dotfiles_bash_funcs_sequence_commands__mkdir_complete
+
 #endregion
