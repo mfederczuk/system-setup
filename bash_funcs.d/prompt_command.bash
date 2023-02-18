@@ -1451,6 +1451,8 @@ function __dotfiles_bash_funcs_prompt_command__update_ps_vars() {
 
 	#endregion
 
+	PS1+=' ' || return
+
 	#region git repository info
 
 	if command -v git > '/dev/null' && command -v __git_ps1 > '/dev/null'; then
@@ -1458,9 +1460,7 @@ function __dotfiles_bash_funcs_prompt_command__update_ps_vars() {
 		git_ps1="$(__git_ps1 '(%s)')" || return
 
 		if [ -n "$git_ps1" ]; then
-			PS1+=" ${fx_sem_gitrepoinfo}${git_ps1}${fx_reset}\\n" || return
-		else
-			PS1+=' ' || return
+			PS1+="${fx_sem_gitrepoinfo}${git_ps1}${fx_reset}\\n" || return
 		fi
 
 		unset -v git_ps1
