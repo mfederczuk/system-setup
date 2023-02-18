@@ -105,7 +105,9 @@ fi
 declare __dotfiles_bash_funcs_sequence_commands__mkdir_complete
 __dotfiles_bash_funcs_sequence_commands__mkdir_complete="$(complete | grep -E '^complete( .*)? mkdir$')"
 
-eval "${__dotfiles_bash_funcs_sequence_commands__mkdir_complete}-cd"
+if [ -n "$__dotfiles_bash_funcs_sequence_commands__mkdir_complete" ]; then
+	eval "${__dotfiles_bash_funcs_sequence_commands__mkdir_complete}-cd"
+fi
 
 if command -v cd-codium > '/dev/null'; then
 	if [ -f '/usr/share/bash-completion/completions/cd' ]; then
@@ -116,12 +118,14 @@ if command -v cd-codium > '/dev/null'; then
 	declare __dotfiles_bash_funcs_sequence_commands__cd_complete
 	__dotfiles_bash_funcs_sequence_commands__cd_complete="$(complete | grep -E '^complete( .*)? cd$')"
 
-	eval "${__dotfiles_bash_funcs_sequence_commands__cd_complete}-codium"
+	if [ -n "$__dotfiles_bash_funcs_sequence_commands__cd_complete" ]; then
+		eval "${__dotfiles_bash_funcs_sequence_commands__cd_complete}-codium"
+	fi
 
 	unset -v __dotfiles_bash_funcs_sequence_commands__cd_complete
 fi
 
-if command -v mkdir-cd-codium > '/dev/null'; then
+if command -v mkdir-cd-codium > '/dev/null' && [ -n "$__dotfiles_bash_funcs_sequence_commands__mkdir_complete" ]; then
 	eval "${__dotfiles_bash_funcs_sequence_commands__mkdir_complete}-cd-codium"
 fi
 
