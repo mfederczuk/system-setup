@@ -12,6 +12,9 @@ declare TRACE_CMD_DRY_RUN
 TRACE_CMD_DRY_RUN='no'
 export TRACE_CMD_DRY_RUN
 
+declare -i _TRACE_CMD_LVL
+_TRACE_CMD_LVL=0
+
 function is_truthy() {
 	#region args
 
@@ -297,6 +300,27 @@ function trace_cmd() {
 
 	#endregion
 
+	#region level
+
+	local -i lvl || return
+	lvl=0 || return
+
+	if [[ "${_TRACE_CMD_LVL-}" =~ ^('+')?[0-9]+$ ]]; then
+		lvl=$((10#$_TRACE_CMD_LVL)) || return
+	fi
+
+	readonly lvl || return
+
+	#endregion
+
+	#region printing
+
+	local -i i || return
+	for ((i = 0; i < lvl; ++i)); do
+		printf '  ' >&2 || return
+	done
+	unset -v i
+
 	if $color_supported; then
 		{ tput bold && tput setaf 4; } >&2 || return
 	fi
@@ -312,9 +336,23 @@ function trace_cmd() {
 
 	printf '\n' >&2 || return
 
+	#endregion
+
+	local -i exc || return
+	exc=0 || return
+
 	if ! $dry_run; then
-		"$@"
+		_TRACE_CMD_LVL=$((lvl + 1)) "$@"
+		exc=$?
 	fi
+
+	readonly exc || return $exc
+
+	unset -v _TRACE_CMD_LVL || return $exc
+	declare -gi _TRACE_CMD_LVL || return $exc
+	_TRACE_CMD_LVL=$((lvl)) || return $exc
+
+	return $exc
 }
 complete -F _command trace_cmd
 
