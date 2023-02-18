@@ -8,6 +8,10 @@ if [[ "$-" != *i* ]]; then
 	return
 fi
 
+if [ -f '/etc/bashrc' ]; then
+	. '/etc/bashrc'
+fi
+
 #region history setup
 
 export HISTFILE="$XDG_STATE_HOME/bash/history"
