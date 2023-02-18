@@ -34,6 +34,10 @@ if command -v dircolors > '/dev/null'; then
 	eval "$(dircolors -b)"
 fi
 
+if command -v git > '/dev/null' && [ -f '/usr/share/git-core/contrib/completion/git-prompt.sh' ]; then
+	. '/usr/share/git-core/contrib/completion/git-prompt.sh'
+fi
+
 export PS2='\[\033[01;94m\]>\[\033[0m\] '
 
 #region sourcing other bash files
