@@ -14,16 +14,16 @@ fi
 
 #region history setup
 
-export HISTFILE="$XDG_STATE_HOME/bash/history"
+declare HISTFILE="$XDG_STATE_HOME/bash/history"
 
 shopt -s histappend
 
-export HISTCONTROL=ignoreboth # same as 'ignorespace' and 'ignoredups'
+declare HISTCONTROL=ignoreboth # same as 'ignorespace' and 'ignoredups'
 
-export HISTTIMEFORMAT='[%Y-%m-%d %M:%H:%S] '
+declare HISTTIMEFORMAT='[%Y-%m-%d %M:%H:%S] '
 
-export HISTSIZE=$((2**16))
-export HISTFILESIZE=$((HISTSIZE * 2)) # double to account for the timestamp line
+declare HISTSIZE=$((2**16))
+declare HISTFILESIZE=$((HISTSIZE * 2)) # double to account for the timestamp line
 
 #endregion
 
