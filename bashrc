@@ -20,7 +20,7 @@ shopt -s histappend
 
 export HISTCONTROL=ignoreboth # same as 'ignorespace' and 'ignoredups'
 
-export HISTTIMESTAMP='[%Y-%m-%d %M:%H:%S] '
+export HISTTIMEFORMAT='[%Y-%m-%d %M:%H:%S] '
 
 export HISTSIZE=$((2**16))
 export HISTFILESIZE=$((HISTSIZE * 2)) # double to account for the timestamp line
