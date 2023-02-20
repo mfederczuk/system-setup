@@ -1,4 +1,4 @@
 # shellcheck shell=bash
 # -*- sh -*-
-# vim: syntax=sh
+# vim: syntax=bash
 # code: language=shellscript
