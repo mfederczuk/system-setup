@@ -34,8 +34,15 @@ if command -v dircolors > '/dev/null'; then
 	eval "$(dircolors -b)"
 fi
 
-if command -v git > '/dev/null' && [ -f '/usr/share/git-core/contrib/completion/git-prompt.sh' ]; then
-	. '/usr/share/git-core/contrib/completion/git-prompt.sh'
+if command -v git > '/dev/null'; then
+	if [ -f '/usr/share/git-core/contrib/completion/git-prompt.sh' ]; then
+		. '/usr/share/git-core/contrib/completion/git-prompt.sh'
+	fi
+
+	# pre-sourcing git's bash completion so that `__git_complete` is available
+	if [ -f '/usr/share/bash-completion/completions/git' ]; then
+		. '/usr/share/bash-completion/completions/git'
+	fi
 fi
 
 #region sourcing other bash files
