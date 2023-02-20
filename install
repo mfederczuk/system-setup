@@ -38,19 +38,19 @@ root_dir_path="$(realpath -- "$0")"
 root_dir_path="$(dirname -- "$root_dir_path")"
 readonly root_dir_path
 
-readonly keybox_dir_path_relative_to_root_dir='keybox'
+readonly secret_dir_path_relative_to_root_dir='secret'
 
-declare keybox_dir_path
-keybox_dir_path="$root_dir_path/$keybox_dir_path_relative_to_root_dir"
-keybox_dir_path="$(realpath -- "$keybox_dir_path")"
-readonly keybox_dir_path
+declare secret_dir_path
+secret_dir_path="$root_dir_path/$secret_dir_path_relative_to_root_dir"
+secret_dir_path="$(realpath -- "$secret_dir_path")"
+readonly secret_dir_path
 
 
 declare -a dotfile_paths_relative_to_root_dir=()
 
 while read -r -d ''; do
 	dotfile_paths_relative_to_root_dir+=("$(realpath -s --relative-to="$root_dir_path" -- "$REPLY")")
-done < <(find "$root_dir_path" "$keybox_dir_path" \
+done < <(find "$root_dir_path" "$secret_dir_path" \
               -mindepth 1 -maxdepth 1 \
               -type f -not -executable \
               -not -name README.txt -not -name .nobak -not -name .nobakpattern \
