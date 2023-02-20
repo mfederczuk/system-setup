@@ -64,7 +64,7 @@ function __dotfiles_bash_funcs_prompt_command__escape_for_ps() {
 	# shellcheck disable=1003
 	escaped_str="${escaped_str//'\'/'\\'}" || return
 	escaped_str="${escaped_str//'`'/'\`'}" || return
-	escaped_str="${escaped_str//'$'/'\$'}" || return
+	escaped_str="${escaped_str//'$'/'\\$'}" || return
 	escaped_str="${escaped_str//$'\n'/'\n'}" || return
 
 	printf '%s' "$escaped_str"
@@ -1315,7 +1315,7 @@ function __dotfiles_bash_funcs_prompt_command__update_ps_vars() {
 			PS1+=" ${fx_sem_emptydirindicator}(empty dir)${fx_reset}" || return
 			;;
 		('hidden_git_dir_only')
-			PS1+=" ${fx_sem_hiddendirentriesindicator}!.*${fx_reset} ${fx_sem_hiddengitdironlyindicator}(\\\$GIT_DIR only)${fx_reset}" || return
+			PS1+=" ${fx_sem_hiddendirentriesindicator}!.*${fx_reset} ${fx_sem_hiddengitdironlyindicator}(\\\\\$GIT_DIR only)${fx_reset}" || return
 			;;
 		('hidden_dir_env_vars_file_only')
 			local dir_env_vars_filename || return
