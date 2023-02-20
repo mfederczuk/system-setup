@@ -14,6 +14,11 @@ set shiftwidth=4
 set noexpandtab
 set smarttab
 
+set textwidth=120
+set colorcolumn=+1
+set formatoptions-=t
+set wrap!
+
 set listchars=space:.,tab:-->,eol:$
 
 " smart home key
