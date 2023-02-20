@@ -9,6 +9,11 @@ set mouse=a
 set modeline
 set modelines=5
 
+set tabstop=4
+set shiftwidth=4
+set noexpandtab
+set smarttab
+
 set listchars=space:.,tab:-->,eol:$
 
 " smart home key
