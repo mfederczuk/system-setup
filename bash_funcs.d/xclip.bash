@@ -49,15 +49,11 @@ function xcopyfile() {
 
 	#region args
 
-	local pathname || return
+	local input_source || return
 
 	case $# in
 		(0)
-			{
-				printf '%s: missing argument: <file>\n' "${FUNCNAME[0]}"
-				printf 'usage: %s <file>\n' "${FUNCNAME[0]}"
-			} >&2
-			return 3
+			input_source='stdin:' || return
 			;;
 		(1)
 			if [ -z "$1" ]; then
@@ -65,7 +61,11 @@ function xcopyfile() {
 				return 9
 			fi
 
-			pathname="$1" || return
+			if [ "$1" = '-' ]; then
+				input_source='stdin:' || return
+			else
+				input_source="file:$1" || return
+			fi
 			;;
 		(*)
 			{
@@ -76,21 +76,34 @@ function xcopyfile() {
 			;;
 	esac
 
-	readonly pathname
+	readonly input_source
 
 	#endregion
 
-	if [ ! -e "$pathname" ]; then
-		printf '%s: %s: no such file\n' "${FUNCNAME[0]}" "$pathname" >&2
-		return 24
+	local -a pathname_args || return
+	pathname_args=() || return
+
+	if [[ "$input_source" =~ ^'file:' ]]; then
+		local input_file_pathname || return
+		input_file_pathname="${input_source#"file:"}" || return
+
+		if [ ! -e "$input_file_pathname" ]; then
+			printf '%s: %s: no such file\n' "${FUNCNAME[0]}" "$input_file_pathname" >&2
+			return 24
+		fi
+
+		if [ -d "$input_file_pathname" ]; then
+			printf '%s: %s: not a file\n' "${FUNCNAME[0]}" "$input_file_pathname" >&2
+			return 26
+		fi
+
+		pathname_args+=("$input_file_pathname") || return
+		unset -v input_file_pathname || return
 	fi
 
-	if [ -d "$pathname" ]; then
-		printf '%s: %s: not a file\n' "${FUNCNAME[0]}" "$pathname" >&2
-		return 26
-	fi
+	readonly pathname_args || return
 
-	xclip -selection clipboard -i "$pathname"
+	xclip -selection clipboard -i "${pathname_args[@]}"
 }
 
 function xpaste() {
