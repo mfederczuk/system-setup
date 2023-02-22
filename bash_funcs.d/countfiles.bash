@@ -43,7 +43,11 @@ function countfiles() {
 					('total')     will_print_total=true                || return ;;
 					('no-total')  will_print_total=false               || return ;;
 					('help')      help_specified=true                  || return ;;
-					(*)           first_invalid_option_arg="--$opt_id" || return ;;
+					(*)
+						if [ -z "$first_invalid_option_arg" ]; then
+							first_invalid_option_arg="--$opt_id" || return
+						fi
+						;;
 				esac
 
 				unset -v opt_id || return
@@ -65,7 +69,11 @@ function countfiles() {
 					('t') will_print_total=true               || return ;;
 					('T') will_print_total=false              || return ;;
 					('h') help_specified=true                 || return ;;
-					(*)   first_invalid_option_arg="-$opt_id" || return ;;
+					(*)
+						if [ -z "$first_invalid_option_arg" ]; then
+							first_invalid_option_arg="-$opt_id" || return
+						fi
+						;;
 				esac
 
 				unset -v opt_id || return
