@@ -3,6 +3,9 @@
 # vim: syntax=bash
 # code: language=shellscript
 
+# Copyright (c) 2023 Michael Federczuk
+# SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
+
 #region util functions
 
 # these functions are generally only used in other functions
