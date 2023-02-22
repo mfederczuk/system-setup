@@ -116,6 +116,65 @@ function readlink_portable() {
 	fi
 }
 
+# normalization is done by squeezing slashes and by removing all unnecessary '.' components
+function normalize_pathname() {
+	#region args
+
+	local input_pathname || return
+
+	case $# in
+		(0)
+			{
+				printf '%s: missing argument: <pathname>\n' "${FUNCNAME[0]}"
+				printf 'usage: %s <pathname>\n' "${FUNCNAME[0]}"
+			} >&2
+			return 3
+			;;
+		(1)
+			input_pathname="$1" || return
+			;;
+		(*)
+			{
+				printf '%s: too many arguments: %i\n' "${FUNCNAME[0]}" $(($# - 1))
+				printf 'usage: %s <pathname>\n' "${FUNCNAME[0]}"
+			} >&2
+			return 4
+			;;
+	esac
+
+	readonly input_pathname || return
+
+	#endregion
+
+	#region normalizing the pathname
+
+	local normalized_pathname || return
+	normalized_pathname="$input_pathname" || return
+
+	while [[ "$normalized_pathname" =~ '//' ]]; do
+		normalized_pathname="${normalized_pathname//'//'/'/'}" || return
+	done
+
+	# shellcheck disable=2076
+	while [[ "$normalized_pathname" =~ '/./' ]]; do
+		normalized_pathname="${normalized_pathname//'/./'/'/'}" || return
+	done
+
+	if [[ "$normalized_pathname" =~ ^'./'(.+)$ ]]; then
+		normalized_pathname="${BASH_REMATCH[1]}" || return
+	fi
+
+	if [[ "$normalized_pathname" =~ ^(.*'/')'.'$ ]]; then
+		normalized_pathname="${BASH_REMATCH[1]}" || return
+	fi
+
+	readonly normalized_pathname || return
+
+	#endregion
+
+	printf '%s' "$normalized_pathname"
+}
+
 function pretty_quote() {
 	#region args
 
