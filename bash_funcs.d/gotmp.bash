@@ -103,12 +103,8 @@ function gotmp() {
 			return $exc
 		}
 
-	"${SHELL:-"sh"}" ||
-		{
-			exc=$?
-			rm -rf -- "$tmp_dir_pathname"
-			return $exc
-		}
+	"${SHELL:-"sh"}" || true # shell will exit with the code of the last executed command, which doesn't have to mean
+	                         # that the shell itself failed
 
 	cd -- "$cwd" ||
 		cd - ||
