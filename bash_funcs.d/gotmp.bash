@@ -77,7 +77,9 @@ function gotmp() {
 
 	{
 		local tmp_dir_pathname_quoted &&
-			if command -v quote > '/dev/null'; then
+			if command -v pretty_quote > '/dev/null'; then
+				tmp_dir_pathname_quoted="$(pretty_quote "$tmp_dir_pathname")"
+			elif command -v quote > '/dev/null'; then
 				tmp_dir_pathname_quoted="$(quote "$tmp_dir_pathname")"
 			else
 				tmp_dir_pathname_quoted="'$tmp_dir_pathname'"
