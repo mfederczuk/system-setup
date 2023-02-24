@@ -91,7 +91,15 @@ function gotmp() {
 	} ||
 		{
 			exc=$?
+
+			cd -- "$cwd" ||
+				cd - ||
+				cd ||
+				cd '..' ||
+				cd '/'
+
 			rm -rf -- "$tmp_dir_pathname"
+
 			return $exc
 		}
 
