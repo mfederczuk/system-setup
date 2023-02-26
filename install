@@ -53,7 +53,7 @@ while read -r -d ''; do
 done < <(find "$root_dir_path" "$secret_dir_path" \
               -mindepth 1 -maxdepth 1 \
               -type f -not -executable \
-              -not -name README.txt -not -name .nobak -not -name .nobakpattern \
+              -not -name README.txt -not -name '.*' \
               -print0)
 
 unset -v REPLY
