@@ -3,6 +3,11 @@
 # vim: syntax=bash
 # code: language=shellscript
 
+if [ -f "$HOME/.environment.sh" ]; then
+	# shellcheck source=environment.sh
+	. "$HOME/.environment.sh"
+fi
+
 # only continue if running interactively
 if [[ "$-" != *i* ]]; then
 	return
