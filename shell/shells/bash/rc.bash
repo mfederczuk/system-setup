@@ -3,6 +3,8 @@
 # vim: syntax=bash
 # code: language=shellscript
 
+# SPDX-License-Identifier: CC0-1.0
+
 if [ -f "$HOME/.environment.sh" ]; then
 	# shellcheck source=shell/environment.sh
 	. "$HOME/.environment.sh"
