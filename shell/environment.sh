@@ -124,10 +124,19 @@ if [ -d "$HOME/Android/Sdk" ]; then
 	export ANDROID_HOME="${ANDROID_HOME:-"$ANDROID_SDK"}"
 fi
 
-# Node.JS
-if [ -d '/usr/lib/node_modules' ]; then
-	export NODE_PATH="${NODE_PATH:-"/usr/lib/node_modules"}"
+#region Node.js
+
+if command -v node > '/dev/null'; then
+	if [ -d '/usr/lib/node_modules' ]; then
+		export NODE_PATH="${NODE_PATH:-"/usr/lib/node_modules"}"
+	fi
+
+	# TODO: these directories must be created manually
+	export NODE_REPL_HISTORY="$XDG_STATE_HOME/node/repl_history"
+	export TS_NODE_HISTORY="$XDG_STATE_HOME/ts-node/repl_history"
 fi
+
+#endregion
 
 # .NET
 export DOTNET_ROOT='/opt/dotnet'
