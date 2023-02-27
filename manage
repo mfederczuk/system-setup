@@ -1,0 +1,403 @@
+#!/usr/bin/env python3
+
+# Copyright (c) 2023 Michael Federczuk
+# SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
+
+import errno
+import os
+import re
+import shutil
+import sys
+from dataclasses import dataclass
+
+# region environment variables
+
+HOME: str = os.environ.get("HOME", default="")
+
+if HOME == "":
+    print(f"{sys.argv[0]}: HOME environment variable must not be unset nor empty", file=sys.stderr)
+    exit(48)
+
+if not os.path.isabs(HOME):
+    print(f"{sys.argv[0]}: {HOME}: HOME environment variable must be an absolute pathname", file=sys.stderr)
+    exit(49)
+
+XDG_CONFIG_HOME: str = os.environ.get("XDG_CONFIG_HOME", default=os.path.join(HOME, ".config"))
+
+if not os.path.isabs(XDG_CONFIG_HOME):
+    print(
+        f"{sys.argv[0]}: {XDG_CONFIG_HOME}: XDG_CONFIG_HOME environment variable must be an absolute pathname",
+        file=sys.stderr,
+    )
+    exit(50)
+
+# endregion
+
+# region args
+
+if len(sys.argv) < 2:
+    print(
+        f"{sys.argv[0]}: missing argument: <command>\n" +
+        f"usage: {sys.argv[0]} [un]install [<home>]",
+        file=sys.stderr,
+    )
+    exit(3)
+
+command_name: str = sys.argv[1]
+
+if command_name == "":
+    if len(sys.argv) == 2:
+        print(f"{sys.argv[0]}: argument must not be empty", file=sys.stderr)
+    else:
+        print(f"{sys.argv[0]}: argument 1: must not be empty", file=sys.stderr)
+
+    print(f"usage: {sys.argv[0]} [un]install [<home>]", file=sys.stderr)
+
+    exit(9)
+
+# endregion
+
+
+@dataclass
+class InstructionFile:
+
+    desc: str
+    source: str
+    target: str
+
+    def __init__(self, desc: str, source: str, target: str):
+        self.desc = desc
+        self.source = source
+        self.target = target
+
+
+@dataclass
+class Instruction:
+
+    name: str
+    files: list[InstructionFile]
+
+    def __init__(self, name: str, files: list[InstructionFile]):
+        self.name = name
+        self.files = files.copy()
+
+
+class InstructionsReadError(Exception):
+
+    pathname: str
+    lineno: int
+    msg: str
+
+    def __init__(self, pathname: str, lineno: int, msg: str):
+        super().__init__(pathname, lineno, msg)
+
+        self.pathname = pathname
+        self.lineno = lineno
+        self.msg = msg
+
+
+def read_instructions(source_dir_pathname: str) -> list[Instruction]:
+    file_pathname: str = os.path.join(source_dir_pathname, "Instructions.cfg")
+
+    if not os.path.exists(file_pathname):
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_pathname)
+
+    if os.path.isdir(file_pathname):
+        raise IsADirectoryError(errno.EISDIR, os.strerror(errno.EISDIR), file_pathname)
+
+    instructions: list[Instruction] = []
+
+    with open(file_pathname, "r") as f:
+        lineno: int = 0
+
+        current_instruction_with_current_file: tuple[Instruction, InstructionFile | None] | None = None
+
+        for line in f:
+            lineno += 1
+
+            line = line.strip()
+
+            if line == "" or line.startswith("#"):
+                continue
+
+            match: re.Match | None = None
+
+            if current_instruction_with_current_file != None and current_instruction_with_current_file[1] != None:
+                current_instruction: Instruction = current_instruction_with_current_file[0]
+                current_instruction_file: InstructionFile = current_instruction_with_current_file[1]
+
+                match = re.match(r"^\)(\s*#.*)?$", line)
+                if match != None:
+                    if current_instruction_file.source == "":
+                        raise InstructionsReadError(file_pathname, lineno, "File definition is missing a source")
+
+                    if current_instruction_file.target == "":
+                        raise InstructionsReadError(file_pathname, lineno, "File definition is missing a target")
+
+                    current_instruction.files.append(current_instruction_file)
+                    current_instruction_with_current_file = (current_instruction, None)
+                    continue
+
+                match = re.match(r"^Source\s*\"(?P<pathname>[^\"]+)\"(\s*#.*)?$", line)
+                if match != None:
+                    source_pathname: str = match.group("pathname")
+
+                    if os.path.isabs(source_pathname):
+                        raise InstructionsReadError(file_pathname, lineno, "Source pathname must be relative")
+
+                    current_instruction_file.source = source_pathname
+
+                    continue
+
+                match = re.match(r"^Target\s*\"(?P<pathname>[^\"]+)\"(\s*#.*)?$", line)
+                if match != None:
+                    target_pathname: str = match.group("pathname")
+
+                    if target_pathname.startswith("$HOME"):
+                        target_pathname = os.path.join(
+                            HOME,
+                            os.path.relpath(target_pathname.removeprefix("$HOME"), os.path.abspath(os.sep)),
+                        )
+                    elif target_pathname.startswith("$XDG_CONFIG_HOME"):
+                        target_pathname = os.path.join(
+                            XDG_CONFIG_HOME,
+                            os.path.relpath(target_pathname.removeprefix("$XDG_CONFIG_HOME"), os.path.abspath(os.sep)),
+                        )
+
+                    if not os.path.isabs(target_pathname):
+                        raise InstructionsReadError(file_pathname, lineno, "Target pathname must be absolute")
+
+                    current_instruction_file.target = target_pathname
+
+                    continue
+
+                raise InstructionsReadError(file_pathname, lineno, "Invalid line in instruction file definition")
+
+            if current_instruction_with_current_file != None:
+                current_instruction: Instruction = current_instruction_with_current_file[0]
+
+                match = re.match(r"^\)(\s*#.*)?$", line)
+                if match != None:
+                    instructions.append(current_instruction)
+                    current_instruction_with_current_file = None
+                    continue
+
+                match = re.match(r"^File\s*\"(?P<desc>[^\"]+)\"\s*\((\s*#.*)?$", line)
+                if match != None:
+                    desc: str = match.group("desc")
+                    current_instruction_with_current_file = (current_instruction, InstructionFile(desc, "", ""))
+                    continue
+
+                raise InstructionsReadError(file_pathname, lineno, "Invalid line in instruction definition")
+
+            match = re.match(r"^Include\s*\"(?P<pathname>[^\"]+)\"(\s*#.*)?$", line)
+            if match != None:
+                source_dir_pathname_to_include: str = os.path.join(source_dir_pathname, match.group("pathname"))
+
+                included_instructions: list[Instruction] = read_instructions(source_dir_pathname_to_include)
+                for instruction in included_instructions:
+                    for i in range(0, len(instruction.files)):
+                        file: InstructionFile = instruction.files[i]
+
+                        instruction.files[i] = InstructionFile(
+                            file.desc,
+                            source=os.path.join(os.path.basename(source_dir_pathname_to_include), file.source),
+                            target=file.target,
+                        )
+
+                instructions.extend(included_instructions)
+
+                continue
+
+            match = re.match(r"^Instruction\s*\"(?P<name>[^\"]+)\"\s*\((\s*#.*)?$", line)
+            if match != None:
+                name: str = match.group("name")
+                current_instruction_with_current_file = (Instruction(name, []), None)
+                continue
+
+            raise InstructionsReadError(file_pathname, lineno, "Invalid top-level line")
+
+    return instructions
+
+
+match command_name:
+    case "install":
+        # region args
+
+        dest_dir_pathname: str
+
+        match len(sys.argv):
+            case 2:
+                dest_dir_pathname = ""
+
+            case 3:
+                if sys.argv[2] == "":
+                    print(
+                        f"{sys.argv[0]}: argument 2: must not be empty\n" +
+                        f"usage: {sys.argv[0]} {command_name} [<home>]",
+                        file=sys.stderr,
+                    )
+                    exit(9)
+
+                dest_dir_pathname = sys.argv[2]
+
+            case _:
+                print(
+                    f"{sys.argv[0]}: too many arguments: {len(sys.argv) - 3}\n" +
+                    f"usage: {sys.argv[0]} {command_name} [<home>]",
+                    file=sys.stderr,
+                )
+                exit(4)
+
+        # endregion
+
+        instructions: list[Instruction]
+        try:
+            root_dir_pathname: str = os.path.relpath(os.path.dirname(__file__), os.getcwd())
+
+            instructions = read_instructions(source_dir_pathname=root_dir_pathname)
+        except FileNotFoundError as e:
+            print(f"{sys.argv[0]}: {command_name}: {e.filename}: no such file", file=sys.stderr)
+            exit(24)
+        except IsADirectoryError as e:
+            print(f"{sys.argv[0]}: {command_name}: {e.filename}: not a file", file=sys.stderr)
+            exit(26)
+        except InstructionsReadError as e:
+            print(f"{sys.argv[0]}: {command_name}: {e.pathname}:{e.lineno}: {e.msg}", file=sys.stderr)
+            exit(51)
+
+        for instruction in instructions:
+            for file in instruction.files:
+                if dest_dir_pathname != "":
+                    file.target = os.path.join(
+                        dest_dir_pathname,
+                        os.path.relpath(file.target, os.path.abspath(os.sep)),
+                    )
+
+        print("Going to copy the following files (missing directories will be created):", file=sys.stderr)
+
+        for instruction in instructions:
+            for file in instruction.files:
+                print(f" * {file.source} -> {file.target}", file=sys.stderr)
+
+        print("Continue? [y/N] ", end="", file=sys.stderr)
+
+        ans: str
+        try:
+            ans = input()
+        except EOFError:
+            ans = ""
+            print("", file=sys.stderr)
+        except KeyboardInterrupt:
+            ans = ""
+            print("", file=sys.stderr)
+
+        if not ans.lower().startswith("y"):
+            print("Aborted.", file=sys.stderr)
+            exit(52)
+
+        for instruction in instructions:
+            for file in instruction.files:
+                os.makedirs(os.path.dirname(file.target), exist_ok=True)
+                shutil.copy(file.source, file.target)
+
+        print(f"\nDone.", file=sys.stderr)
+
+    case "uninstall":
+        # region args
+
+        dest_dir_pathname: str
+
+        match len(sys.argv):
+            case 2:
+                dest_dir_pathname = ""
+
+            case 3:
+                if sys.argv[2] == "":
+                    print(
+                        f"{sys.argv[0]}: argument 2: must not be empty\n" +
+                        f"usage: {sys.argv[0]} {command_name} [<home>]",
+                        file=sys.stderr,
+                    )
+                    exit(9)
+
+                dest_dir_pathname = sys.argv[2]
+
+            case _:
+                print(
+                    f"{sys.argv[0]}: too many arguments: {len(sys.argv) - 3}\n" +
+                    f"usage: {sys.argv[0]} {command_name} [<home>]",
+                    file=sys.stderr,
+                )
+                exit(4)
+
+        # endregion
+
+        instructions: list[Instruction]
+        try:
+            root_dir_pathname: str = os.path.relpath(os.path.dirname(__file__), os.getcwd())
+
+            instructions = read_instructions(source_dir_pathname=root_dir_pathname)
+        except FileNotFoundError as e:
+            print(f"{sys.argv[0]}: {command_name}: {e.filename}: no such file", file=sys.stderr)
+            exit(24)
+        except IsADirectoryError as e:
+            print(f"{sys.argv[0]}: {command_name}: {e.filename}: not a file", file=sys.stderr)
+            exit(26)
+        except InstructionsReadError as e:
+            print(f"{sys.argv[0]}: {command_name}: {e.pathname}:{e.lineno}: {e.msg}", file=sys.stderr)
+            exit(51)
+
+        pathnames_to_remove: list[str] = []
+
+        for instruction in instructions:
+            for file in instruction.files:
+                target: str = file.target
+
+                if dest_dir_pathname != "":
+                    target = os.path.join(
+                        dest_dir_pathname,
+                        os.path.relpath(target, os.path.abspath(os.sep)),
+                    )
+
+                pathnames_to_remove.append(target)
+
+        print("Going to remove the following files (if they exist):", file=sys.stderr)
+
+        for pathname in pathnames_to_remove:
+            print(f" * {pathname}", file=sys.stderr)
+
+        print("Continue? [y/N] ", end="", file=sys.stderr)
+
+        ans: str
+        try:
+            ans = input()
+        except EOFError:
+            ans = ""
+            print("", file=sys.stderr)
+        except KeyboardInterrupt:
+            ans = ""
+            print("", file=sys.stderr)
+
+        if not ans.lower().startswith("y"):
+            print("Aborted.", file=sys.stderr)
+            exit(52)
+
+        removed_count: int = 0
+
+        for pathname in pathnames_to_remove:
+            if not os.path.exists(pathname):
+                continue
+
+            os.remove(pathname)
+            removed_count += 1
+
+        print(f"\nDone. (removed {removed_count} file(s))", file=sys.stderr)
+
+    case _:
+        print(
+            f"{sys.argv[0]}: {command_name}: unknown command\n" +
+            f"usage: {sys.argv[0]} [un]install [<home>]",
+            file=sys.stderr,
+        )
+        exit(8)
