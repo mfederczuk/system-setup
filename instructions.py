@@ -8,7 +8,7 @@ import re
 
 
 @dataclass
-class InstructionFile:
+class FileCopyInstruction:
 
     desc: str
     source: str
@@ -21,14 +21,14 @@ class InstructionFile:
 
 
 @dataclass
-class Instruction:
+class InstructionGroup:
 
     name: str
-    files: list[InstructionFile]
+    file_copy_instructions: list[FileCopyInstruction]
 
-    def __init__(self, name: str, files: list[InstructionFile]):
+    def __init__(self, name: str, file_copy_instructions: list[FileCopyInstruction]):
         self.name = name
-        self.files = files.copy()
+        self.file_copy_instructions = file_copy_instructions.copy()
 
 
 class InstructionsReadError(Exception):
@@ -45,7 +45,7 @@ class InstructionsReadError(Exception):
         self.msg = msg
 
 
-def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str) -> list[Instruction]:
+def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str) -> list[InstructionGroup]:
     file_pathname: str = os.path.join(source_dir_pathname, "Instructions.cfg")
 
     if not os.path.exists(file_pathname):
@@ -54,7 +54,7 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
     if os.path.isdir(file_pathname):
         raise IsADirectoryError(errno.EISDIR, os.strerror(errno.EISDIR), file_pathname)
 
-    instructions: list[Instruction] = []
+    instructions: list[InstructionGroup] = []
 
     with open(file_pathname, "r") as f:
         lineno: int = 0
@@ -62,12 +62,12 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
         @dataclass
         class ReadState:
 
-            instruction: Instruction
-            instruction_file: InstructionFile | None
+            instruction_group: InstructionGroup
+            file_copy_instruction: FileCopyInstruction | None
 
-            def __init__(self, instruction: Instruction) -> None:
-                self.instruction = instruction
-                self.instruction_file = None
+            def __init__(self, instruction_group: FileCopyInstruction) -> None:
+                self.instruction_group = instruction_group
+                self.file_copy_instruction = None
 
         current_state: ReadState | None = None
 
@@ -81,20 +81,20 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
 
             match: re.Match | None = None
 
-            if current_state != None and current_state.instruction_file != None:
-                current_instruction: Instruction = current_state.instruction
-                current_instruction_file: InstructionFile = current_state.instruction_file
+            if current_state != None and current_state.file_copy_instruction != None:
+                current_instruction_group: InstructionGroup = current_state.instruction_group
+                current_file_copy_instruction: FileCopyInstruction = current_state.file_copy_instruction
 
                 match = re.match(r"^\)(\s*#.*)?$", line)
                 if match != None:
-                    if current_instruction_file.source == "":
+                    if current_file_copy_instruction.source == "":
                         raise InstructionsReadError(file_pathname, lineno, "File definition is missing a source")
 
-                    if current_instruction_file.target == "":
+                    if current_file_copy_instruction.target == "":
                         raise InstructionsReadError(file_pathname, lineno, "File definition is missing a target")
 
-                    current_instruction.files.append(current_instruction_file)
-                    current_state.instruction_file = None
+                    current_instruction_group.file_copy_instructions.append(current_file_copy_instruction)
+                    current_state.file_copy_instruction = None
                     continue
 
                 match = re.match(r"^Source\s*\"(?P<pathname>[^\"]+)\"(\s*#.*)?$", line)
@@ -104,7 +104,7 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
                     if os.path.isabs(source_pathname):
                         raise InstructionsReadError(file_pathname, lineno, "Source pathname must be relative")
 
-                    current_instruction_file.source = source_pathname
+                    current_file_copy_instruction.source = source_pathname
 
                     continue
 
@@ -126,25 +126,25 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
                     if not os.path.isabs(target_pathname):
                         raise InstructionsReadError(file_pathname, lineno, "Target pathname must be absolute")
 
-                    current_instruction_file.target = target_pathname
+                    current_file_copy_instruction.target = target_pathname
 
                     continue
 
                 raise InstructionsReadError(file_pathname, lineno, "Invalid line in instruction file definition")
 
             if current_state != None:
-                current_instruction: Instruction = current_state.instruction
+                current_instruction_group: InstructionGroup = current_state.instruction_group
 
                 match = re.match(r"^\)(\s*#.*)?$", line)
                 if match != None:
-                    instructions.append(current_instruction)
+                    instructions.append(current_instruction_group)
                     current_state = None
                     continue
 
                 match = re.match(r"^File\s*\"(?P<desc>[^\"]+)\"\s*\((\s*#.*)?$", line)
                 if match != None:
                     desc: str = match.group("desc")
-                    current_state.instruction_file = InstructionFile(desc, "", "")
+                    current_state.file_copy_instruction = FileCopyInstruction(desc, "", "")
                     continue
 
                 raise InstructionsReadError(file_pathname, lineno, "Invalid line in instruction definition")
@@ -153,16 +153,16 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
             if match != None:
                 source_dir_pathname_to_include: str = os.path.join(source_dir_pathname, match.group("pathname"))
 
-                included_instructions: list[Instruction] = read_instructions(
+                included_instructions: list[InstructionGroup] = read_instructions(
                     source_dir_pathname_to_include,
                     HOME,
                     XDG_CONFIG_HOME,
                 )
                 for instruction in included_instructions:
-                    for i in range(0, len(instruction.files)):
-                        file: InstructionFile = instruction.files[i]
+                    for i in range(0, len(instruction.file_copy_instructions)):
+                        file: FileCopyInstruction = instruction.file_copy_instructions[i]
 
-                        instruction.files[i] = InstructionFile(
+                        instruction.file_copy_instructions[i] = FileCopyInstruction(
                             file.desc,
                             source=os.path.join(os.path.basename(source_dir_pathname_to_include), file.source),
                             target=file.target,
@@ -175,7 +175,7 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
             match = re.match(r"^Instruction\s*\"(?P<name>[^\"]+)\"\s*\((\s*#.*)?$", line)
             if match != None:
                 name: str = match.group("name")
-                current_state = ReadState(Instruction(name, []))
+                current_state = ReadState(InstructionGroup(name, []))
                 continue
 
             raise InstructionsReadError(file_pathname, lineno, "Invalid top-level line")
