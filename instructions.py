@@ -39,16 +39,13 @@ def require_arg_of_list_type(arg_name: str, actual_value: any, expected_item_typ
 @dataclass
 class FileCopyInstruction:
 
-    desc: str
     source: str
     target: str
 
-    def __init__(self, desc: str, source: str, target: str):
-        require_arg_of_type("desc", desc, str)
+    def __init__(self, source: str, target: str):
         require_arg_of_type("source", source, str)
         require_arg_of_type("target", target, str)
 
-        self.desc = desc
         self.source = source
         self.target = target
 
@@ -185,10 +182,9 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
                     current_state = None
                     continue
 
-                match = re.match(r"^File\s*\"(?P<desc>[^\"]+)\"\s*\((\s*#.*)?$", line)
+                match = re.match(r"^File\s*\((\s*#.*)?$", line)
                 if match != None:
-                    desc: str = match.group("desc")
-                    current_state.file_copy_instruction = FileCopyInstruction(desc, "", "")
+                    current_state.file_copy_instruction = FileCopyInstruction("", "")
                     continue
 
                 raise InstructionsReadError(file_pathname, lineno, "Invalid line in instruction definition")
@@ -207,7 +203,6 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
                         file: FileCopyInstruction = instruction.file_copy_instructions[i]
 
                         instruction.file_copy_instructions[i] = FileCopyInstruction(
-                            file.desc,
                             source=os.path.join(os.path.basename(source_dir_pathname_to_include), file.source),
                             target=file.target,
                         )
