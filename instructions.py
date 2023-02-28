@@ -216,7 +216,7 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
 
                 continue
 
-            match = re.match(r"^Instruction\s*\"(?P<name>[^\"]+)\"\s*\((\s*#.*)?$", line)
+            match = re.match(r"^Group\s*\"(?P<name>[^\"]+)\"\s*\((\s*#.*)?$", line)
             if match != None:
                 name: str = match.group("name")
                 current_state = ReadState(InstructionGroup(name, []))
