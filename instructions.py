@@ -8,6 +8,12 @@ import re
 
 
 def require_arg_of_type(arg_name: str, actual_value: any, expected_type: type):
+    if type(arg_name) != str:
+        raise TypeError(f"Argument 'arg_name' must be of type {str.__name__}")
+
+    if type(expected_type) != type:
+        raise TypeError(f"Argument 'expected_type' must be of type {type.__name__}")
+
     if type(actual_value) == expected_type:
         return
 
@@ -15,6 +21,8 @@ def require_arg_of_type(arg_name: str, actual_value: any, expected_type: type):
 
 
 def require_arg_of_list_type(arg_name: str, actual_value: any, expected_item_type: type):
+    require_arg_of_type("expected_item_type", expected_item_type, type)
+
     require_arg_of_type(arg_name, actual_value, list)
 
     for i in range(0, len(actual_value)):
