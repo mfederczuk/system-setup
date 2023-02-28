@@ -59,7 +59,17 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
     with open(file_pathname, "r") as f:
         lineno: int = 0
 
-        current_instruction_with_current_file: tuple[Instruction, InstructionFile | None] | None = None
+        @dataclass
+        class ReadState:
+
+            instruction: Instruction
+            instruction_file: InstructionFile | None
+
+            def __init__(self, instruction: Instruction) -> None:
+                self.instruction = instruction
+                self.instruction_file = None
+
+        current_state: ReadState | None = None
 
         for line in f:
             lineno += 1
@@ -71,9 +81,9 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
 
             match: re.Match | None = None
 
-            if current_instruction_with_current_file != None and current_instruction_with_current_file[1] != None:
-                current_instruction: Instruction = current_instruction_with_current_file[0]
-                current_instruction_file: InstructionFile = current_instruction_with_current_file[1]
+            if current_state != None and current_state.instruction_file != None:
+                current_instruction: Instruction = current_state.instruction
+                current_instruction_file: InstructionFile = current_state.instruction_file
 
                 match = re.match(r"^\)(\s*#.*)?$", line)
                 if match != None:
@@ -84,7 +94,7 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
                         raise InstructionsReadError(file_pathname, lineno, "File definition is missing a target")
 
                     current_instruction.files.append(current_instruction_file)
-                    current_instruction_with_current_file = (current_instruction, None)
+                    current_state.instruction_file = None
                     continue
 
                 match = re.match(r"^Source\s*\"(?P<pathname>[^\"]+)\"(\s*#.*)?$", line)
@@ -122,19 +132,19 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
 
                 raise InstructionsReadError(file_pathname, lineno, "Invalid line in instruction file definition")
 
-            if current_instruction_with_current_file != None:
-                current_instruction: Instruction = current_instruction_with_current_file[0]
+            if current_state != None:
+                current_instruction: Instruction = current_state.instruction
 
                 match = re.match(r"^\)(\s*#.*)?$", line)
                 if match != None:
                     instructions.append(current_instruction)
-                    current_instruction_with_current_file = None
+                    current_state = None
                     continue
 
                 match = re.match(r"^File\s*\"(?P<desc>[^\"]+)\"\s*\((\s*#.*)?$", line)
                 if match != None:
                     desc: str = match.group("desc")
-                    current_instruction_with_current_file = (current_instruction, InstructionFile(desc, "", ""))
+                    current_state.instruction_file = InstructionFile(desc, "", "")
                     continue
 
                 raise InstructionsReadError(file_pathname, lineno, "Invalid line in instruction definition")
@@ -165,7 +175,7 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
             match = re.match(r"^Instruction\s*\"(?P<name>[^\"]+)\"\s*\((\s*#.*)?$", line)
             if match != None:
                 name: str = match.group("name")
-                current_instruction_with_current_file = (Instruction(name, []), None)
+                current_state = ReadState(Instruction(name, []))
                 continue
 
             raise InstructionsReadError(file_pathname, lineno, "Invalid top-level line")
