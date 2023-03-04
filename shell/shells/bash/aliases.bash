@@ -147,7 +147,19 @@ fi
 
 #endregion
 
-# BASE: prefixing system's native package manager command with root command
+#region APT
+
+if command -v apt > '/dev/null'; then
+	if command -v try_as_root > '/dev/null'; then
+		alias dnf='try_as_root apt'
+	elif command -v doas > '/dev/null'; then
+		alias dnf='doas apt'
+	elif command -v sudo > '/dev/null'; then
+		alias dnf='sudo apt'
+	fi
+fi
+
+#endregion
 
 #region Git
 
