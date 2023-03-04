@@ -147,7 +147,19 @@ fi
 
 #endregion
 
-# BASE: prefixing system's native package manager command with root command
+#region DNF
+
+if command -v dnf > '/dev/null'; then
+	if command -v try_as_root > '/dev/null'; then
+		alias dnf='try_as_root dnf'
+	elif command -v doas > '/dev/null'; then
+		alias dnf='doas dnf'
+	elif command -v sudo > '/dev/null'; then
+		alias dnf='sudo dnf'
+	fi
+fi
+
+#endregion
 
 #region Git
 
