@@ -3,13 +3,21 @@
   SPDX-License-Identifier: CC-BY-SA-4.0
 -->
 
-# Personal System Setup #
+<!-- markdownlint-disable-next-line no-inline-html  -->
+# Personal System Setup<sub>(base branch)</sub> #
 
 This repository tracks all of my user/system configurations, preferences, dotfiles, custom aliases, functions, scripts,
-programs, etc. for my used Linux distributions.
+programs, etc. of my personally used Linux distributions.
 
-Different distributions and their versions are represented by branches.  
-For example, the branch `fedora-37` is specifically for Fedora Workstation 37.
+## Distributions ##
+
+Each individual distribution — and their distinct versions/releases — has it's own branch.  
+These distribution branches are prefixed with the string `distros/`.
+
+As the name implies, the `base` branch is the basis for all other distributions.  
+Changes are primarily made on this branch and then get merged into the active `distros/*` branches.
+
+## Installation ##
 
 To install (or uninstall) the files to their correct locations, the [`manage`](manage) script is used.  
 This script will read the [`Instructions.cfg`](Instructions.cfg) files, which declare which files need to be installed
