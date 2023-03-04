@@ -15,9 +15,7 @@ if [[ "$-" != *i* ]]; then
 	return
 fi
 
-if [ -f '/etc/bashrc' ]; then
-	. '/etc/bashrc'
-fi
+# BASE: sourcing system-wide bash RC config file if it exists
 
 #region history setup
 
@@ -42,9 +40,7 @@ if command -v dircolors > '/dev/null'; then
 fi
 
 if command -v git > '/dev/null'; then
-	if [ -f '/usr/share/git-core/contrib/completion/git-prompt.sh' ]; then
-		. '/usr/share/git-core/contrib/completion/git-prompt.sh'
-	fi
+	# BASE: sourcing git prompt command file if it exists
 
 	# pre-sourcing git's bash completion so that `__git_complete` is available
 	if [ -f '/usr/share/bash-completion/completions/git' ]; then

@@ -7,84 +7,7 @@ fi
 
 #region distinct package managers
 
-if command -v dnf > '/dev/null' && command -v try_as_root > '/dev/null'; then
-	function dnf-up() {
-		#region checking for required programs
-
-		local cmd || return
-
-		for cmd in dnf trace_cmd try_as_root; do
-			if ! command -v "$cmd" > '/dev/null'; then
-				printf '%s: %s: program missing\n' "${FUNCNAME[0]}" "$cmd" >&2
-				return 27
-			fi
-		done
-
-		unset -v cmd || return
-
-		#endregion
-
-		if (($# > 0)); then
-			printf '%s: too many arguments: %i\n' "${FUNCNAME[0]}" $# >&2
-			return 4
-		fi
-
-		local dnf_cmd || return
-		for dnf_cmd in makecache upgrade autoremove; do
-			{
-				trace_cmd try_as_root dnf "$dnf_cmd" || return
-				printf '\n' || return
-			} >&2
-		done
-		unset -v dnf_cmd || return
-
-		trace_cmd try_as_root dnf clean packages >&2
-	}
-
-	complete dnf-up
-fi
-
-if command -v apt-get > '/dev/null' && command -v try_as_root > '/dev/null'; then
-	function apt-up() {
-		#region checking for required programs
-
-		local cmd || return
-
-		for cmd in apt-get trace_cmd try_as_root; do
-			if ! command -v "$cmd" > '/dev/null'; then
-				printf '%s: %s: program missing\n' "${FUNCNAME[0]}" "$cmd" >&2
-				return 27
-			fi
-		done
-
-		unset -v cmd || return
-
-		#endregion
-
-		if (($# > 0)); then
-			printf '%s: too many arguments: %i\n' "${FUNCNAME[0]}" $# >&2
-			return 4
-		fi
-
-		{
-			trace_cmd try_as_root apt-get update || return
-
-			printf '\n' || return
-
-			trace_cmd try_as_root apt-get -y full-upgrade || return
-
-			printf '\n' || return
-
-			trace_cmd try_as_root apt-get autoremove || return
-
-			printf '\n' || return
-
-			trace_cmd try_as_root apt-get -y autoclean
-		} >&2
-	}
-
-	complete apt-up
-fi
+# BASE: <cmd>-up comamnd for system's native package manager
 
 if command -v flatpak > '/dev/null'; then
 	function flatpak-up() {
@@ -202,8 +125,7 @@ if $__dotfiles_bash_funcs_pkgsup__any_up_commands_present; then
 		fi
 
 		local -ar package_managers=(
-			dnf
-			apt
+			# BASE: system's native package manager command
 			flatpak
 			npm
 		) || return
