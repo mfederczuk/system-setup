@@ -104,7 +104,7 @@ Commit Date: %C(auto,bold)%cd%C(auto) %C(auto,dim)(%cr)%C(auto)%n\
 
 	# diffing
 	changes = diff --staged
-	rawdiff = !git --no-pager -c diff.noprefix=false diff --patch --raw -z --no-color
+	rawdiff = !git -c diff.noprefix=false --no-pager diff --patch-with-raw -z --no-color --full-index --binary
 	xcopy-changes = xcopy-diff --staged
 
 	# other
