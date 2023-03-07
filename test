@@ -1,0 +1,103 @@
+#!/bin/sh
+# -*- sh -*-
+# vim: syntax=sh
+# code: language=shellscript
+
+# Copyright (c) 2023 Michael Federczuk
+# SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
+
+# TODO: can this be done better with LXC?
+
+case "$-" in
+	(*'i'*)
+		\command printf 'script was called interactively\n' >&2
+		return 124
+		;;
+esac
+
+set -o errexit
+set -o nounset
+
+# enabling POSIX-compliant behavior for GNU programs
+export POSIXLY_CORRECT=yes POSIX_ME_HARDER=yes
+
+
+if [ "${0#/}" = "$0" ]; then
+	argv0="$0"
+else
+	argv0="$(basename -- "$0" && printf x)"
+	argv0="${argv0%"$(printf '\nx')"}"
+fi
+readonly argv0
+
+#region checking SHELL environment variable
+
+if [ -z "${SHELL-}" ]; then
+	printf '%s: SHELL environment must not unset or empty\n' "$argv0" >&2
+	exit 48
+fi
+
+if [ "${SHELL#"/"}" = "$SHELL" ]; then
+	printf '%s: %s: SHELL environment variable must be an absolute pathname\n' "$argv0" "$SHELL" >&2
+	exit 49
+fi
+
+#endregion
+
+#region args
+
+if [ $# -gt 0 ]; then
+	printf '%s: too many arguments: %i\n' "$argv0" $# >&2
+	exit 4
+fi
+
+#endregion
+
+#region setting up variables
+
+root_dir_pathname="$(dirname -- "$0" && printf x)"
+root_dir_pathname="${root_dir_pathname%"$(printf '\nx')"}"
+readonly root_dir_pathname
+
+test_dir_pathname="$root_dir_pathname/test.d"
+readonly test_dir_pathname
+
+test_home_dir_pathname="$test_dir_pathname/root/${HOME#"/"}"
+readonly test_home_dir_pathname
+
+new_HOME_value="$test_home_dir_pathname"
+
+if [ "${new_HOME_value#"/"}" = "$new_HOME_value" ]; then
+	cwd="$(pwd -L && printf x)"
+	cwd="${cwd%"$(printf '\nx')"}"
+
+	new_HOME_value="$cwd/$new_HOME_value"
+
+	unset -v cwd
+fi
+
+new_HOME_value="$(printf '%s' "$new_HOME_value" | sed -e s%'/./'%'/'%g)"
+
+readonly new_HOME_value
+
+#endregion
+
+rm -rf -- "$test_dir_pathname"
+
+"$root_dir_pathname/manage" install "$test_dir_pathname/root"
+printf '*\n' > "$test_dir_pathname/.gitignore"
+
+cd "$test_home_dir_pathname"
+
+printf '\nA new shell instance has been started with an (almost) clean environment.\n' >&2
+
+export PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games'
+export HOME="$new_HOME_value"
+unset -v XDG_DATA_HOME
+unset -v XDG_CONFIG_HOME
+unset -v XDG_STATE_HOME
+unset -v XDG_CACHE_HOME
+
+unset -v POSIX_ME_HARDER POSIXLY_CORRECT
+
+exec "$SHELL"
