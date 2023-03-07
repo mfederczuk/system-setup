@@ -101,6 +101,109 @@ class Pathname:
 
         return not self.is_absolute()
 
+    def startswith(self: Pathname, prefix: Pathname) -> bool:
+        """
+        Return whether or not this pathname starts with the prefix pathname.
+
+        This pathname starts with the prefix pathname if all of the following conditions are true:
+
+        * The "absoluteness" of both pathnames are the same. i.e.: either both pathnames are absolute or
+          both parameters are relative
+
+        * Excluding all `.` components (for both pathnames), the leading components of this pathname matches all
+          components of the prefix pathname, both in component value and in the order they appear in.
+          Note that this means if the prefix pathname is effectively just `.` will always match this pathname (provided
+          it is also relative).
+
+        * If the prefix pathname has either a trailing component separator or a trailing `.` component, then
+          this pathname's component that matched the prefix pathname's last non-`.` component must be followed by
+          a separator itself.
+
+        Note that the way these conditions are laid out, both pathnames are effectively normalized before they are
+        compared.
+        A call like
+        ```
+        Pathname("/foo/./bar//baz").startswith(Pathname("/foo//bar/"))
+        ```
+        will return `True`.
+        """
+
+        if self.is_absolute() != prefix.is_absolute():
+            return False
+
+        prefix_pathname_str: str = str(prefix)
+        prefix_pathname_str_i: int = 0
+
+        self_pathname_str: str = str(self)
+        self_pathname_str_i: int = 0
+
+        while True:
+            current_prefix_component: PathnameComponent | None = None
+            current_prefix_component_has_trailing_separator: bool = False
+
+            while prefix_pathname_str_i < len(prefix_pathname_str):
+                prefix_char: str = prefix_pathname_str[prefix_pathname_str_i]
+                prefix_pathname_str_i += 1
+
+                if prefix_char == PathnameComponent.separator and current_prefix_component is not None:
+                    if current_prefix_component == PathnameComponent("."):
+                        current_prefix_component = None
+                        continue
+
+                    current_prefix_component_has_trailing_separator = True
+                    break
+
+                if prefix_char != PathnameComponent.separator:
+                    current_prefix_component_str: str = ""
+
+                    if current_prefix_component is not None:
+                        current_prefix_component_str = str(current_prefix_component)
+
+                    current_prefix_component_str += prefix_char
+                    current_prefix_component = PathnameComponent(current_prefix_component_str)
+
+            if current_prefix_component == PathnameComponent("."):
+                current_prefix_component = None
+
+            if current_prefix_component is None:
+                return True
+
+            current_self_component: PathnameComponent | None = None
+            current_self_component_has_trailing_separator: bool = False
+
+            while self_pathname_str_i < len(self_pathname_str):
+                self_char: str = self_pathname_str[self_pathname_str_i]
+                self_pathname_str_i += 1
+
+                if self_char == PathnameComponent.separator and current_self_component is not None:
+                    if current_self_component == PathnameComponent("."):
+                        current_self_component = None
+                        continue
+
+                    current_self_component_has_trailing_separator = True
+                    break
+
+                if self_char != PathnameComponent.separator:
+                    current_self_component_str: str = ""
+
+                    if current_self_component is not None:
+                        current_self_component_str = str(current_self_component)
+
+                    current_self_component_str += self_char
+                    current_self_component = PathnameComponent(current_self_component_str)
+
+            if current_self_component == PathnameComponent("."):
+                current_prefix_component = None
+
+            if current_self_component is None:
+                return False
+
+            if current_prefix_component != current_self_component:
+                return False
+
+            if current_prefix_component_has_trailing_separator and not current_self_component_has_trailing_separator:
+                return False
+
     def basename(self: Pathname) -> PathnameComponent | None:
         """
         Return the last component (a.k.a.: "basename" or "filename") of this pathname as an instance of
