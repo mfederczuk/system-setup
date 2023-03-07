@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: CC0-1.0
+
+[MASTER]
+
+disable = missing-docstring
+
+max-line-length = 120
