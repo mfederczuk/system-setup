@@ -1,0 +1,74 @@
+#!/bin/sh
+# -*- sh -*-
+# vim: syntax=sh
+# code: language=shellscript
+
+# Copyright (c) 2023 Michael Federczuk
+# SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
+
+case "$-" in
+	(*'i'*)
+		\command printf 'script was called interactively\n' >&2
+		return 124
+		;;
+esac
+
+set -o errexit
+set -o nounset
+
+# enabling POSIX-compliant behavior for GNU programs
+export POSIXLY_CORRECT=yes POSIX_ME_HARDER=yes
+
+
+if [ "${0#/}" = "$0" ]; then
+	argv0="$0"
+else
+	argv0="$(basename -- "$0" && printf x)"
+	argv0="${argv0%"$(printf '\nx')"}"
+fi
+readonly argv0
+
+
+if [ $# -gt 0 ]; then
+	printf '%s: too many arguments: %i\n' "$argv0" $# >&2
+	exit 4
+fi
+
+
+root_dir_pathname="$(dirname -- "$0" && printf x)"
+root_dir_pathname="${root_dir_pathname%"$(printf '\nx')"}"
+readonly root_dir_pathname
+
+#region setting up temporary repository
+
+tmp_repo_dir_pathname="$root_dir_pathname/_gradle_completion_tmp.git"
+readonly tmp_repo_dir_pathname
+
+remove_tmp_repo_dir() {
+	rm -rf -- "$tmp_repo_dir_pathname"
+}
+
+mkdir -- "$tmp_repo_dir_pathname"
+
+trap remove_tmp_repo_dir EXIT
+trap 'trap - EXIT; remove_tmp_repo_dir' INT QUIT TERM
+
+git clone --depth=1 --branch=master --single-branch --no-tags -- \
+	'https://github.com/gradle/gradle-completion.git' "$tmp_repo_dir_pathname"
+
+#endregion
+
+commit_hash="$(git -C "$tmp_repo_dir_pathname" --no-pager show --no-abbrev-commit --pretty=format:'%H' --no-patch HEAD)"
+readonly commit_hash
+
+#region writing to completion file
+
+{
+	sed -e s/'^.*$'/'# \0'/ -e s/'^# $'/'#'/ "$tmp_repo_dir_pathname/LICENSE"
+	printf '\n'
+	printf '# <https://github.com/gradle/gradle-completion/blob/%s/gradle-completion.bash>\n' "$commit_hash"
+	printf '\n'
+	cat -- "$tmp_repo_dir_pathname/gradle-completion.bash"
+} > "$root_dir_pathname/gradle.bash"
+
+#endregion

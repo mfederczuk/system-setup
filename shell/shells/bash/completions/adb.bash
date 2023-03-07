@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-# <https://gist.github.com/otobrglez/7677543>
+# <https://gist.github.com/otobrglez/7677543/02f98ad63737b995def40daa4b5e7ad74fc7fdf2>
 
 _adb() {
     unset -v have

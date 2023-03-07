@@ -1,7 +1,3 @@
-# <https://github.com/gradle/gradle-completion>
-
-# <https://github.com/gradle/gradle-completion/blob/b042038e3d3b30a6440c121268894234c509ca1c/gradle-completion.bash>
-
 # Copyright (c) 2017 Eric Wendelin
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -22,7 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# <https://github.com/gradle/gradle-completion/blob/b042038e3d3b30a6440c121268894234c509ca1c/LICENSE>
+# <https://github.com/gradle/gradle-completion/blob/b042038e3d3b30a6440c121268894234c509ca1c/gradle-completion.bash>
 
 __gradle-completion-print-timestamp() {
     echo "$(($(gdate +'%s * 1000 + %-N / 1000000'))) - $1"
