@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import ClassVar
+from typing import ClassVar, Tuple
 
 
 def _squeeze(base_str: str, char: str) -> str:
@@ -45,6 +45,13 @@ class PathnameComponent:
         """
 
         return self._value
+
+
+@dataclass(frozen=True)
+class PathnameMatch:
+
+    prefix: Pathname
+    suffix: Pathname
 
 
 @dataclass(frozen=True)
@@ -98,6 +105,17 @@ class Pathname:
         """
 
         return not self.is_absolute()
+
+    def match_prefix(self: Pathname, prefix: Pathname) -> PathnameMatch | None:
+        if self.is_absolute() != prefix.is_absolute():
+            return None
+
+        prefix_pathname_str: str = str(prefix)
+        prefix_pathname_str_i: int = 0
+
+        self_pathname_str: str = str(self)
+        self_pathname_str_i: int = 0
+
 
     def startswith(self: Pathname, prefix: Pathname) -> bool:
         """
@@ -202,6 +220,15 @@ class Pathname:
             if current_prefix_component_has_trailing_separator and not current_self_component_has_trailing_separator:
                 return False
 
+    # def replaceprefix(self, prefix: "Pathname", substitution: "Pathname") -> "Pathname":
+    #     self_normalized: Pathname = self.normalized()
+    #     prefix_normalized: Pathname = prefix.normalized()
+
+    #     if not (self_normalized.value + "/").startswith(prefix_normalized.value + "/"):
+    #         return self
+
+    #     return Pathname(substitution.value + self_normalized.value[len(prefix_normalized.value):])
+
     def basename(self: Pathname) -> PathnameComponent | None:
         """
         Return the last component (a.k.a.: "basename" or "filename") of this pathname as an instance of
@@ -279,6 +306,9 @@ class Pathname:
             resulting_pathname_str += str(suffix).removeprefix(PathnameComponent.separator)
 
         return Pathname(resulting_pathname_str)
+
+    # def relative_to(self, base_pathname: "Pathname") -> "Pathname":
+    #     return Pathname(os.path.relpath(self.value, base_pathname.value))
 
     def normalized(self: Pathname) -> Pathname:
         """
