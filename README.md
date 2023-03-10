@@ -4,7 +4,7 @@
 -->
 
 <!-- markdownlint-disable-next-line no-inline-html  -->
-# Personal System Setup<sub>(base branch)</sub> #
+# Personal System Setup<sub>(Android Termux branch)</sub> #
 
 This repository tracks all of my user/system configurations, preferences, dotfiles, custom aliases, functions, scripts,
 programs, etc. of my personally used Linux distributions.

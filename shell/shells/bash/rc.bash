@@ -15,7 +15,10 @@ if [[ "$-" != *i* ]]; then
 	return
 fi
 
-# BASE: sourcing system-wide bash RC config file if it exists
+if [ -f "$PREFIX/etc/bash.bashrc" ]; then
+	# shellcheck disable=1091
+	. "$PREFIX/etc/bash.bashrc"
+fi
 
 #region history setup
 
@@ -40,11 +43,15 @@ if command -v dircolors > '/dev/null'; then
 fi
 
 if command -v git > '/dev/null'; then
-	# BASE: sourcing git prompt command file if it exists
+	if [ -f "$PREFIX/etc/bash_completion.d/git-prompt.sh" ]; then
+		# shellcheck disable=1091
+		. "$PREFIX/etc/bash_completion.d/git-prompt.sh"
+	fi
 
 	# pre-sourcing git's bash completion so that `__git_complete` is available
-	if [ -f '/usr/share/bash-completion/completions/git' ]; then
-		. '/usr/share/bash-completion/completions/git'
+	if [ -f "$PREFIX/share/bash-completion/completions/git" ]; then
+		# shellcheck disable=1091
+		. "$PREFIX/share/bash-completion/completions/git"
 	fi
 fi
 

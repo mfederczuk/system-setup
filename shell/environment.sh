@@ -2,6 +2,8 @@
 
 # SPDX-License-Identifier: CC0-1.0
 
+export PREFIX="${PREFIX:-"/data/data/com.termux/files/usr"}"
+
 #region PATH setup
 
 _add_to_path() {
@@ -42,34 +44,15 @@ _add_to_path() {
 }
 
 # sorted from most to least priority
-_add_to_path back '/usr/local/sbin' \
-                  '/usr/local/bin' \
-                  '/usr/sbin' \
-                  '/usr/bin' \
-                  '/sbin' \
-                  '/bin' \
-                  '/usr/local/games' \
-                  '/usr/games'
+_add_to_path back "$PREFIX/bin" \
+                  "$PREFIX/local/bin"
 
-# at this point we should have access to `grep`, `id` and `cut`
-export HOME="${HOME:-"$(\command grep -E "^[^:]*:[^:]*:$(id -u):$(\command id -g)" '/etc/passwd' | \command cut -d: -f6)"}"
+export HOME="${HOME:-"$PREFIX/../home"}"
 
 # sorted from most to least priority
 _add_to_path front '.bin' \
                    'node_modules/.bin' \
-                   "$HOME/bin" \
-                   "$HOME/bin/git" \
-                   "$HOME/bin/repos" \
-                   "$HOME/.local/bin" \
-                   "$HOME/.local/lib/nodejs/bin" \
-                   "$HOME/.cargo/bin" \
-                   "$HOME/Android/Sdk/cmdline-tools/latest/bin" \
-                   "$HOME/.sdkman/candidates/kotlin/current/bin" \
-                   "$HOME/.sdkman/candidates/gradle/current/bin" \
-                   '/usr/local/lib/kotlin-native-linux/bin' \
-                   "$HOME/.local/lib/flutter/bin" \
-                   "$HOME/go/bin" \
-                   "$HOME/.dotnet/tools"
+                   "$HOME/.local/bin"
 
 export PATH
 
@@ -77,10 +60,10 @@ unset -f _add_to_path
 
 #endregion
 
-export SHELL="${SHELL:-"$(\command grep -E "^[^:]*:[^:]*:$(id -u):$(id -g)" '/etc/passwd' | \command cut -d: -f7)"}"
+export SHELL="${SHELL:-"$PREFIX/bin/bash"}"
 
-export TMPDIR="${TMPDIR:-"/tmp"}"
-export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-"/lib:/usr/lib:/usr/local/lib"}"
+export TMPDIR="${TMPDIR:-"$PREFIX/tmp"}"
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-"/lib:/usr/lib:$PREFIX/lib:$PREFIX/local/lib"}"
 
 #region XDG base directories
 
@@ -91,8 +74,8 @@ export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-"$HOME/.config"}"
 export XDG_STATE_HOME="${XDG_STATE_HOME:-"$HOME/.local/state"}"
 export XDG_CACHE_HOME="${XDG_CACHE_HOME:-"$HOME/.cache"}"
 
-export XDG_DATA_DIRS="${XDG_DATA_DIRS:-"/usr/local/share/:/usr/share/"}"
-export XDG_CONFIG_DIRS="${XDG_CONFIG_DIRS:-"/etc/xdg"}"
+export XDG_DATA_DIRS="${XDG_DATA_DIRS:-"$PREFIX/local/share/:$PREFIX/share/"}"
+export XDG_CONFIG_DIRS="${XDG_CONFIG_DIRS:-"$PREFIX/etc/xdg"}"
 
 #endregion
 
@@ -106,10 +89,6 @@ elif command -v nano > '/dev/null'; then
 	export VISUAL='nano'
 fi
 
-if command -v codium > '/dev/null'; then
-	export GUI_EDITOR='codium -w'
-fi
-
 #endregion
 
 #region programming languages / enviroments
@@ -118,19 +97,9 @@ fi
 export CC="${CC:-"cc"}"
 export CXX="${CXX:-"c++"}"
 
-# Android
-if [ -d "$HOME/Android/Sdk" ]; then
-	export ANDROID_SDK="${ANDROID_SDK:-"$HOME/Android/Sdk"}"
-	export ANDROID_HOME="${ANDROID_HOME:-"$ANDROID_SDK"}"
-fi
-
 #region Node.js
 
 if command -v node > '/dev/null'; then
-	if [ -d '/usr/lib/node_modules' ]; then
-		export NODE_PATH="${NODE_PATH:-"/usr/lib/node_modules"}"
-	fi
-
 	# TODO: these directories must be created manually
 	export NODE_REPL_HISTORY="$XDG_STATE_HOME/node/repl_history"
 	export TS_NODE_HISTORY="$XDG_STATE_HOME/ts-node/repl_history"
@@ -138,16 +107,9 @@ fi
 
 #endregion
 
-# .NET
-export DOTNET_ROOT='/opt/dotnet'
-export DOTNET_CLI_TELEMETRY_OPTOUT="${DOTNET_CLI_TELEMETRY_OPTOUT:-1}"
-
 #endregion
 
 export PAGER='less --ignore-case --quit-on-intr --LONG-PROMPT --RAW-CONTROL-CHARS --chop-long-lines -+X'
-
-export SYSTEMD_PAGERSECURE='true'
-export SYSTEMD_PAGER='less --quit-if-one-screen --ignore-case --quit-on-intr --LONG-PROMPT --RAW-CONTROL-CHARS --chop-long-lines -+X --file-size'
 
 #region Git
 

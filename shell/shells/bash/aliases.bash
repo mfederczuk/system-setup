@@ -147,8 +147,6 @@ fi
 
 #endregion
 
-# BASE: prefixing system's native package manager command with root command
-
 #region Git
 
 if command -v git > '/dev/null'; then
@@ -281,15 +279,6 @@ unset -v __bash_aliases__c_cxx_compiler_cmd
 
 unset -v __bash_aliases__c_cxx_compiler_args_str \
          __bash_aliases__c_cxx_compiler_cmds
-
-#endregion
-
-#region VLC
-
-if command -v vlc > '/dev/null'; then
-	alias vlc-no-one-instance='vlc --no-one-instance'
-	alias vlc-one-instance-playlist-enqueue='vlc --one-instance --playlist-enqueue'
-fi
 
 #endregion
 
