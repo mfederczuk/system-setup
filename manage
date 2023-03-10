@@ -7,10 +7,13 @@
 # SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
 
 import os
+from typing import NoReturn
 
-from instr import fs, proc
-from instr.pathname import Pathname, PathnameComponent
 from instructions import InstructionGroup, InstructionsReadError, read_instructions
+
+from instr import fs, instructions, proc
+from instr.instructions import File, FileCopyInstruction, InstructionGroup, InstructionsReadError
+from instr.pathname import Pathname, PathnameComponent
 
 # region environment variables
 
@@ -79,186 +82,212 @@ if command_name == "":
 
 # endregion
 
+
+def query_bool_with_default_false(msg: str) -> bool | None:
+    ans: str
+
+    try:
+        ans = input(msg + " [y/N] ")
+    except EOFError:
+        return None
+    except KeyboardInterrupt:
+        return None
+
+    return ans.lower().startswith("y")
+
+
+def read_instruction_groups(dest_dir_pathname: Pathname | None) -> list[InstructionGroup] | NoReturn:
+    root_dir_pathname: Pathname = Pathname(__file__).dirname().relative_to(proc.getcwd())
+
+    original_instruction_groups: list[InstructionGroup]
+
+    try:
+        original_instruction_groups = instructions.read_instructions(
+            root_dir_pathname,
+            home_pathname,
+            xdg_config_home_pathname,
+        )
+    except FileNotFoundError as file_not_found_error:
+        print(f"{proc.argv[0]}: {command_name}: {file_not_found_error.filename}: no such file", file=proc.stderr)
+        proc.exit(24)
+    except IsADirectoryError as is_a_directory_error:
+        print(f"{proc.argv[0]}: {command_name}: {is_a_directory_error.filename}: not a file", file=proc.stderr)
+        proc.exit(26)
+    except InstructionsReadError as instructions_read_error:
+        print(
+            f"{proc.argv[0]}: {command_name}: " +
+            f"{instructions_read_error.pathname}:{instructions_read_error.lineno}: {instructions_read_error.msg}",
+            file=proc.stderr,
+        )
+        proc.exit(51)
+
+    if dest_dir_pathname is None:
+        return original_instruction_groups
+
+    mapped_instruction_groups: list[InstructionGroup] = []
+
+    for original_instruction_group in original_instruction_groups:
+        mapped_file_copy_instructions: list[FileCopyInstruction] = []
+
+        for original_file_copy_instruction in original_instruction_group.file_copy_instructions:
+            mapped_target_pathname: Pathname = dest_dir_pathname \
+                .appended_with(original_file_copy_instruction.target.pathname)
+
+            mapped_file_copy_instruction: FileCopyInstruction = original_file_copy_instruction \
+                .with_target(File(mapped_target_pathname))
+
+            mapped_file_copy_instructions.append(mapped_file_copy_instruction)
+
+        mapped_instruction_group: InstructionGroup = original_instruction_group \
+            .with_file_copy_instructions(mapped_file_copy_instructions)
+
+        mapped_instruction_groups.append(mapped_instruction_group)
+
+    return mapped_instruction_groups
+
+
+def command_install() -> int:
+    # region args
+
+    dest_dir_pathname: Pathname | None
+
+    match len(proc.argv):
+        case 2:
+            dest_dir_pathname = None
+
+        case 3:
+            if proc.argv[2] == "":
+                print(
+                    f"{proc.argv[0]}: argument 2: must not be empty\n" +
+                    f"usage: {proc.argv[0]} {command_name} [<home>]",
+                    file=proc.stderr,
+                )
+                return 9
+
+            dest_dir_pathname = Pathname.create_normalized(proc.argv[2])
+
+        case _:
+            print(
+                f"{proc.argv[0]}: too many arguments: {len(proc.argv) - 3}\n" +
+                f"usage: {proc.argv[0]} {command_name} [<home>]",
+                file=proc.stderr,
+            )
+            return 4
+
+    # endregion
+
+    instruction_groups: list[InstructionGroup] = read_instruction_groups(dest_dir_pathname)
+    del dest_dir_pathname
+
+    print("Going to copy the following files (missing directories will be created):", file=proc.stderr)
+
+    for instruction_group in instruction_groups:
+        for file_copy_instruction in instruction_group.file_copy_instructions:
+            print(
+                f" * {file_copy_instruction.source.pathname} -> {file_copy_instruction.target.pathname}",
+                file=proc.stderr,
+            )
+
+    print("Continue? [y/N] ", end="", file=proc.stderr)
+    ans: bool | None = query_bool_with_default_false(msg="Continue?")
+
+    if ans is None:
+        ans = False
+        print(file=proc.stderr)
+
+    if not ans:
+        print("Aborted.", file=proc.stderr)
+        return 52
+
+    for instruction_group in instruction_groups:
+        for file_copy_instruction in instruction_group.file_copy_instructions:
+            fs.mkdirs(file_copy_instruction.target.pathname.dirname())
+            fs.copy(file_copy_instruction.source.pathname, file_copy_instruction.target.pathname)
+
+    print("\nDone.", file=proc.stderr)
+
+    return 0
+
+
+def command_uninstall() -> int:
+    # region args
+
+    dest_dir_pathname: Pathname | None
+
+    match len(proc.argv):
+        case 2:
+            dest_dir_pathname = None
+
+        case 3:
+            if proc.argv[2] == "":
+                print(
+                    f"{proc.argv[0]}: argument 2: must not be empty\n" +
+                    f"usage: {proc.argv[0]} {command_name} [<home>]",
+                    file=proc.stderr,
+                )
+                return 9
+
+            dest_dir_pathname = Pathname.create_normalized(proc.argv[2])
+
+        case _:
+            print(
+                f"{proc.argv[0]}: too many arguments: {len(proc.argv) - 3}\n" +
+                f"usage: {proc.argv[0]} {command_name} [<home>]",
+                file=proc.stderr,
+            )
+            return 4
+
+    # endregion
+
+    instruction_groups: list[InstructionGroup] = read_instruction_groups(dest_dir_pathname)
+    del dest_dir_pathname
+
+    pathnames_to_remove: list[Pathname] = []
+
+    for instruction_group in instruction_groups:
+        for file_copy_instruction in instruction_group.file_copy_instructions:
+            pathnames_to_remove.insert(0, file_copy_instruction.target.pathname)
+    del instruction_groups
+
+    print("Going to remove the following files (if they exist):", file=proc.stderr)
+
+    for pathname in pathnames_to_remove:
+        print(f" * {pathname}", file=proc.stderr)
+
+    ans: bool | None = query_bool_with_default_false(msg="Continue?")
+
+    if ans is None:
+        ans = False
+        print(file=proc.stderr)
+
+    if not ans:
+        print("Aborted.", file=proc.stderr)
+        return 52
+
+    removed_count: int = 0
+
+    for pathname in pathnames_to_remove:
+        if not fs.exists(pathname):
+            continue
+
+        fs.remove(pathname)
+        removed_count += 1
+
+    print(f"\nDone. (removed {removed_count} file(s))", file=proc.stderr)
+
+    return 0
+
+
+command_exc: int
+
 match command_name:
     case "install":
-        # region args
-
-        dest_dir_pathname: Pathname | None
-
-        match len(proc.argv):
-            case 2:
-                dest_dir_pathname = None
-
-            case 3:
-                if proc.argv[2] == "":
-                    print(
-                        f"{proc.argv[0]}: argument 2: must not be empty\n" +
-                        f"usage: {proc.argv[0]} {command_name} [<home>]",
-                        file=proc.stderr,
-                    )
-                    proc.exit(9)
-
-                dest_dir_pathname = Pathname.create_normalized(proc.argv[2])
-
-            case _:
-                print(
-                    f"{proc.argv[0]}: too many arguments: {len(proc.argv) - 3}\n" +
-                    f"usage: {proc.argv[0]} {command_name} [<home>]",
-                    file=proc.stderr,
-                )
-                proc.exit(4)
-
-        # endregion
-
-        instruction_groups: list[InstructionGroup]
-        try:
-            root_dir_pathname = Pathname(os.path.relpath(str(Pathname(__file__).dirname()), str(proc.getcwd())))
-
-            instruction_groups = read_instructions(
-                source_dir_pathname=root_dir_pathname,
-                home=home_pathname,
-                xdg_config_home=xdg_config_home_pathname,
-            )
-        except FileNotFoundError as e:
-            print(f"{proc.argv[0]}: {command_name}: {e.filename}: no such file", file=proc.stderr)
-            proc.exit(24)
-        except IsADirectoryError as e:
-            print(f"{proc.argv[0]}: {command_name}: {e.filename}: not a file", file=proc.stderr)
-            proc.exit(26)
-        except InstructionsReadError as e:
-            print(f"{proc.argv[0]}: {command_name}: {e.pathname}:{e.lineno}: {e.msg}", file=proc.stderr)
-            proc.exit(51)
-
-        for instruction_group in instruction_groups:
-            for file_copy_instruction in instruction_group.file_copy_instructions:
-                if dest_dir_pathname is not None:
-                    file_copy_instruction.target = file_copy_instruction.target.with_pathname(
-                        dest_dir_pathname.appended_with(file_copy_instruction.target.pathname)
-                    )
-
-        print("Going to copy the following files (missing directories will be created):", file=proc.stderr)
-
-        for instruction_group in instruction_groups:
-            for file_copy_instruction in instruction_group.file_copy_instructions:
-                print(
-                    f" * {file_copy_instruction.source.pathname} -> {file_copy_instruction.target.pathname}",
-                    file=proc.stderr,
-                )
-
-        print("Continue? [y/N] ", end="", file=proc.stderr)
-
-        ans: str
-        try:
-            ans = input()
-        except EOFError:
-            ans = ""
-            print("", file=proc.stderr)
-        except KeyboardInterrupt:
-            ans = ""
-            print("", file=proc.stderr)
-
-        if not ans.lower().startswith("y"):
-            print("Aborted.", file=proc.stderr)
-            proc.exit(52)
-
-        for instruction_group in instruction_groups:
-            for file_copy_instruction in instruction_group.file_copy_instructions:
-                fs.mkdirs(file_copy_instruction.target.pathname.dirname())
-                fs.copy(source=file_copy_instruction.source.pathname, target=file_copy_instruction.target.pathname)
-
-        print("\nDone.", file=proc.stderr)
+        # pylint: disable=invalid-name
+        command_exc = command_install()
 
     case "uninstall":
-        # region args
-
-        dest_dir_pathname: Pathname | None = None
-
-        match len(proc.argv):
-            case 2:
-                dest_dir_pathname = None
-
-            case 3:
-                if proc.argv[2] == "":
-                    print(
-                        f"{proc.argv[0]}: argument 2: must not be empty\n" +
-                        f"usage: {proc.argv[0]} {command_name} [<home>]",
-                        file=proc.stderr,
-                    )
-                    proc.exit(9)
-
-                dest_dir_pathname = Pathname.create_normalized(proc.argv[2])
-
-            case _:
-                print(
-                    f"{proc.argv[0]}: too many arguments: {len(proc.argv) - 3}\n" +
-                    f"usage: {proc.argv[0]} {command_name} [<home>]",
-                    file=proc.stderr,
-                )
-                proc.exit(4)
-
-        # endregion
-
-        instruction_groups: list[InstructionGroup]
-        try:
-            root_dir_pathname = Pathname(os.path.relpath(str(Pathname(__file__).dirname()), str(proc.getcwd())))
-
-            instruction_groups = read_instructions(
-                source_dir_pathname=root_dir_pathname,
-                home=home_pathname,
-                xdg_config_home=xdg_config_home_pathname,
-            )
-        except FileNotFoundError as e:
-            print(f"{proc.argv[0]}: {command_name}: {e.filename}: no such file", file=proc.stderr)
-            proc.exit(24)
-        except IsADirectoryError as e:
-            print(f"{proc.argv[0]}: {command_name}: {e.filename}: not a file", file=proc.stderr)
-            proc.exit(26)
-        except InstructionsReadError as e:
-            print(f"{proc.argv[0]}: {command_name}: {e.pathname}:{e.lineno}: {e.msg}", file=proc.stderr)
-            proc.exit(51)
-
-        pathnames_to_remove: list[Pathname] = []
-
-        for instruction_group in instruction_groups:
-            for file_copy_instruction in instruction_group.file_copy_instructions:
-                target: Pathname = file_copy_instruction.target.pathname
-
-                if dest_dir_pathname is not None:
-                    target = dest_dir_pathname.appended_with(target)
-
-                pathnames_to_remove.append(target)
-
-        print("Going to remove the following files (if they exist):", file=proc.stderr)
-
-        for pathname in pathnames_to_remove:
-            print(f" * {pathname}", file=proc.stderr)
-
-        print("Continue? [y/N] ", end="", file=proc.stderr)
-
-        ans: str
-        try:
-            ans = input()
-        except EOFError:
-            ans = ""
-            print("", file=proc.stderr)
-        except KeyboardInterrupt:
-            ans = ""
-            print("", file=proc.stderr)
-
-        if not ans.lower().startswith("y"):
-            print("Aborted.", file=proc.stderr)
-            proc.exit(52)
-
-        removed_count: int = 0
-
-        for pathname in pathnames_to_remove:
-            if not fs.exists(pathname):
-                continue
-
-            fs.remove(pathname)
-            removed_count += 1
-
-        print(f"\nDone. (removed {removed_count} file(s))", file=proc.stderr)
+        # pylint: disable=invalid-name
+        command_exc = command_uninstall()
 
     case _:
         print(
@@ -267,3 +296,7 @@ match command_name:
             file=proc.stderr,
         )
         proc.exit(8)
+
+
+if command_exc != 0:
+    proc.exit(command_exc)
