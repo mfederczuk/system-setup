@@ -8,11 +8,6 @@
 	email = federczuk.michael@protonmail.com
 	signingKey = B1299309A8D8D90B
 
-[gpg]
-	# git uses by default the `gpg` binary, which on some older systems may still be GnuPG v1.x, so let's explictly tell
-	# git to use v2.x instead
-	program = gpg2
-
 [core]
 	editor = vim -n
 
@@ -24,9 +19,6 @@
 
 [init]
 	defaultBranch = master
-
-[commit]
-	gpgSign = true
 
 [diff]
 	noprefix = true
