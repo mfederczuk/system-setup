@@ -151,16 +151,6 @@ function __dotfiles_bash_funcs_prompt_command__is_hidden_git_dir_present() {
 		{ ! command -v git > '/dev/null' || command git --no-pager status &> '/dev/null'; }
 }
 
-function __dotfiles_bash_funcs_prompt_command__is_hidden_dir_env_vars_file_ok() {
-	local dir_env_vars_filename || return
-	dir_env_vars_filename="$(__dotfiles_bash_funcs_prompt_command__get_dir_env_vars_filename && printf x)" || return
-	dir_env_vars_filename="${dir_env_vars_filename%x}" || return
-	readonly dir_env_vars_filename || return
-
-	[[ "$dir_env_vars_filename" =~ ^'.' ]] &&
-		__dotfiles_bash_funcs_prompt_command__is_dir_env_vars_file_ok
-}
-
 function __dotfiles_bash_funcs_prompt_command__get_dir_contents_state() {
 	local cwd || return
 	cwd="$(pwd -L && printf x)" || return
@@ -185,20 +175,8 @@ function __dotfiles_bash_funcs_prompt_command__get_dir_contents_state() {
 		return
 	fi
 
-	if ((hidden_count == 1)); then
-		if __dotfiles_bash_funcs_prompt_command__is_hidden_git_dir_present; then
-			printf 'hidden_git_dir_only'
-			return
-		fi
-
-		if __dotfiles_bash_funcs_prompt_command__is_hidden_dir_env_vars_file_ok; then
-			printf 'hidden_dir_env_vars_file_only'
-			return
-		fi
-	fi
-
-	if __dotfiles_bash_funcs_prompt_command__is_hidden_dir_env_vars_file_ok; then
-		printf 'hidden_with_hidden_dir_env_vars_file'
+	if ((hidden_count == 1)) && __dotfiles_bash_funcs_prompt_command__is_hidden_git_dir_present; then
+		printf 'hidden_git_dir_only'
 		return
 	fi
 
@@ -525,28 +503,6 @@ function __dotfiles_bash_funcs_prompt_command__update_ps_vars() {
 			;;
 		('hidden_git_dir_only')
 			PS1+=" ${fx_sem_hiddendirentriesindicator}!.*${fx_reset} ${fx_sem_hiddengitdironlyindicator}(\\\\\$GIT_DIR only)${fx_reset}" || return
-			;;
-		('hidden_dir_env_vars_file_only')
-			local dir_env_vars_filename || return
-			dir_env_vars_filename="$(__dotfiles_bash_funcs_prompt_command__get_dir_env_vars_filename && printf x)" || return
-			dir_env_vars_filename="${dir_env_vars_filename%x}" || return
-			dir_env_vars_filename="$(__dotfiles_bash_funcs_prompt_command__escape_for_ps "$dir_env_vars_filename")" || return
-
-			# shellcheck disable=1003
-			PS1+=" ${fx_sem_hiddendirentriesindicator}!.*${fx_reset} ${fx_sem_hiddendirenvvarsfileindicator}($dir_env_vars_filename only)${fx_reset}" || return
-
-			unset -v dir_env_vars_filename
-			;;
-		('hidden_with_hidden_dir_env_vars_file')
-			local dir_env_vars_filename || return
-			dir_env_vars_filename="$(__dotfiles_bash_funcs_prompt_command__get_dir_env_vars_filename && printf x)" || return
-			dir_env_vars_filename="${dir_env_vars_filename%x}" || return
-			dir_env_vars_filename="$(__dotfiles_bash_funcs_prompt_command__escape_for_ps "$dir_env_vars_filename")" || return
-
-			# shellcheck disable=1003
-			PS1+=" ${fx_sem_hiddendirentriesindicator}!.*${fx_reset} ${fx_sem_hiddendirenvvarsfileonlyindicator}($dir_env_vars_filename)${fx_reset}" || return
-
-			unset -v dir_env_vars_filename
 			;;
 		('hidden')
 			PS1+=" ${fx_sem_hiddendirentriesindicator}!.*${fx_reset}" || return
