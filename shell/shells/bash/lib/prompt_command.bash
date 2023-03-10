@@ -70,18 +70,6 @@ function __dotfiles_bash_funcs_prompt_command__escape_for_ps() {
 	printf '%s' "$escaped_str"
 }
 
-#region preview mode
-
-declare PREVIEW_MODE_ENABLED
-PREVIEW_MODE_ENABLED='no'
-
-function __dotfiles_bash_funcs_prompt_command__is_preview_mode_enabled() {
-	command -v is_truthy > '/dev/null' &&
-		is_truthy "${PREVIEW_MODE_ENABLED-}"
-}
-
-#endregion
-
 #region terminal title
 
 function __dotfiles_bash_funcs_prompt_command__is_terminal_title_supported() {
@@ -193,59 +181,10 @@ function __dotfiles_bash_funcs_prompt_command__get_job_count() {
 
 #endregion
 
-#region current working directory
-
-function __dotfiles_bash_funcs_prompt_command__get_cwd_state() {
-	# using '.' here wouldn't work, because when querying '.', it is reported to always exist and be a directory, even
-	# if that is not the real case
-
-	local absolute_cwd_pathname || return
-	absolute_cwd_pathname="$(pwd -L && printf x)" || return
-	absolute_cwd_pathname="${absolute_cwd_pathname%$'\nx'}" || return
-	readonly absolute_cwd_pathname || return
-
-	if [ ! -e "$absolute_cwd_pathname" ]; then
-		printf 'missing'
-		return
-	fi
-
-	if [ ! -d "$absolute_cwd_pathname" ]; then
-		printf 'not_dir'
-		return
-	fi
-
-	printf 'ok'
-}
-
-#endregion
-
-function __dotfiles_bash_funcs_prompt_command__is_effective_user_root() {
-	local uid || return
-	uid="$(id -u)" || return
-	readonly uid || return
-
-	test "$uid" = '0'
-}
-
 #endregion
 
 function __dotfiles_bash_funcs_prompt_command__update_ps_vars() {
 	local -ir prev_cmd_exc=$? || return
-
-	#region preview mode
-
-	if __dotfiles_bash_funcs_prompt_command__is_preview_mode_enabled; then
-		unset -v PS2 PS1 PS0 || return
-		declare -g PS0 PS1 PS2 || return
-
-		PS0=''    || return
-		PS1='\$ ' || return
-		PS2='> '  || return
-
-		return
-	fi
-
-	#endregion
 
 	#region terminal effect variables
 
@@ -321,34 +260,23 @@ function __dotfiles_bash_funcs_prompt_command__update_ps_vars() {
 
 	#region semantics
 
-	local fx_sem_ps2                               || return
-	local fx_sem_timestamp                         || return
-	local fx_sem_timestamp_ps0                     || return
-	local fx_sem_timestamp_ps1                     || return
-	local fx_sem_exitcode_success                  || return
-	local fx_sem_exitcode_failure                  || return
-	local fx_sem_emptydirindicator                 || return
-	local fx_sem_hiddendirentriesindicator         || return
-	local fx_sem_hiddengitdironlyindicator         || return
-	local fx_sem_hiddendirenvvarsfileindicator     || return
-	local fx_sem_hiddendirenvvarsfileonlyindicator || return
-	local fx_sem_jobcount                          || return
-	local fx_sem_shelllevel                        || return
-	local fx_sem_username                          || return
-	local fx_sem_username_nonroot                  || return
-	local fx_sem_username_root                     || return
-	local fx_sem_usernamehostnamesep               || return
-	local fx_sem_hostname                          || return
-	local fx_sem_cwd                               || return
-	local fx_sem_cwd_valid                         || return
-	local fx_sem_cwd_invalid                       || return
-	local fx_sem_cwd_invalid_missing               || return
-	local fx_sem_cwd_invalid_notdir                || return
-	local fx_sem_dirstacksize                      || return
-	local fx_sem_gitrepoinfo                       || return
-	local fx_sem_promptchar                        || return
-	local fx_sem_promptchar_nonroot                || return
-	local fx_sem_promptchar_root                   || return
+	local fx_sem_ps2                       || return
+	local fx_sem_timestamp                 || return
+	local fx_sem_timestamp_ps0             || return
+	local fx_sem_timestamp_ps1             || return
+	local fx_sem_exitcode_success          || return
+	local fx_sem_exitcode_failure          || return
+	local fx_sem_emptydirindicator         || return
+	local fx_sem_hiddendirentriesindicator || return
+	local fx_sem_hiddengitdironlyindicator || return
+	local fx_sem_jobcount                  || return
+	local fx_sem_shelllevel                || return
+	local fx_sem_username                  || return
+	local fx_sem_usernamehostnamesep       || return
+	local fx_sem_hostname                  || return
+	local fx_sem_dirstacksize              || return
+	local fx_sem_gitrepoinfo               || return
+	local fx_sem_promptchar                || return
 
 	fx_sem_ps2="${fx_lit_lightblue}${fx_lit_bold}" || return
 
@@ -359,66 +287,43 @@ function __dotfiles_bash_funcs_prompt_command__update_ps_vars() {
 	fx_sem_exitcode_success="${fx_lit_gray}${fx_lit_bold}"     || return
 	fx_sem_exitcode_failure="${fx_lit_lightred}${fx_lit_bold}" || return
 
-	fx_sem_emptydirindicator="${fx_lit_gray}${fx_lit_bold}"                          || return
-	fx_sem_hiddendirentriesindicator="${fx_lit_lightyellow}${fx_lit_bold}"           || return
-	fx_sem_hiddengitdironlyindicator="${fx_lit_gray}${fx_lit_bold}"                  || return
-	fx_sem_hiddendirenvvarsfileindicator="${fx_lit_gray}${fx_lit_bold}"              || return
-	fx_sem_hiddendirenvvarsfileonlyindicator="$fx_sem_hiddendirenvvarsfileindicator" || return
+	fx_sem_emptydirindicator="${fx_lit_gray}${fx_lit_bold}"                || return
+	fx_sem_hiddendirentriesindicator="${fx_lit_lightyellow}${fx_lit_bold}" || return
+	fx_sem_hiddengitdironlyindicator="${fx_lit_gray}${fx_lit_bold}"        || return
 
 	fx_sem_jobcount="${fx_lit_blue}${fx_lit_bold}" || return
 
 	fx_sem_shelllevel="${fx_lit_gray}${fx_lit_bold}" || return
 
-	fx_sem_username="${fx_lit_lightgreen}${fx_lit_bold}"    || return
-	fx_sem_username_nonroot="$fx_sem_username"              || return
-	fx_sem_username_root="${fx_lit_lightred}${fx_lit_bold}" || return
+	fx_sem_username="${fx_lit_lightgreen}${fx_lit_bold}" || return
 
 	fx_sem_usernamehostnamesep="${fx_lit_lightgreen}" || return
 
 	fx_sem_hostname="${fx_lit_lightgreen}${fx_lit_bold}" || return
 
-	fx_sem_cwd="${fx_lit_lightblue}${fx_lit_bold}"             || return
-	fx_sem_cwd_valid="$fx_sem_cwd"                             || return
-	fx_sem_cwd_invalid="${fx_lit_lightred}${fx_lit_bold}"      || return
-	fx_sem_cwd_invalid_missing="$fx_sem_cwd_invalid"           || return
-	fx_sem_cwd_invalid_notdir="${fx_lit_yellow}${fx_lit_bold}" || return
-
 	fx_sem_dirstacksize="${fx_lit_lightmagenta}${fx_lit_bold}" || return
 
 	fx_sem_gitrepoinfo="${fx_lit_lightcyan}${fx_lit_bold}" || return
 
-	fx_sem_promptchar="${fx_lit_lightblue}${fx_lit_bold}"     || return
-	fx_sem_promptchar_nonroot="$fx_sem_promptchar"            || return
-	fx_sem_promptchar_root="${fx_lit_lightred}${fx_lit_bold}" || return
+	fx_sem_promptchar="${fx_lit_lightblue}${fx_lit_bold}" || return
 
-	readonly fx_sem_promptchar_root                   || return
-	readonly fx_sem_promptchar_nonroot                || return
-	readonly fx_sem_promptchar                        || return
-	readonly fx_sem_gitrepoinfo                       || return
-	readonly fx_sem_dirstacksize                      || return
-	readonly fx_sem_cwd_invalid_notdir                || return
-	readonly fx_sem_cwd_invalid_missing               || return
-	readonly fx_sem_cwd_invalid                       || return
-	readonly fx_sem_cwd_valid                         || return
-	readonly fx_sem_cwd                               || return
-	readonly fx_sem_hostname                          || return
-	readonly fx_sem_usernamehostnamesep               || return
-	readonly fx_sem_username_root                     || return
-	readonly fx_sem_username_nonroot                  || return
-	readonly fx_sem_username                          || return
-	readonly fx_sem_shelllevel                        || return
-	readonly fx_sem_jobcount                          || return
-	readonly fx_sem_hiddendirenvvarsfileonlyindicator || return
-	readonly fx_sem_hiddendirenvvarsfileindicator     || return
-	readonly fx_sem_hiddengitdironlyindicator         || return
-	readonly fx_sem_hiddendirentriesindicator         || return
-	readonly fx_sem_emptydirindicator                 || return
-	readonly fx_sem_exitcode_failure                  || return
-	readonly fx_sem_exitcode_success                  || return
-	readonly fx_sem_timestamp_ps1                     || return
-	readonly fx_sem_timestamp_ps0                     || return
-	readonly fx_sem_timestamp                         || return
-	readonly fx_sem_ps2                               || return
+	readonly fx_sem_promptchar                || return
+	readonly fx_sem_gitrepoinfo               || return
+	readonly fx_sem_dirstacksize              || return
+	readonly fx_sem_hostname                  || return
+	readonly fx_sem_usernamehostnamesep       || return
+	readonly fx_sem_username                  || return
+	readonly fx_sem_shelllevel                || return
+	readonly fx_sem_jobcount                  || return
+	readonly fx_sem_hiddengitdironlyindicator || return
+	readonly fx_sem_hiddendirentriesindicator || return
+	readonly fx_sem_emptydirindicator         || return
+	readonly fx_sem_exitcode_failure          || return
+	readonly fx_sem_exitcode_success          || return
+	readonly fx_sem_timestamp_ps1             || return
+	readonly fx_sem_timestamp_ps0             || return
+	readonly fx_sem_timestamp                 || return
+	readonly fx_sem_ps2                       || return
 
 	#endregion
 
@@ -544,40 +449,13 @@ function __dotfiles_bash_funcs_prompt_command__update_ps_vars() {
 
 	#region username & hostname
 
-	if ! __dotfiles_bash_funcs_prompt_command__is_effective_user_root; then
-		PS1+="${fx_sem_username_nonroot}\\u${fx_reset}" || return
-	else
-		PS1+="${fx_sem_username_root}\\u${fx_reset}" || return
-	fi
-
+	PS1+="${fx_sem_username}\\u${fx_reset}" || return
 	PS1+="${fx_sem_usernamehostnamesep}@${fx_reset}" || return
-
 	PS1+="${fx_sem_hostname}\\H${fx_reset}" || return
 
 	#endregion
 
 	PS1+=':' || return
-
-	#region current working directory
-
-	local cwd_state || return
-	cwd_state="$(__dotfiles_bash_funcs_prompt_command__get_cwd_state)" || return
-
-	case "$cwd_state" in
-		('ok')
-			PS1+="${fx_sem_cwd_valid}\\w${fx_reset}" || return
-			;;
-		('missing')
-			PS1+="${fx_sem_cwd_invalid_missing}\\w${fx_reset}" || return
-			;;
-		('not_dir')
-			PS1+="${fx_sem_cwd_invalid_notdir}\\w${fx_reset}" || return
-			;;
-	esac
-
-	unset -v cwd_state
-
-	#endregion
 
 	#region directory stack size
 
@@ -606,11 +484,7 @@ function __dotfiles_bash_funcs_prompt_command__update_ps_vars() {
 
 	#region prompt character
 
-	if ! __dotfiles_bash_funcs_prompt_command__is_effective_user_root; then
-		PS1+="${fx_sem_promptchar_nonroot}\\\$${fx_reset}" || return
-	else
-		PS1+="${fx_sem_promptchar_root}\\\$${fx_reset}" || return
-	fi
+	PS1+="${fx_sem_promptchar}\\\$${fx_reset}" || return
 
 	#endregion
 
@@ -645,16 +519,3 @@ fi
 PROMPT_COMMAND+=(__dotfiles_bash_funcs_prompt_command__update_ps_vars)
 
 #endregion
-
-function toggle-preview-mode() {
-	if (($# > 0)); then
-		printf '%s: too many arguments: %i\n' "${FUNCNAME[0]}" $# >&2
-		return 4
-	fi
-
-	if __dotfiles_bash_funcs_prompt_command__is_preview_mode_enabled; then
-		PREVIEW_MODE_ENABLED='no'
-	else
-		PREVIEW_MODE_ENABLED='yes'
-	fi
-}
