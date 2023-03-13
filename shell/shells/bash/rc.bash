@@ -134,16 +134,13 @@ function __bashrc__set_ps_vars() {
 
 	#region semantics
 
-	local fx_sem_ps2                 || return
-	local fx_sem_timestamp           || return
-	local fx_sem_timestamp_ps0       || return
-	local fx_sem_timestamp_ps1       || return
-	local fx_sem_username            || return
-	local fx_sem_usernamehostnamesep || return
-	local fx_sem_hostname            || return
-	local fx_sem_cwd                 || return
-	local fx_sem_gitrepoinfo         || return
-	local fx_sem_promptchar          || return
+	local fx_sem_ps2           || return
+	local fx_sem_timestamp     || return
+	local fx_sem_timestamp_ps0 || return
+	local fx_sem_timestamp_ps1 || return
+	local fx_sem_cwd           || return
+	local fx_sem_gitrepoinfo   || return
+	local fx_sem_promptchar    || return
 
 	fx_sem_ps2="${fx_lit_lightblue}${fx_lit_bold}" || return
 
@@ -151,28 +148,19 @@ function __bashrc__set_ps_vars() {
 	fx_sem_timestamp_ps0="$fx_sem_timestamp" || return
 	fx_sem_timestamp_ps1="$fx_sem_timestamp" || return
 
-	fx_sem_username="${fx_lit_lightgreen}${fx_lit_bold}" || return
-
-	fx_sem_usernamehostnamesep="${fx_lit_lightgreen}" || return
-
-	fx_sem_hostname="${fx_lit_lightgreen}${fx_lit_bold}" || return
-
 	fx_sem_cwd="${fx_lit_lightblue}${fx_lit_bold}" || return
 
 	fx_sem_gitrepoinfo="${fx_lit_lightcyan}${fx_lit_bold}" || return
 
 	fx_sem_promptchar="${fx_lit_lightblue}${fx_lit_bold}" || return
 
-	readonly fx_sem_promptchar          || return
-	readonly fx_sem_gitrepoinfo         || return
-	readonly fx_sem_cwd                 || return
-	readonly fx_sem_hostname            || return
-	readonly fx_sem_usernamehostnamesep || return
-	readonly fx_sem_username            || return
-	readonly fx_sem_timestamp_ps1       || return
-	readonly fx_sem_timestamp_ps0       || return
-	readonly fx_sem_timestamp           || return
-	readonly fx_sem_ps2                 || return
+	readonly fx_sem_promptchar    || return
+	readonly fx_sem_gitrepoinfo   || return
+	readonly fx_sem_cwd           || return
+	readonly fx_sem_timestamp_ps1 || return
+	readonly fx_sem_timestamp_ps0 || return
+	readonly fx_sem_timestamp     || return
+	readonly fx_sem_ps2           || return
 
 	#endregion
 
@@ -197,13 +185,6 @@ function __bashrc__set_ps_vars() {
 	PS1+="${fx_sem_timestamp_ps1}[\\t]${fx_reset}" || return
 
 	PS1+='\n' || return
-
-	# username & hostname
-	PS1+="${fx_sem_username}\\u${fx_reset}" || return
-	PS1+="${fx_sem_usernamehostnamesep}@${fx_reset}" || return
-	PS1+="${fx_sem_hostname}\\H${fx_reset}" || return
-
-	PS1+=':' || return
 
 	# current working directory
 	PS1+="${fx_sem_cwd}\\w${fx_reset}" || return
