@@ -191,7 +191,7 @@ function __bashrc__set_ps_vars() {
 
 	# git repository info
 	if command -v git > '/dev/null' && command -v __git_ps1 > '/dev/null'; then
-		PS1+="${fx_sem_gitrepoinfo}\\$(__git_ps1 ' (%s)')${fx_reset}\\n" || return
+		PS1+="${fx_sem_gitrepoinfo}\$(__git_ps1 ' (%s)')${fx_reset}" || return
 	fi
 
 	PS1+=' ' || return
