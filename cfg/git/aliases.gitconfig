@@ -48,8 +48,8 @@
 
 	# ====================== #
 
-	set-editor-codium-workspace  = config core.editor 'codium --wait --new-window .'
+	set-editor-codium-workspace    = config core.editor 'codium --wait --new-window .'
 	set-editor-codium-no-workspace = config core.editor 'codium --wait --new-window'
-	set-editor-gedit             = !printf \"\\033[31mgedit is dead. Long live gnome-text-editor\\033[0m\\n\"
-	set-editor-gnome-text-editor = !printf \"\\033[31mNot supported yet.\\033[0m\\n\"
-	set-editor-vim               = config core.editor 'vim -n'
+	set-editor-gedit               = !printf \"\\033[31mgedit is dead. Long live gnome-text-editor\\033[0m\\n\"
+	set-editor-gnome-text-editor   = !printf \"\\033[31mNot supported yet.\\033[0m\\n\"
+	set-editor-vim                 = config core.editor 'vim -n'
