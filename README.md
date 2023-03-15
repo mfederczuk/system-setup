@@ -37,11 +37,11 @@ programs, etc. of my personally used Linux distributions.
         GNU Bash files that define various custom functions, which get installed to `$XDG_CONFIG_HOME/bash/lib/`
 
       * [`completions/`](shell/shells/bash/completions)  
-        GNU Bash files that define completion functions, which get installed to `$HOME/.local/etc/bash_completion.d/`
+        GNU Bash files that define completion functions, which get installed to `$XDG_CONFIG_HOME/bash/completions/`
 
         * [`git/`](shell/shells/bash/completions/git)  
           GNU Bash files that define completion functions for the custom Git commands located in [`bin/git/`](bin/git),
-          which also get installed to `$HOME/.local/etc/bash_completion.d/`
+          which also get installed to `$XDG_CONFIG_HOME/bash/completions/`
 
 ## Distributions ##
 
