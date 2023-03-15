@@ -23,7 +23,7 @@ function __bash_aliases__is_program_gnu() {
 	fi
 
 	local program_version_info || return
-	program_version_info="$(command "$binary_name" --version)" || return 33
+	program_version_info="$(command "$binary_name" --version 2> '/dev/null')" || return 33
 
 	if [[ ! "$program_version_info" =~ ^"$canonical_program_name (GNU $package_name)" ]]; then
 		return 34

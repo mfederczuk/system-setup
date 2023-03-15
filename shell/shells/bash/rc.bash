@@ -21,6 +21,7 @@ fi
 
 #region history setup
 
+# TODO: this directory must be created manually
 declare HISTFILE="$XDG_STATE_HOME/bash/history"
 
 shopt -s histappend
@@ -71,7 +72,9 @@ fi
 
 declare __bashrc__completion_file_pathname
 
-for __bashrc__completion_file_pathname in "$HOME/"{'completions/','.local/etc/bash_completion.d/'}*'.bash'{,'-completion'}; do
+# youtube-dl installs its completions script into '$HOME/.local/etc/bash_completion.d'
+# <https://github.com/ytdl-org/youtube-dl/blob/2021.12.17/Makefile#L25-L26>
+for __bashrc__completion_file_pathname in {"$XDG_CONFIG_HOME/bash/completions/","$HOME/.local/etc/bash_completion.d"}*'.bash'{,'-completion'}; do
 	if [ -f "$__bashrc__completion_file_pathname" ]; then
 		# shellcheck disable=1090
 		. "$__bashrc__completion_file_pathname"

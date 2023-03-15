@@ -3,9 +3,6 @@
 # vim: syntax=sh
 # code: language=shellscript
 
-# Copyright (c) 2023 Michael Federczuk
-# SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
-
 case "$-" in
 	(*'i'*)
 		\command printf 'script was called interactively\n' >&2
@@ -35,13 +32,16 @@ if [ $# -gt 0 ]; then
 fi
 
 
+tag_name='v0.1.0'
+readonly tag_name
+
 root_dir_pathname="$(dirname -- "$0" && printf x)"
 root_dir_pathname="${root_dir_pathname%"$(printf '\nx')"}"
 readonly root_dir_pathname
 
 #region setting up temporary repository
 
-tmp_repo_dir_pathname="$root_dir_pathname/_adb_completion_tmp.git"
+tmp_repo_dir_pathname="$root_dir_pathname/_git_wip_dump_tmp.git"
 readonly tmp_repo_dir_pathname
 
 remove_tmp_repo_dir() {
@@ -53,19 +53,19 @@ mkdir -- "$tmp_repo_dir_pathname"
 trap remove_tmp_repo_dir EXIT
 trap 'trap - EXIT; remove_tmp_repo_dir' INT QUIT TERM
 
-git clone --sparse --depth=1 --single-branch --no-tags -- 'https://gist.github.com/7677543.git' "$tmp_repo_dir_pathname"
+git -c advice.detachedHead=false clone --sparse --branch="$tag_name" --depth=1 --single-branch --no-tags -- \
+	'https://github.com/mfederczuk/git-wip-dump.git' "$tmp_repo_dir_pathname"
 
 #endregion
 
-commit_hash="$(git -C "$tmp_repo_dir_pathname" --no-pager show --no-abbrev-commit --pretty=format:'%H' --no-patch HEAD)"
-readonly commit_hash
-
-#region writing to completion file
+#region writing to file
 
 {
-	head -n17 -- "$tmp_repo_dir_pathname/adb-completion.bash"
-	printf '# <https://gist.github.com/otobrglez/7677543/%s>\n' "$commit_hash"
-	tail -n+17 -- "$tmp_repo_dir_pathname/adb-completion.bash"
-} > "$root_dir_pathname/adb.bash"
+	head -n8 -- "$tmp_repo_dir_pathname/git-wip-dump"
+	printf '# <https://github.com/mfederczuk/git-wip-dump/blob/%s/git-wip-dump>\n' "$tag_name"
+	tail -n+8 -- "$tmp_repo_dir_pathname/git-wip-dump"
+} > "$root_dir_pathname/wip-dump.sh"
+
+chmod +x "$root_dir_pathname/wip-dump.sh"
 
 #endregion

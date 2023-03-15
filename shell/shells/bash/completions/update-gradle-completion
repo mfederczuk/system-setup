@@ -53,7 +53,7 @@ mkdir -- "$tmp_repo_dir_pathname"
 trap remove_tmp_repo_dir EXIT
 trap 'trap - EXIT; remove_tmp_repo_dir' INT QUIT TERM
 
-git clone --depth=1 --branch=master --single-branch --no-tags -- \
+git clone --sparse --depth=1 --branch=master --single-branch --no-tags -- \
 	'https://github.com/gradle/gradle-completion.git' "$tmp_repo_dir_pathname"
 
 #endregion
