@@ -19,6 +19,7 @@ fi
 
 #region history setup
 
+# TODO: this directory must be created manually
 declare HISTFILE="$XDG_STATE_HOME/bash/history"
 
 shopt -s histappend
