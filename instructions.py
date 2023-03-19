@@ -7,28 +7,114 @@ import errno
 import re
 
 
+def require_arg_of_type(arg_name: str, actual_value: any, expected_type: type):
+    if type(arg_name) != str:
+        raise TypeError(f"Argument 'arg_name' must be of type {str.__name__}")
+
+    if type(expected_type) != type:
+        raise TypeError(f"Argument 'expected_type' must be of type {type.__name__}")
+
+    if type(actual_value) == expected_type:
+        return
+
+    raise TypeError(f"Argument '{arg_name}' must be of type {expected_type.__name__}")
+
+
+def require_arg_of_list_type(arg_name: str, actual_value: any, expected_item_type: type):
+    require_arg_of_type("expected_item_type", expected_item_type, type)
+
+    require_arg_of_type(arg_name, actual_value, list)
+
+    for i in range(0, len(actual_value)):
+        item: any = actual_value[i]
+
+        if type(item) == expected_item_type:
+            continue
+
+        msg: str = (f"Item at index {i} of {list.__name__} argument '{arg_name}'" +
+                    f"must be of type {expected_item_type.__name__}")
+        raise ValueError(msg)
+
+
+@dataclass(frozen=True)
+class Pathname:
+
+    value: str
+
+    def __post_init__(self):
+        require_arg_of_type("value", self.value, str)
+
+        if self.value == "":
+            raise ValueError("Empty pathnames are invalid")
+
+    @staticmethod
+    def create_normalized(value: str) -> "Pathname":
+        return Pathname(value).normalized()
+
+    def normalized(self) -> "Pathname":
+        # note: not using `os.path.normpath()` because it also removes '..' components, which is wrong; it changes the
+        #       behavior of the path resolution
+
+        normalied_value: str = self.value
+
+        while "/./" in normalied_value:
+            normalied_value = normalied_value.replace("/./", "/")
+
+        while "//" in normalied_value:
+            normalied_value = normalied_value.replace("//", "/")
+
+        if normalied_value.startswith("./") and len(self.value) > 2:
+            normalied_value = normalied_value.removeprefix("./")
+
+        if normalied_value.endswith("/."):
+            normalied_value = normalied_value.removesuffix(".")
+
+        return Pathname(normalied_value)
+
+    def __str__(self) -> str:
+        return self.value
+
+
+@dataclass(frozen=True)
+class File:
+
+    pathname: Pathname
+
+    def __post_init__(self):
+        require_arg_of_type("pathname", self.pathname, Pathname)
+
+    def with_pathname(self, new_pathname: Pathname) -> "File":
+        require_arg_of_type("new_pathname", new_pathname, Pathname)
+
+        return File(new_pathname)
+
+
 @dataclass
-class InstructionFile:
+class FileCopyInstruction:
 
-    desc: str
-    source: str
-    target: str
+    source: File
+    target: File
 
-    def __init__(self, desc: str, source: str, target: str):
-        self.desc = desc
+    def __init__(self, source: File, target: File):
+        require_arg_of_type("source", source, File)
+        require_arg_of_type("target", target, File)
+
         self.source = source
         self.target = target
 
 
 @dataclass
-class Instruction:
+class InstructionGroup:
 
     name: str
-    files: list[InstructionFile]
+    file_copy_instructions: list[FileCopyInstruction]
 
-    def __init__(self, name: str, files: list[InstructionFile]):
+    def __init__(self, name: str, file_copy_instructions: list[FileCopyInstruction]):
+        require_arg_of_type("name", name, str)
+        require_arg_of_list_type("file_copy_instructions", file_copy_instructions, FileCopyInstruction)
+
         self.name = name
-        self.files = files.copy()
+        self.file_copy_instructions = file_copy_instructions.copy()
 
 
 class InstructionsReadError(Exception):
@@ -38,6 +124,10 @@ class InstructionsReadError(Exception):
     msg: str
 
     def __init__(self, pathname: str, lineno: int, msg: str):
+        require_arg_of_type("pathname", pathname, str)
+        require_arg_of_type("lineno", lineno, int)
+        require_arg_of_type("msg", msg, str)
+
         super().__init__(pathname, lineno, msg)
 
         self.pathname = pathname
@@ -45,7 +135,11 @@ class InstructionsReadError(Exception):
         self.msg = msg
 
 
-def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str) -> list[Instruction]:
+def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str) -> list[InstructionGroup]:
+    require_arg_of_type("source_dir_pathname", source_dir_pathname, str)
+    require_arg_of_type("HOME", HOME, str)
+    require_arg_of_type("XDG_CONFIG_HOME", XDG_CONFIG_HOME, str)
+
     file_pathname: str = os.path.join(source_dir_pathname, "Instructions.cfg")
 
     if not os.path.exists(file_pathname):
@@ -54,12 +148,12 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
     if os.path.isdir(file_pathname):
         raise IsADirectoryError(errno.EISDIR, os.strerror(errno.EISDIR), file_pathname)
 
-    instructions: list[Instruction] = []
+    instructions: list[InstructionGroup] = []
 
     with open(file_pathname, "r") as f:
         lineno: int = 0
 
-        current_instruction_with_current_file: tuple[Instruction, InstructionFile | None] | None = None
+        current_instruction_group: InstructionGroup | None = None
 
         for line in f:
             lineno += 1
@@ -71,70 +165,44 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
 
             match: re.Match | None = None
 
-            if current_instruction_with_current_file != None and current_instruction_with_current_file[1] != None:
-                current_instruction: Instruction = current_instruction_with_current_file[0]
-                current_instruction_file: InstructionFile = current_instruction_with_current_file[1]
-
-                match = re.match(r"^\)(\s*#.*)?$", line)
+            if current_instruction_group != None:
+                match = re.match(r"^\}(\s*#.*)?$", line)
                 if match != None:
-                    if current_instruction_file.source == "":
-                        raise InstructionsReadError(file_pathname, lineno, "File definition is missing a source")
-
-                    if current_instruction_file.target == "":
-                        raise InstructionsReadError(file_pathname, lineno, "File definition is missing a target")
-
-                    current_instruction.files.append(current_instruction_file)
-                    current_instruction_with_current_file = (current_instruction, None)
+                    instructions.append(current_instruction_group)
+                    current_instruction_group = None
                     continue
 
-                match = re.match(r"^Source\s*\"(?P<pathname>[^\"]+)\"(\s*#.*)?$", line)
+                match = re.match(
+                    r"^Copy\s+File\s*\"(?P<source_pathname>[^\"]+)\"\s*To\s+File\s*\"(?P<target_pathname>[^\"]+)\"(\s*#.*)?$",
+                    line,
+                )
                 if match != None:
-                    source_pathname: str = match.group("pathname")
+                    source_pathname: Pathname = Pathname.create_normalized(match.group("source_pathname"))
 
-                    if os.path.isabs(source_pathname):
-                        raise InstructionsReadError(file_pathname, lineno, "Source pathname must be relative")
+                    target_pathname_str: str = match.group("target_pathname")
+                    if target_pathname_str.startswith("$HOME"):
+                        target_pathname_str = target_pathname_str.removeprefix("$HOME")
 
-                    current_instruction_file.source = source_pathname
-
-                    continue
-
-                match = re.match(r"^Target\s*\"(?P<pathname>[^\"]+)\"(\s*#.*)?$", line)
-                if match != None:
-                    target_pathname: str = match.group("pathname")
-
-                    if target_pathname.startswith("$HOME"):
-                        target_pathname = os.path.join(
+                        target_pathname_str = os.path.join(
                             HOME,
-                            os.path.relpath(target_pathname.removeprefix("$HOME"), os.path.abspath(os.sep)),
+                            os.path.relpath(target_pathname_str, os.path.abspath(os.sep)),
                         )
-                    elif target_pathname.startswith("$XDG_CONFIG_HOME"):
-                        target_pathname = os.path.join(
+                    elif target_pathname_str.startswith("$XDG_CONFIG_HOME"):
+                        target_pathname_str = target_pathname_str.removeprefix("$XDG_CONFIG_HOME")
+
+                        target_pathname_str = os.path.join(
                             XDG_CONFIG_HOME,
-                            os.path.relpath(target_pathname.removeprefix("$XDG_CONFIG_HOME"), os.path.abspath(os.sep)),
+                            os.path.relpath(target_pathname_str, os.path.abspath(os.sep)),
                         )
 
-                    if not os.path.isabs(target_pathname):
-                        raise InstructionsReadError(file_pathname, lineno, "Target pathname must be absolute")
+                    target_pathname: Pathname = Pathname.create_normalized(target_pathname_str)
 
-                    current_instruction_file.target = target_pathname
+                    file_copy_instruction = FileCopyInstruction(
+                        source=File(source_pathname),
+                        target=File(target_pathname),
+                    )
 
-                    continue
-
-                raise InstructionsReadError(file_pathname, lineno, "Invalid line in instruction file definition")
-
-            if current_instruction_with_current_file != None:
-                current_instruction: Instruction = current_instruction_with_current_file[0]
-
-                match = re.match(r"^\)(\s*#.*)?$", line)
-                if match != None:
-                    instructions.append(current_instruction)
-                    current_instruction_with_current_file = None
-                    continue
-
-                match = re.match(r"^File\s*\"(?P<desc>[^\"]+)\"\s*\((\s*#.*)?$", line)
-                if match != None:
-                    desc: str = match.group("desc")
-                    current_instruction_with_current_file = (current_instruction, InstructionFile(desc, "", ""))
+                    current_instruction_group.file_copy_instructions.append(file_copy_instruction)
                     continue
 
                 raise InstructionsReadError(file_pathname, lineno, "Invalid line in instruction definition")
@@ -143,29 +211,35 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
             if match != None:
                 source_dir_pathname_to_include: str = os.path.join(source_dir_pathname, match.group("pathname"))
 
-                included_instructions: list[Instruction] = read_instructions(
+                included_instructions: list[InstructionGroup] = read_instructions(
                     source_dir_pathname_to_include,
                     HOME,
                     XDG_CONFIG_HOME,
                 )
                 for instruction in included_instructions:
-                    for i in range(0, len(instruction.files)):
-                        file: InstructionFile = instruction.files[i]
+                    for i in range(0, len(instruction.file_copy_instructions)):
+                        file_copy_instruction: FileCopyInstruction = instruction.file_copy_instructions[i]
 
-                        instruction.files[i] = InstructionFile(
-                            file.desc,
-                            source=os.path.join(os.path.basename(source_dir_pathname_to_include), file.source),
-                            target=file.target,
+                        instruction.file_copy_instructions[i] = FileCopyInstruction(
+                            source=File(
+                                Pathname.create_normalized(
+                                    os.path.join(
+                                        os.path.basename(source_dir_pathname_to_include),
+                                        file_copy_instruction.source.pathname.value,
+                                    )
+                                )
+                            ),
+                            target=file_copy_instruction.target,
                         )
 
                 instructions.extend(included_instructions)
 
                 continue
 
-            match = re.match(r"^Instruction\s*\"(?P<name>[^\"]+)\"\s*\((\s*#.*)?$", line)
+            match = re.match(r"^Group\s*\"(?P<name>[^\"]+)\"\s*\{(\s*#.*)?$", line)
             if match != None:
                 name: str = match.group("name")
-                current_instruction_with_current_file = (Instruction(name, []), None)
+                current_instruction_group = InstructionGroup(name, [])
                 continue
 
             raise InstructionsReadError(file_pathname, lineno, "Invalid top-level line")

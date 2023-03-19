@@ -57,18 +57,10 @@ export HOME="${HOME:-"$(\command grep -E "^[^:]*:[^:]*:$(id -u):$(\command id -g
 # sorted from most to least priority
 _add_to_path front '.bin' \
                    'node_modules/.bin' \
+                   "$HOME/.local/bin" \
                    "$HOME/bin" \
                    "$HOME/bin/git" \
                    "$HOME/bin/repos" \
-                   "$HOME/.local/bin" \
-                   "$HOME/.local/lib/nodejs/bin" \
-                   "$HOME/.cargo/bin" \
-                   "$HOME/Android/Sdk/cmdline-tools/latest/bin" \
-                   "$HOME/.sdkman/candidates/kotlin/current/bin" \
-                   "$HOME/.sdkman/candidates/gradle/current/bin" \
-                   '/usr/local/lib/kotlin-native-linux/bin' \
-                   "$HOME/.local/lib/flutter/bin" \
-                   "$HOME/go/bin" \
                    "$HOME/.dotnet/tools"
 
 export PATH

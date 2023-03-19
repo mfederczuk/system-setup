@@ -199,7 +199,7 @@ if command -v pkgsup > '/dev/null'; then
 
 		local cmd || return
 
-		for cmd in dnf trace_cmd pkgsup; do
+		for cmd in trace_cmd pkgsup; do
 			if ! command -v "$cmd" > '/dev/null'; then
 				printf '%s: %s: program missing\n' "${FUNCNAME[0]}" "$cmd" >&2
 				return 27
@@ -220,44 +220,21 @@ if command -v pkgsup > '/dev/null'; then
 		printf 'Shutting down in 3 seconds... (Ctrl+C to cancel)\n' >&2 || return
 		sleep 3 || return
 
+		if [ -n "${HISTFILE-}" ] && [ ! -e "$HISTFILE" ]; then
+			local histfile_parent_dir_pathname || return
+			histfile_parent_dir_pathname="$(dirname -- "$HISTFILE" && printf x)" || return
+			histfile_parent_dir_pathname="${histfile_parent_dir_pathname%$'\nx'}" || return
+
+			mkdir -p -- "$histfile_parent_dir_pathname" || return
+
+			unset -v histfile_parent_dir_pathname || return
+		fi
+		history -a || return
+
 		trace_cmd shutdown 0
 	}
 
 	complete upshut
 fi
-
-#endregion
-
-#region goodnight
-
-function goodnight() {
-	if ! command -v trace_cmd > '/dev/null'; then
-		printf '%s: trace_cmd: program missing\n' "${FUNCNAME[0]}" >&2
-		return 27
-	fi
-
-	if (($# > 0)); then
-		printf '%s: too many arguments: %i\n' "${FUNCNAME[0]}" $# >&2
-		return 4
-	fi
-
-	cd || return
-
-	if command -v pkgsup > '/dev/null'; then
-		trace_cmd pkgsup || return
-	fi
-
-	if command -v mkbak > '/dev/null'; then
-		trace_cmd mkbak || return
-	fi
-
-	if command -v upshut > '/dev/null'; then
-		trace_cmd upshut
-	else
-		trace_cmd shutdown 0
-	fi
-}
-
-complete goodnight
 
 #endregion

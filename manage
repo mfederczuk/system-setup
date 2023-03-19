@@ -7,7 +7,7 @@ import os
 import shutil
 import sys
 
-from instructions import Instruction, InstructionsReadError, read_instructions
+from instructions import InstructionGroup, InstructionsReadError, read_instructions, Pathname
 
 # region environment variables
 
@@ -87,11 +87,11 @@ match command_name:
 
         # endregion
 
-        instructions: list[Instruction]
+        instruction_groups: list[InstructionGroup]
         try:
             root_dir_pathname: str = os.path.relpath(os.path.dirname(__file__), os.getcwd())
 
-            instructions = read_instructions(
+            instruction_groups = read_instructions(
                 source_dir_pathname=root_dir_pathname,
                 HOME=HOME,
                 XDG_CONFIG_HOME=XDG_CONFIG_HOME,
@@ -106,19 +106,26 @@ match command_name:
             print(f"{sys.argv[0]}: {command_name}: {e.pathname}:{e.lineno}: {e.msg}", file=sys.stderr)
             exit(51)
 
-        for instruction in instructions:
-            for file in instruction.files:
+        for instruction_group in instruction_groups:
+            for file_copy_instruction in instruction_group.file_copy_instructions:
                 if dest_dir_pathname != "":
-                    file.target = os.path.join(
-                        dest_dir_pathname,
-                        os.path.relpath(file.target, os.path.abspath(os.sep)),
+                    file_copy_instruction.target = file_copy_instruction.target.with_pathname(
+                        Pathname.create_normalized(
+                            os.path.join(
+                                dest_dir_pathname,
+                                os.path.relpath(file_copy_instruction.target.pathname.value, os.path.abspath(os.sep)),
+                            )
+                        )
                     )
 
         print("Going to copy the following files (missing directories will be created):", file=sys.stderr)
 
-        for instruction in instructions:
-            for file in instruction.files:
-                print(f" * {file.source} -> {file.target}", file=sys.stderr)
+        for instruction_group in instruction_groups:
+            for file_copy_instruction in instruction_group.file_copy_instructions:
+                print(
+                    f" * {file_copy_instruction.source.pathname} -> {file_copy_instruction.target.pathname}",
+                    file=sys.stderr,
+                )
 
         print("Continue? [y/N] ", end="", file=sys.stderr)
 
@@ -136,10 +143,10 @@ match command_name:
             print("Aborted.", file=sys.stderr)
             exit(52)
 
-        for instruction in instructions:
-            for file in instruction.files:
-                os.makedirs(os.path.dirname(file.target), exist_ok=True)
-                shutil.copy(file.source, file.target)
+        for instruction_group in instruction_groups:
+            for file_copy_instruction in instruction_group.file_copy_instructions:
+                os.makedirs(os.path.dirname(file_copy_instruction.target.pathname.value), exist_ok=True)
+                shutil.copy(file_copy_instruction.source.pathname.value, file_copy_instruction.target.pathname.value)
 
         print(f"\nDone.", file=sys.stderr)
 
@@ -173,11 +180,11 @@ match command_name:
 
         # endregion
 
-        instructions: list[Instruction]
+        instruction_groups: list[InstructionGroup]
         try:
             root_dir_pathname: str = os.path.relpath(os.path.dirname(__file__), os.getcwd())
 
-            instructions = read_instructions(
+            instruction_groups = read_instructions(
                 source_dir_pathname=root_dir_pathname,
                 HOME=HOME,
                 XDG_CONFIG_HOME=XDG_CONFIG_HOME,
@@ -194,9 +201,9 @@ match command_name:
 
         pathnames_to_remove: list[str] = []
 
-        for instruction in instructions:
-            for file in instruction.files:
-                target: str = file.target
+        for instruction_group in instruction_groups:
+            for file_copy_instruction in instruction_group.file_copy_instructions:
+                target: str = file_copy_instruction.target.pathname.value
 
                 if dest_dir_pathname != "":
                     target = os.path.join(
