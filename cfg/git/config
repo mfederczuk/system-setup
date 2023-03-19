@@ -6,7 +6,6 @@
 [user]
 	name = Michael Federczuk
 	email = federczuk.michael@protonmail.com
-	signingKey = B1299309A8D8D90B
 
 [core]
 	editor = vim -n
