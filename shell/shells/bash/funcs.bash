@@ -208,7 +208,7 @@ function pretty_quote() {
 
 	local quoted_str
 
-	if [[ "$str" =~ ^[A-Za-z0-9_./:+,-]+$ ]]; then
+	if [[ "$str" =~ ^[A-Za-z0-9_./:+,=-]+$ ]]; then
 		# a string that contains only regular characters that don't need escaping or quoting doesn't need to be quoted
 
 		quoted_str="$str"
