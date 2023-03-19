@@ -137,6 +137,17 @@ function goodnight() {
 	if command -v upshut > '/dev/null'; then
 		trace_cmd upshut
 	else
+		if [ -n "${HISTFILE-}" ] && [ ! -e "$HISTFILE" ]; then
+			local histfile_parent_dir_pathname || return
+			histfile_parent_dir_pathname="$(dirname -- "$HISTFILE" && printf x)" || return
+			histfile_parent_dir_pathname="${histfile_parent_dir_pathname%$'\nx'}" || return
+
+			mkdir -p -- "$histfile_parent_dir_pathname" || return
+
+			unset -v histfile_parent_dir_pathname || return
+		fi
+		history -a || return
+
 		trace_cmd shutdown 0
 	fi
 }
