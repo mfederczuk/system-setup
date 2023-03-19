@@ -1,6 +1,13 @@
 # Copyright (c) 2023 Michael Federczuk
 # SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
 
+# `goodnight` is an end-of-day function that performs the following steps:
+# 1. (if available) updates the installed packages via the command `pkgsup` (see file 'pkgsup.bash')
+# 2. (if available) creates a backup via the command `mkbak` (see <https://github.com/mfederczuk/mkbak>)
+# 3. (if present) executes the file '~/goodnight_tasks'
+# 4. (if available) updates the installed packages and shuts the system down via `upshut` (see file 'pkgsup.bash' again)
+#  4a. if `upshut` is not available, shuts the system down via `shutdown`
+
 if ! command -v trace_cmd > '/dev/null'; then
 	return
 fi
