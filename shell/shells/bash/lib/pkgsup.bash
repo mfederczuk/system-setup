@@ -164,7 +164,7 @@ if command -v pkgsup > '/dev/null'; then
 
 		local cmd || return
 
-		for cmd in dnf trace_cmd pkgsup; do
+		for cmd in trace_cmd pkgsup; do
 			if ! command -v "$cmd" > '/dev/null'; then
 				printf '%s: %s: program missing\n' "${FUNCNAME[0]}" "$cmd" >&2
 				return 27
