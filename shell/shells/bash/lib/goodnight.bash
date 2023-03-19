@@ -6,15 +6,68 @@ if ! command -v trace_cmd > '/dev/null'; then
 fi
 
 function goodnight() {
+	#region checking environment
+
 	if ! command -v trace_cmd > '/dev/null'; then
 		printf '%s: trace_cmd: program missing\n' "${FUNCNAME[0]}" >&2
 		return 27
 	fi
 
+	#region environment variables
+
+	if [ -z "${HOME-}" ]; then
+		printf '%s: HOME environment variable must not be unset or empty\n' "${FUNCNAME[0]}" >&2
+		exit 48
+	fi
+
+	if [[ ! "$HOME" =~ ^'/' ]]; then
+		printf '%s: %s: HOME environment variable must be an absolute path\n' "${FUNCNAME[0]}" "$HOME" >&2
+		exit 49
+	fi
+
+	#endregion
+
+	#endregion
+
 	if (($# > 0)); then
 		printf '%s: too many arguments: %i\n' "${FUNCNAME[0]}" $# >&2
 		return 4
 	fi
+
+	#region checking tasks executable
+
+	local tasks_executable_pathname || return
+	tasks_executable_pathname="$HOME/goodnight_tasks" || return
+	readonly tasks_executable_pathname
+
+	local tasks_executable_present || return
+	tasks_executable_present=false || return
+
+	if [ -e "$tasks_executable_pathname" ]; then
+		if [ ! -f "$tasks_executable_pathname" ]; then
+			local what || return
+			if [ -d "$tasks_executable_pathname" ]; then
+				what='file' || return
+			else
+				what='regular file' || return
+			fi
+			readonly what || return
+
+			printf '%s: %s: not a %s\n' "${FUNCNAME[0]}" "$tasks_executable_pathname" "$what" >&2
+			return 26
+		fi
+
+		if [ ! -x "$tasks_executable_pathname" ]; then
+			printf '%s: %s: permission denied: executable permissions missing\n' "${FUNCNAME[0]}" "$tasks_executable_pathname" >&2
+			return 77
+		fi
+
+		tasks_executable_present=true || return
+	fi
+
+	readonly tasks_executable_present
+
+	#endregion
 
 	cd || return
 
@@ -62,6 +115,16 @@ function goodnight() {
 		trace_cmd mkbak --output="$new_backup_archive_filename" || return
 
 		unset -v new_backup_archive_filename today || return
+	fi
+
+	if $tasks_executable_present; then
+		printf 'Executing goodnight tasks...\n' >&2 || return
+
+		"$tasks_executable_pathname" || return
+
+		printf 'Goodnight Tasks executed successfully\n' >&2 || return
+
+		rm -- "$tasks_executable_pathname" || return
 	fi
 
 	if command -v upshut > '/dev/null'; then
