@@ -85,7 +85,7 @@ function goodnight() {
 	if command -v mkbak > '/dev/null'; then
 		local today new_backup_archive_filename || return
 
-		today="$(date +'%Y-%m-%H')" || return
+		today="$(date +'%Y-%m-%d')" || return
 		new_backup_archive_filename="$today.tar.gz" || return
 
 		if [ -e "$new_backup_archive_filename" ]; then

@@ -219,8 +219,8 @@ function pretty_quote() {
 		quoted_str="$str"
 		quoted_str="${quoted_str//\'/\'\\\'\'}" #     'foo!bar'baz'         ->   '\''foo!bar'\''baz'\''
 		quoted_str="'$quoted_str'"              #  '\''foo!bar'\''baz'\''   ->  ''\''foo!bar'\''baz'\'''
-		quoted_str="${quoted_str#\'\'\\\'}"     # ''\''foo!bar'\''baz'\'''  ->      'foo!bar'\''baz'\'''
-		quoted_str="${quoted_str%\\\'\'\'}"     #     'foo!bar'\''baz'\'''  ->      'foo!bar'\''baz'
+		quoted_str="${quoted_str#"''"}"         # ''\''foo!bar'\''baz'\'''  ->    \''foo!bar'\''baz'\'''
+		quoted_str="${quoted_str%"''"}"         #   \''foo!bar'\''baz'\'''  ->    \''foo!bar'\''baz'\'
 	elif [[ ! "$str" =~ \' ]]; then
 		# as long as a string doesn't contain any single quotation marks, it can be quoted very easily by wrapping it
 		# into single quotation marks since they don't support any kind of escape characters
