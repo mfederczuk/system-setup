@@ -90,12 +90,6 @@ else
 	alias mkdir='mkdir -p'
 fi
 
-if __bash_aliases__is_program_gnu_coreutils rmdir; then
-	alias rmdir='rmdir --parents'
-else
-	alias rmdir='rmdir -p'
-fi
-
 #endregion
 
 #region permission utilities
