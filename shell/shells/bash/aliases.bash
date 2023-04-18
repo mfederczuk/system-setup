@@ -316,7 +316,7 @@ fi
 
 if command -v less > '/dev/null'; then
 	# -+X  ->  enable termcap initialization/deinitialization
-	alias less='less --quit-if-one-screen --ignore-case --quit-on-intr --LONG-PROMPT --LINE-NUMBERS --RAW-CONTROL-CHARS --chop-long-lines -+X'
+	alias less='less --quit-if-one-screen --ignore-case --LONG-PROMPT --LINE-NUMBERS --RAW-CONTROL-CHARS --chop-long-lines -+X'
 fi
 
 if command -v tree > '/dev/null'; then
