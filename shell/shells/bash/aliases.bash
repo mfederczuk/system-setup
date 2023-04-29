@@ -358,6 +358,10 @@ if command -v update-alternatives > '/dev/null'; then
 	alias update-alternatives-local='update-alternatives --altdir ~/.local/etc/alternatives --admindir ~/.local/var/lib/alternatives'
 fi
 
+if command -v mocp > '/dev/null'; then
+	alias mocp='mocp --theme=transparent-background'
+fi
+
 #endregion
 
 unset -f __bash_aliases__is_program_gnu_coreutils \
