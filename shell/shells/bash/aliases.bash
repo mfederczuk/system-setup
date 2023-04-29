@@ -327,7 +327,7 @@ fi
 
 if __bash_aliases__is_program_gnu_coreutils shred; then
 	# -u  ->  remove file after shredding
-	alias shred='shred -u --zero'
+	alias shred='shred -u --verbose --zero'
 fi
 
 if command -v youtube-dl > '/dev/null'; then
