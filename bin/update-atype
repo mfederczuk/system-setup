@@ -3,6 +3,9 @@
 # vim: syntax=sh
 # code: language=shellscript
 
+# Copyright (c) 2023 Michael Federczuk
+# SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
+
 case "$-" in
 	(*'i'*)
 		\command printf 'script was called interactively\n' >&2
