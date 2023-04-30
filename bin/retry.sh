@@ -6,6 +6,8 @@
 # Copyright (c) 2023 Michael Federczuk
 # SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
 
+#region preamble
+
 case "$-" in
 	(*'i'*)
 		\command printf 'script was called interactively\n' >&2
@@ -19,7 +21,6 @@ set -o nounset
 # enabling POSIX-compliant behavior for GNU programs
 export POSIXLY_CORRECT=yes POSIX_ME_HARDER=yes
 
-
 if [ "${0#/}" = "$0" ]; then
 	argv0="$0"
 else
@@ -27,6 +28,8 @@ else
 	argv0="${argv0%"$(printf '\nx')"}"
 fi
 readonly argv0
+
+#endregion
 
 #region args
 
@@ -86,6 +89,8 @@ shift 1
 
 #endregion
 
+#region main
+
 set +o errexit
 
 RETRY_NR=0 "$@"
@@ -109,3 +114,5 @@ while [ $retry_i -lt $max_retry_count ]; do
 done
 
 exit $exc
+
+#endregion

@@ -1,6 +1,6 @@
 #!/bin/sh
 # -*- sh -*-
-# vim: set syntax=sh
+# vim: syntax=sh
 # code: language=shellscript
 
 # Written in 2022 by Michael Federczuk <federczuk.michael@protonmail.com>
@@ -12,7 +12,7 @@
 # You should have received a copy of the CC0 Public Domain Dedication along
 # with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-# <https://gist.github.com/mfederczuk/14a6937d022d736a0a5fe7f8c2d9a2c2/035ed53e8d134b515cf7f59102cb3606e4bc1f74>
+# <https://gist.github.com/mfederczuk/14a6937d022d736a0a5fe7f8c2d9a2c2/de50316d4635e02a3c796b8f66c71fe78e03d064>
 
 set -o errexit
 set -o nounset

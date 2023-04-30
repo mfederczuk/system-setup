@@ -6,6 +6,8 @@
 # Copyright (c) 2023 Michael Federczuk
 # SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
 
+#region preamble
+
 case "$-" in
 	(*'i'*)
 		\command printf 'script was called interactively\n' >&2
@@ -19,10 +21,8 @@ set -o nounset
 # enabling POSIX-compliant behavior for GNU programs
 export POSIXLY_CORRECT=yes POSIX_ME_HARDER=yes
 
-
 # asserts that we're in a repository and at least one commit exists
 git --no-pager show 1> '/dev/null'
-
 
 if [ -n "${GIT_EXEC_PATH-}" ]; then
 	# when executing script through git - i.e.: `git <command>`
@@ -42,6 +42,9 @@ else
 fi
 readonly argv0
 
+#endregion
+
+#region main
 
 HEAD_commit_subject="$(git --no-pager show --no-patch --pretty='format:%s' HEAD)"
 readonly HEAD_commit_subject
@@ -82,3 +85,5 @@ readonly git_commit_date_option
 
 
 git commit --amend --no-edit $git_commit_date_option "$@"
+
+#endregion

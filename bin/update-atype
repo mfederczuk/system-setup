@@ -3,6 +3,11 @@
 # vim: syntax=sh
 # code: language=shellscript
 
+# Copyright (c) 2023 Michael Federczuk
+# SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
+
+#region preamble
+
 case "$-" in
 	(*'i'*)
 		\command printf 'script was called interactively\n' >&2
@@ -16,7 +21,6 @@ set -o nounset
 # enabling POSIX-compliant behavior for GNU programs
 export POSIXLY_CORRECT=yes POSIX_ME_HARDER=yes
 
-
 if [ "${0#/}" = "$0" ]; then
 	argv0="$0"
 else
@@ -25,12 +29,18 @@ else
 fi
 readonly argv0
 
+#endregion
+
+#region args
 
 if [ $# -gt 0 ]; then
 	printf '%s: too many arguments: %i\n' "$argv0" $# >&2
 	exit 4
 fi
 
+#endregion
+
+#region main
 
 root_dir_pathname="$(dirname -- "$0" && printf x)"
 root_dir_pathname="${root_dir_pathname%"$(printf '\nx')"}"
@@ -64,5 +74,7 @@ sed -e s%'<\(https://gist.github.com/mfederczuk/14a6937d022d736a0a5fe7f8c2d9a2c2
 	"$tmp_repo_dir_pathname/atype" > "$root_dir_pathname/atype.bash"
 
 chmod +x "$root_dir_pathname/atype.bash"
+
+#endregion
 
 #endregion
