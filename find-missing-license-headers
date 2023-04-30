@@ -1,0 +1,217 @@
+#!/bin/bash
+# -*- sh -*-
+# vim: syntax=sh
+# code: language=shellscript
+
+# Copyright (c) 2023 Michael Federczuk
+# SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
+
+#region preamble
+
+case "$-" in
+	(*'i'*)
+		if \command test -n "${BASH_VERSION-}"; then
+			# using `eval` here in case a non-Bash shell tries to parse this branch even if the condition is false
+			\command eval "\\command printf '%s: ' \"\${BASH_SOURCE[0]}\" >&2"
+		fi
+
+		\command printf 'script was called interactively\n' >&2
+		return 124
+		;;
+esac
+
+set -o errexit
+set -o nounset
+
+# enabling POSIX-compliant behavior for GNU programs
+export POSIXLY_CORRECT=yes POSIX_ME_HARDER=yes
+
+if [ -z "${BASH_VERSION-}" ]; then
+	if [ "${0#/}" = "$0" ]; then
+		argv0="$0"
+	else
+		argv0="$(basename -- "$0" && printf x)"
+		argv0="${argv0%"$(printf '\nx')"}"
+	fi
+	readonly argv0
+
+	printf '%s: GNU Bash is required for this script\n' "$argv0" >&2
+	exit 1
+fi
+
+declare argv0
+if [[ ! "$0" =~ ^'/' ]]; then
+	argv0="$0"
+else
+	argv0="$(basename -- "$0" && printf x)"
+	argv0="${argv0%$'\nx'}"
+fi
+readonly argv0
+
+#endregion
+
+if ! command -v git > '/dev/null'; then
+	printf '%s: git: program missing\n' "$argv0" >&2
+	exit 27
+fi
+
+#region args
+
+if (($# > 0)); then
+	printf '%s: too many arguments: %i\n' "$argv0" $# >&2
+	exit 4
+fi
+
+#endregion
+
+#region main
+
+declare root_dir_pathname
+root_dir_pathname="$(dirname -- "$0" && printf x)"
+root_dir_pathname="${root_dir_pathname%$'\nx'}"
+readonly root_dir_pathname
+
+#region ignored pathnames
+
+declare -a ignored_pathnames
+ignored_pathnames=(
+	'COPYING.txt'
+
+	# verbatim copies
+	'LICENSES/Apache-2.0.txt'
+	'LICENSES/CC0-1.0.txt'
+	'LICENSES/CC-BY-SA-4.0.txt'
+	'LICENSES/MPL-2.0.txt'
+
+	'CODE_OF_CONDUCT.md' # copied from <https://www.contributor-covenant.org/version/2/1/code_of_conduct/code_of_conduct.md>
+
+	# already contain license header comments
+	'bin/atype.bash'
+	'shell/shells/bash/completions/adb.bash'
+	'shell/shells/bash/completions/gradle.bash'
+)
+readonly ignored_pathnames
+
+function is_ignored_pathname() {
+	local pathname ignored_pathname || return
+	pathname="$1" || return
+	readonly pathname || return
+
+	for ignored_pathname in "${ignored_pathnames[@]}"; do
+		if [ "$ignored_pathname" = "$pathname" ]; then
+			return 0
+		fi
+	done
+
+	return 32
+}
+
+#endregion
+
+declare problems_exist
+problems_exist=false
+
+declare -i exc spdx_short_form_identifier_count copyright_notices_count
+
+declare license_is_public_domain
+
+while read -d '' -r pathname; do
+	if is_ignored_pathname "$pathname"; then
+		continue
+	fi
+
+	#region SPDX short-form identifiers
+
+	exc=0
+	spdx_short_form_identifier_count=$(grep -Ec -- 'SPDX-License-Identifier:[[:space:]]*[^[:space:]]+' "$pathname") ||
+		exc=$?
+
+	if ((exc > 1)); then
+		exit $exc
+	fi
+
+	case $spdx_short_form_identifier_count in
+		(0)
+			problems_exist=true
+			printf "File '%s' is missing an SPDX short-form identifier.\n" "$pathname" >&2
+			continue
+			;;
+		(1)
+			# ok
+			;;
+		(*)
+			problems_exist=true
+			printf "File '%s' has more than one SPDX short-form identifier.\n" "$pathname" >&2
+			continue
+			;;
+	esac
+
+	#endregion
+
+	#region copyright notices
+
+	exc=0
+	copyright_notices_count=$(grep -Ec -- 'Copyright[[:space:]]*\(c\)' "$pathname") ||
+		exc=$?
+
+	if ((exc > 1)); then
+		exit $exc
+	fi
+
+
+	exc=0
+	grep -Eq -- 'SPDX-License-Identifier:[[:space:]]*CC0-1\.0' "$pathname" ||
+		exc=$?
+
+	case $exc in
+		(0)
+			license_is_public_domain=true
+			;;
+		(1)
+			license_is_public_domain=false
+			;;
+		(*)
+			exit $exc
+			;;
+	esac
+
+
+	case $copyright_notices_count in
+		(0)
+			if ! $license_is_public_domain; then
+				problems_exist=true
+				printf "File '%s' is missing a copyright notice.\n" "$pathname" >&2
+				continue
+			fi
+			;;
+		(1)
+			if $license_is_public_domain; then
+				problems_exist=true
+				printf "File '%s' is both published into the public domain and has a copyright notice.\n" "$pathname" >&2
+				continue
+			fi
+			;;
+		(*)
+			problems_exist=true
+			printf "File '%s' has more than one copyright notice.\n" "$pathname" >&2
+			continue
+			;;
+	esac
+
+	#endregion
+
+done < <(git -C "$root_dir_pathname" ls-tree -rz --name-only HEAD)
+
+unset -v license_is_public_domain
+unset -v copyright_notices_count spdx_short_form_identifier_count exc
+
+readonly problems_exist
+
+if $problems_exist; then
+	exit 32
+fi
+
+printf 'No license header problems.\n' >&2
+exit 0
+
+#endregion

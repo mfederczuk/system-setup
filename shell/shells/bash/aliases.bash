@@ -90,12 +90,6 @@ else
 	alias mkdir='mkdir -p'
 fi
 
-if __bash_aliases__is_program_gnu_coreutils rmdir; then
-	alias rmdir='rmdir --parents'
-else
-	alias rmdir='rmdir -p'
-fi
-
 #endregion
 
 #region permission utilities
@@ -311,7 +305,7 @@ fi
 
 if command -v less > '/dev/null'; then
 	# -+X  ->  enable termcap initialization/deinitialization
-	alias less='less --quit-if-one-screen --ignore-case --quit-on-intr --LONG-PROMPT --LINE-NUMBERS --RAW-CONTROL-CHARS --chop-long-lines -+X'
+	alias less='less --quit-if-one-screen --ignore-case --LONG-PROMPT --LINE-NUMBERS --RAW-CONTROL-CHARS --chop-long-lines -+X'
 fi
 
 if command -v tree > '/dev/null'; then
@@ -322,7 +316,7 @@ fi
 
 if __bash_aliases__is_program_gnu_coreutils shred; then
 	# -u  ->  remove file after shredding
-	alias shred='shred -u --zero'
+	alias shred='shred -u --verbose --zero'
 fi
 
 if command -v youtube-dl > '/dev/null'; then
@@ -351,6 +345,10 @@ fi
 
 if command -v update-alternatives > '/dev/null'; then
 	alias update-alternatives-local='update-alternatives --altdir ~/.local/etc/alternatives --admindir ~/.local/var/lib/alternatives'
+fi
+
+if command -v mocp > '/dev/null'; then
+	alias mocp='mocp --theme=transparent-background'
 fi
 
 #endregion
