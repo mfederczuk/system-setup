@@ -76,6 +76,7 @@ readonly root_dir_pathname
 declare -a ignored_pathnames
 ignored_pathnames=(
 	'COPYING.txt'
+	'find-missing-license-headers' # TODO: remove this from here and detect it from $0?
 
 	# verbatim copies
 	'LICENSES/Apache-2.0.txt'
@@ -116,7 +117,7 @@ declare -i exc spdx_short_form_identifier_count copyright_notices_count
 declare license_is_public_domain
 
 while read -d '' -r pathname; do
-	if is_ignored_pathname "$pathname"; then
+	if [ ! -e "$pathname" ] || is_ignored_pathname "$pathname"; then
 		continue
 	fi
 
