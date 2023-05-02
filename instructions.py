@@ -149,7 +149,7 @@ def read_instructions(source_dir_pathname: str, home: str, xdg_config_home: str)
 
     instructions: list[InstructionGroup] = []
 
-    with open(file_pathname, "r") as f:
+    with open(file_pathname, "r", encoding="utf8") as f:
         lineno: int = 0
 
         current_instruction_group: InstructionGroup | None = None
