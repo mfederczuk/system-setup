@@ -4,9 +4,9 @@
 # SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
 
 import os
-import shutil
 import sys
 
+from instr import fs
 from instructions import InstructionGroup, InstructionsReadError, Pathname, read_instructions
 
 # region environment variables
@@ -145,8 +145,8 @@ match command_name:
 
         for instruction_group in instruction_groups:
             for file_copy_instruction in instruction_group.file_copy_instructions:
-                os.makedirs(os.path.dirname(file_copy_instruction.target.pathname.value), exist_ok=True)
-                shutil.copy(file_copy_instruction.source.pathname.value, file_copy_instruction.target.pathname.value)
+                fs.mkdirs(Pathname(os.path.dirname(file_copy_instruction.target.pathname.value)))
+                fs.copy(source=file_copy_instruction.source.pathname, target=file_copy_instruction.target.pathname)
 
         print("\nDone.", file=sys.stderr)
 
@@ -237,10 +237,10 @@ match command_name:
         removed_count: int = 0
 
         for pathname in pathnames_to_remove:
-            if not os.path.exists(pathname):
+            if not fs.exists(Pathname(pathname)):
                 continue
 
-            os.remove(pathname)
+            fs.remove(Pathname(pathname))
             removed_count += 1
 
         print(f"\nDone. (removed {removed_count} file(s))", file=sys.stderr)

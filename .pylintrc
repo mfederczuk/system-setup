@@ -2,6 +2,9 @@
 
 [MASTER]
 
+# <https://stackoverflow.com/a/3065082/9581962>
+init-hook = "import sys; sys.path.append('.')"
+
 disable = missing-docstring
 
 max-line-length = 120

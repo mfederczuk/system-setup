@@ -5,6 +5,8 @@ import errno
 import os
 import re
 from dataclasses import dataclass
+
+from instr import fs
 from instr.pathname import Pathname
 
 
@@ -188,10 +190,10 @@ def _read_line(
 def read_instructions(source_dir_pathname: str, home: str, xdg_config_home: str) -> list[InstructionGroup]:
     file_pathname: str = os.path.join(source_dir_pathname, "Instructions.cfg")
 
-    if not os.path.exists(file_pathname):
+    if not fs.exists(Pathname(file_pathname)):
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_pathname)
 
-    if os.path.isdir(file_pathname):
+    if fs.is_directory(Pathname(file_pathname)):
         raise IsADirectoryError(errno.EISDIR, os.strerror(errno.EISDIR), file_pathname)
 
     instructions: list[InstructionGroup] = []
