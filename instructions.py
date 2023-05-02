@@ -204,7 +204,7 @@ def read_instructions(source_dir_pathname: str, home: str, xdg_config_home: str)
                     current_instruction_group.file_copy_instructions.append(file_copy_instruction)
                     continue
 
-                raise InstructionsReadError(file_pathname, lineno, "Invalid line in instruction definition")
+                raise InstructionsReadError(file_pathname, lineno, "Invalid line inside instruction group definition")
 
             match = re.match(r"^Include\s*\"(?P<pathname>[^\"]+)\"(\s*#.*)?$", line)
             if match is not None:
