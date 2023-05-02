@@ -112,7 +112,7 @@ match command_name:
                         Pathname.create_normalized(
                             os.path.join(
                                 dest_dir_pathname,
-                                os.path.relpath(file_copy_instruction.target.pathname.value, os.path.abspath(os.sep)),
+                                os.path.relpath(str(file_copy_instruction.target.pathname), os.path.abspath(os.sep)),
                             )
                         )
                     )
@@ -144,7 +144,7 @@ match command_name:
 
         for instruction_group in instruction_groups:
             for file_copy_instruction in instruction_group.file_copy_instructions:
-                fs.mkdirs(Pathname(os.path.dirname(file_copy_instruction.target.pathname.value)))
+                fs.mkdirs(Pathname(os.path.dirname(str(file_copy_instruction.target.pathname))))
                 fs.copy(source=file_copy_instruction.source.pathname, target=file_copy_instruction.target.pathname)
 
         print("\nDone.", file=proc.stderr)
@@ -202,7 +202,7 @@ match command_name:
 
         for instruction_group in instruction_groups:
             for file_copy_instruction in instruction_group.file_copy_instructions:
-                target: str = file_copy_instruction.target.pathname.value
+                target: str = str(file_copy_instruction.target.pathname)
 
                 if dest_dir_pathname != "":
                     target = os.path.join(

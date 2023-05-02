@@ -164,7 +164,7 @@ def _read_line(
                         Pathname.create_normalized(
                             os.path.join(
                                 os.path.basename(source_dir_pathname_to_include),
-                                file_copy_instruction.source.pathname.value,
+                                str(file_copy_instruction.source.pathname),
                             )
                         )
                     ),
