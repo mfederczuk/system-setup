@@ -134,10 +134,10 @@ class InstructionsReadError(Exception):
         self.msg = msg
 
 
-def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str) -> list[InstructionGroup]:
+def read_instructions(source_dir_pathname: str, home: str, xdg_config_home: str) -> list[InstructionGroup]:
     require_arg_of_type("source_dir_pathname", source_dir_pathname, str)
-    require_arg_of_type("HOME", HOME, str)
-    require_arg_of_type("XDG_CONFIG_HOME", XDG_CONFIG_HOME, str)
+    require_arg_of_type("home", home, str)
+    require_arg_of_type("xdg_config_home", xdg_config_home, str)
 
     file_pathname: str = os.path.join(source_dir_pathname, "Instructions.cfg")
 
@@ -183,14 +183,14 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
                         target_pathname_str = target_pathname_str.removeprefix("$HOME")
 
                         target_pathname_str = os.path.join(
-                            HOME,
+                            home,
                             os.path.relpath(target_pathname_str, os.path.abspath(os.sep)),
                         )
                     elif target_pathname_str.startswith("$XDG_CONFIG_HOME"):
                         target_pathname_str = target_pathname_str.removeprefix("$XDG_CONFIG_HOME")
 
                         target_pathname_str = os.path.join(
-                            XDG_CONFIG_HOME,
+                            xdg_config_home,
                             os.path.relpath(target_pathname_str, os.path.abspath(os.sep)),
                         )
 
@@ -212,8 +212,8 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
 
                 included_instructions: list[InstructionGroup] = read_instructions(
                     source_dir_pathname_to_include,
-                    HOME,
-                    XDG_CONFIG_HOME,
+                    home,
+                    xdg_config_home,
                 )
                 for instruction in included_instructions:
                     for (i, file_copy_instruction) in enumerate(instruction.file_copy_instructions):

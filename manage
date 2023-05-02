@@ -93,8 +93,8 @@ match command_name:
 
             instruction_groups = read_instructions(
                 source_dir_pathname=root_dir_pathname,
-                HOME=HOME,
-                XDG_CONFIG_HOME=XDG_CONFIG_HOME,
+                home=HOME,
+                xdg_config_home=XDG_CONFIG_HOME,
             )
         except FileNotFoundError as e:
             print(f"{sys.argv[0]}: {command_name}: {e.filename}: no such file", file=sys.stderr)
@@ -186,8 +186,8 @@ match command_name:
 
             instruction_groups = read_instructions(
                 source_dir_pathname=root_dir_pathname,
-                HOME=HOME,
-                XDG_CONFIG_HOME=XDG_CONFIG_HOME,
+                home=HOME,
+                xdg_config_home=XDG_CONFIG_HOME,
             )
         except FileNotFoundError as e:
             print(f"{sys.argv[0]}: {command_name}: {e.filename}: no such file", file=sys.stderr)
