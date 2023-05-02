@@ -5,34 +5,6 @@ import errno
 import os
 import re
 from dataclasses import dataclass
-from typing import Any
-
-
-def require_arg_of_type(arg_name: str, actual_value: Any, expected_type: type):
-    if not isinstance(arg_name, str):  # type: ignore
-        raise TypeError(f"Argument 'arg_name' must be of type {str.__name__}")
-
-    if not isinstance(expected_type, type):
-        raise TypeError(f"Argument 'expected_type' must be of type {type.__name__}")
-
-    if isinstance(actual_value, expected_type):
-        return
-
-    raise TypeError(f"Argument '{arg_name}' must be of type {expected_type.__name__}")
-
-
-def require_arg_of_list_type(arg_name: str, actual_value: Any, expected_item_type: type):
-    require_arg_of_type("expected_item_type", expected_item_type, type)
-
-    require_arg_of_type(arg_name, actual_value, list)
-
-    for (i, item) in enumerate(actual_value):
-        if isinstance(item, expected_item_type):
-            continue
-
-        msg: str = (f"Item at index {i} of {list.__name__} argument '{arg_name}'" +
-                    f"must be of type {expected_item_type.__name__}")
-        raise ValueError(msg)
 
 
 @dataclass(frozen=True)
@@ -41,8 +13,6 @@ class Pathname:
     value: str
 
     def __post_init__(self):
-        require_arg_of_type("value", self.value, str)
-
         if self.value == "":
             raise ValueError("Empty pathnames are invalid")
 
@@ -79,12 +49,7 @@ class File:
 
     pathname: Pathname
 
-    def __post_init__(self):
-        require_arg_of_type("pathname", self.pathname, Pathname)
-
     def with_pathname(self, new_pathname: Pathname) -> "File":
-        require_arg_of_type("new_pathname", new_pathname, Pathname)
-
         return File(new_pathname)
 
 
@@ -94,13 +59,6 @@ class FileCopyInstruction:
     source: File
     target: File
 
-    def __init__(self, source: File, target: File):
-        require_arg_of_type("source", source, File)
-        require_arg_of_type("target", target, File)
-
-        self.source = source
-        self.target = target
-
 
 @dataclass
 class InstructionGroup:
@@ -109,9 +67,6 @@ class InstructionGroup:
     file_copy_instructions: list[FileCopyInstruction]
 
     def __init__(self, name: str, file_copy_instructions: list[FileCopyInstruction]):
-        require_arg_of_type("name", name, str)
-        require_arg_of_list_type("file_copy_instructions", file_copy_instructions, FileCopyInstruction)
-
         self.name = name
         self.file_copy_instructions = file_copy_instructions.copy()
 
@@ -123,10 +78,6 @@ class InstructionsReadError(Exception):
     msg: str
 
     def __init__(self, pathname: str, lineno: int, msg: str):
-        require_arg_of_type("pathname", pathname, str)
-        require_arg_of_type("lineno", lineno, int)
-        require_arg_of_type("msg", msg, str)
-
         super().__init__(pathname, lineno, msg)
 
         self.pathname = pathname
@@ -271,10 +222,6 @@ def _read_line(
 
 
 def read_instructions(source_dir_pathname: str, home: str, xdg_config_home: str) -> list[InstructionGroup]:
-    require_arg_of_type("source_dir_pathname", source_dir_pathname, str)
-    require_arg_of_type("home", home, str)
-    require_arg_of_type("xdg_config_home", xdg_config_home, str)
-
     file_pathname: str = os.path.join(source_dir_pathname, "Instructions.cfg")
 
     if not os.path.exists(file_pathname):
