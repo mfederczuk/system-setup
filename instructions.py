@@ -9,13 +9,13 @@ from typing import Any
 
 
 def require_arg_of_type(arg_name: str, actual_value: Any, expected_type: type):
-    if type(arg_name) != str:
+    if not isinstance(arg_name, str):  # type: ignore
         raise TypeError(f"Argument 'arg_name' must be of type {str.__name__}")
 
-    if type(expected_type) != type:
+    if not isinstance(expected_type, type):
         raise TypeError(f"Argument 'expected_type' must be of type {type.__name__}")
 
-    if type(actual_value) == expected_type:
+    if isinstance(actual_value, expected_type):
         return
 
     raise TypeError(f"Argument '{arg_name}' must be of type {expected_type.__name__}")
@@ -27,7 +27,7 @@ def require_arg_of_list_type(arg_name: str, actual_value: Any, expected_item_typ
     require_arg_of_type(arg_name, actual_value, list)
 
     for (i, item) in enumerate(actual_value):
-        if type(item) == expected_item_type:
+        if isinstance(item, expected_item_type):
             continue
 
         msg: str = (f"Item at index {i} of {list.__name__} argument '{arg_name}'" +
