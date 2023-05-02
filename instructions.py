@@ -1,10 +1,10 @@
 # Copyright (c) 2023 Michael Federczuk
 # SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
 
-from dataclasses import dataclass
-import os
 import errno
+import os
 import re
+from dataclasses import dataclass
 
 
 def require_arg_of_type(arg_name: str, actual_value: any, expected_type: type):

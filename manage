@@ -7,7 +7,7 @@ import os
 import shutil
 import sys
 
-from instructions import InstructionGroup, InstructionsReadError, read_instructions, Pathname
+from instructions import InstructionGroup, InstructionsReadError, Pathname, read_instructions
 
 # region environment variables
 
