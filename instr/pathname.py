@@ -19,6 +19,9 @@ class Pathname:
         if self._value == "":
             raise ValueError("Pathname must not be empty")
 
+        if "\0" in self._value:
+            raise ValueError("Pathname must not contain any NUL characters")
+
     @staticmethod
     def create_normalized(value: str) -> Pathname:
         return Pathname(value).normalized()
