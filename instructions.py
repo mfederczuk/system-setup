@@ -164,9 +164,9 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
 
             match: re.Match | None = None
 
-            if current_instruction_group != None:
+            if current_instruction_group is not None:
                 match = re.match(r"^\}(\s*#.*)?$", line)
-                if match != None:
+                if match is not None:
                     instructions.append(current_instruction_group)
                     current_instruction_group = None
                     continue
@@ -175,7 +175,7 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
                     r"^Copy\s+File\s*\"(?P<source_pathname>[^\"]+)\"\s*To\s+File\s*\"(?P<target_pathname>[^\"]+)\"(\s*#.*)?$",
                     line,
                 )
-                if match != None:
+                if match is not None:
                     source_pathname: Pathname = Pathname.create_normalized(match.group("source_pathname"))
 
                     target_pathname_str: str = match.group("target_pathname")
@@ -207,7 +207,7 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
                 raise InstructionsReadError(file_pathname, lineno, "Invalid line in instruction definition")
 
             match = re.match(r"^Include\s*\"(?P<pathname>[^\"]+)\"(\s*#.*)?$", line)
-            if match != None:
+            if match is not None:
                 source_dir_pathname_to_include: str = os.path.join(source_dir_pathname, match.group("pathname"))
 
                 included_instructions: list[InstructionGroup] = read_instructions(
@@ -234,7 +234,7 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
                 continue
 
             match = re.match(r"^Group\s*\"(?P<name>[^\"]+)\"\s*\{(\s*#.*)?$", line)
-            if match != None:
+            if match is not None:
                 name: str = match.group("name")
                 current_instruction_group = InstructionGroup(name, [])
                 continue
