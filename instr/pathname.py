@@ -15,7 +15,7 @@ class Pathname:
 
     _value: str
 
-    def __post_init__(self):
+    def __post_init__(self: Pathname):
         if self._value == "":
             raise ValueError("Empty pathnames are invalid")
 
@@ -23,7 +23,7 @@ class Pathname:
     def create_normalized(value: str) -> Pathname:
         return Pathname(value).normalized()
 
-    def normalized(self) -> Pathname:
+    def normalized(self: Pathname) -> Pathname:
         # note: not using `os.path.normpath()` because it also removes '..' components, which is wrong; it changes the
         #       behavior of the path resolution
 
@@ -43,5 +43,5 @@ class Pathname:
 
         return Pathname(normalied_value)
 
-    def __str__(self) -> str:
+    def __str__(self: Pathname) -> str:
         return self._value
