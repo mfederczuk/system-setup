@@ -47,4 +47,8 @@ class Pathname:
         return Pathname(normalied_value)
 
     def __str__(self: Pathname) -> str:
+        """
+        Return `str(self)`; the underlying string value of this pathname.
+        """
+
         return self._value
