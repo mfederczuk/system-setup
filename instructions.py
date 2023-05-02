@@ -162,7 +162,7 @@ def read_instructions(source_dir_pathname: str, home: str, xdg_config_home: str)
             if line == "" or line.startswith("#"):
                 continue
 
-            match: re.Match | None = None
+            match: re.Match[str] | None = None
 
             if current_instruction_group is not None:
                 match = re.match(r"^\}(\s*#.*)?$", line)
