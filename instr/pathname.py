@@ -17,7 +17,7 @@ class Pathname:
 
     def __post_init__(self: Pathname):
         if self._value == "":
-            raise ValueError("Empty pathnames are invalid")
+            raise ValueError("Pathname must not be empty")
 
     @staticmethod
     def create_normalized(value: str) -> Pathname:
