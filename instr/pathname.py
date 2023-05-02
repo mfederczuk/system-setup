@@ -6,6 +6,10 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class Pathname:
+    """
+    Represents a valid abstract POSIX filesystem pathname.
+    "Abstract" because no method of this class ever queries the filesystem.
+    """
 
     _value: str
 
