@@ -1,6 +1,8 @@
 # Copyright (c) 2023 Michael Federczuk
 # SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
 
+from __future__ import annotations
+
 from dataclasses import dataclass
 
 
@@ -18,10 +20,10 @@ class Pathname:
             raise ValueError("Empty pathnames are invalid")
 
     @staticmethod
-    def create_normalized(value: str) -> "Pathname":
+    def create_normalized(value: str) -> Pathname:
         return Pathname(value).normalized()
 
-    def normalized(self) -> "Pathname":
+    def normalized(self) -> Pathname:
         # note: not using `os.path.normpath()` because it also removes '..' components, which is wrong; it changes the
         #       behavior of the path resolution
 
