@@ -148,7 +148,7 @@ match command_name:
                 os.makedirs(os.path.dirname(file_copy_instruction.target.pathname.value), exist_ok=True)
                 shutil.copy(file_copy_instruction.source.pathname.value, file_copy_instruction.target.pathname.value)
 
-        print(f"\nDone.", file=sys.stderr)
+        print("\nDone.", file=sys.stderr)
 
     case "uninstall":
         # region args
