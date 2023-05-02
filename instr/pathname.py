@@ -24,6 +24,12 @@ class Pathname:
 
     @staticmethod
     def create_normalized(value: str) -> Pathname:
+        """
+        Return a normalized pathname of the given string.
+
+        This is a convenience function for `Pathname(value).normalized()`.
+        """
+
         return Pathname(value).normalized()
 
     def normalized(self: Pathname) -> Pathname:
