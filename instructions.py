@@ -26,9 +26,7 @@ def require_arg_of_list_type(arg_name: str, actual_value: Any, expected_item_typ
 
     require_arg_of_type(arg_name, actual_value, list)
 
-    for i in range(0, len(actual_value)):
-        item: Any = actual_value[i]
-
+    for (i, item) in enumerate(actual_value):
         if type(item) == expected_item_type:
             continue
 
@@ -218,9 +216,7 @@ def read_instructions(source_dir_pathname: str, HOME: str, XDG_CONFIG_HOME: str)
                     XDG_CONFIG_HOME,
                 )
                 for instruction in included_instructions:
-                    for i in range(0, len(instruction.file_copy_instructions)):
-                        file_copy_instruction: FileCopyInstruction = instruction.file_copy_instructions[i]
-
+                    for (i, file_copy_instruction) in enumerate(instruction.file_copy_instructions):
                         instruction.file_copy_instructions[i] = FileCopyInstruction(
                             source=File(
                                 Pathname.create_normalized(
