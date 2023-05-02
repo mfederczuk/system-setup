@@ -149,12 +149,12 @@ def read_instructions(source_dir_pathname: str, home: str, xdg_config_home: str)
 
     instructions: list[InstructionGroup] = []
 
-    with open(file_pathname, "r", encoding="utf8") as f:
+    with open(file_pathname, "r", encoding="utf8") as file_io_wrapper:
         lineno: int = 0
 
         current_instruction_group: InstructionGroup | None = None
 
-        for line in f:
+        for line in file_io_wrapper:
             lineno += 1
 
             line = line.strip()
