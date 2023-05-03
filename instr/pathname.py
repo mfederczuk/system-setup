@@ -54,6 +54,14 @@ class Pathname:
             raise ValueError("Pathname must not contain any NUL characters")
 
     @staticmethod
+    def create_relative_of_component(component: PathnameComponent) -> Pathname:
+        """
+        Return a relative pathname that has a single component and no trailing component separator.
+        """
+
+        return Pathname(str(component))
+
+    @staticmethod
     def create_normalized(value: str) -> Pathname:
         """
         Return a normalized pathname of the given string.
@@ -80,6 +88,30 @@ class Pathname:
         """
 
         return not self.is_absolute()
+
+    def appended_with(self: Pathname, *suffixes: Pathname | PathnameComponent) -> Pathname:
+        """
+        Return this pathname, appended with all given suffixes.
+
+        Between all items (which are this pathname + all suffixes), a component separator is inserted if neither
+        the left item has a trailing separator nor the right item has a leading separator, though none of the items will
+        be normalized; repeating component separators are retained.
+
+        This operation is sometimes also referred to as "joining" pathnames together, though this term was consciously
+        not chosen because the behavior of `os.path.join` is slightly different than that of this function's.
+        """
+
+        resulting_pathname_str: str = str(self)
+
+        for suffix in suffixes:
+            if isinstance(suffix, PathnameComponent):
+                suffix = Pathname.create_relative_of_component(suffix)
+
+            resulting_pathname_str = resulting_pathname_str.removesuffix(PathnameComponent.separator)
+            resulting_pathname_str += PathnameComponent.separator
+            resulting_pathname_str += str(suffix).removeprefix(PathnameComponent.separator)
+
+        return Pathname(resulting_pathname_str)
 
     def normalized(self: Pathname) -> Pathname:
         # note: not using `os.path.normpath()` because it also removes '..' components, which is wrong; it changes the
