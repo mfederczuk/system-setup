@@ -4,9 +4,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import final
 
 
 @dataclass(frozen=True)
+@final
 class Pathname:
     """
     Represents a valid abstract POSIX filesystem pathname.
