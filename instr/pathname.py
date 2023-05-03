@@ -4,7 +4,36 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import final
+from typing import ClassVar, final
+
+
+@dataclass(frozen=True)
+@final
+class PathnameComponent:
+    """
+    Represents a valid abstract POSIX filesystem pathname component.
+    """
+
+    separator: ClassVar[str] = "/"
+
+    _value: str
+
+    def __post_init__(self: PathnameComponent) -> None:
+        if self._value == "":
+            raise ValueError("Pathname component must not be empty")
+
+        if "\0" in self._value:
+            raise ValueError("Pathname component must not contain any NUL characters")
+
+        if PathnameComponent.separator in self._value:
+            raise ValueError("Pathname component must not contain any component separator")
+
+    def __str__(self: PathnameComponent) -> str:
+        """
+        Return `str(self)`; the underlying string value of this pathname.
+        """
+
+        return self._value
 
 
 @dataclass(frozen=True)

@@ -7,7 +7,7 @@ import re
 from dataclasses import dataclass
 
 from instr import fs
-from instr.pathname import Pathname
+from instr.pathname import Pathname, PathnameComponent
 
 
 @dataclass(frozen=True)
@@ -187,8 +187,11 @@ def _read_line(
 # endregion
 
 
+_INSTRUCTIONS_FILE_PATHNAME_COMPONENT: PathnameComponent = PathnameComponent("Instructions.cfg")
+
+
 def read_instructions(source_dir_pathname: str, home: str, xdg_config_home: str) -> list[InstructionGroup]:
-    file_pathname: str = os.path.join(source_dir_pathname, "Instructions.cfg")
+    file_pathname: str = os.path.join(source_dir_pathname, str(_INSTRUCTIONS_FILE_PATHNAME_COMPONENT))
 
     if not fs.exists(Pathname(file_pathname)):
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_pathname)
