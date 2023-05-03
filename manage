@@ -9,28 +9,49 @@
 import os
 
 from instr import fs, proc
+from instr.pathname import PathnameComponent
 from instructions import InstructionGroup, InstructionsReadError, Pathname, read_instructions
 
 # region environment variables
 
-HOME: str = proc.environ.get("HOME", default="")
+# region HOME
 
-if HOME == "":
+home_str: str = proc.environ.get("HOME", default="")
+
+if home_str == "":
     print(f"{proc.argv[0]}: HOME environment variable must not be unset nor empty", file=proc.stderr)
     proc.exit(48)
 
-if not os.path.isabs(HOME):
-    print(f"{proc.argv[0]}: {HOME}: HOME environment variable must be an absolute pathname", file=proc.stderr)
+home_pathname: Pathname = Pathname.create_normalized(home_str)
+del home_str
+
+if home_pathname.is_relative():
+    print(f"{proc.argv[0]}: {home_pathname}: HOME environment variable must be an absolute pathname", file=proc.stderr)
     proc.exit(49)
 
-XDG_CONFIG_HOME: str = proc.environ.get("XDG_CONFIG_HOME", default=os.path.join(HOME, ".config"))
+# endregion
 
-if not os.path.isabs(XDG_CONFIG_HOME):
+# region XDG_CONFIG_HOME
+
+xdg_config_home_str: str = proc.environ.get("XDG_CONFIG_HOME", default="")
+
+xdg_config_home_pathname: Pathname
+
+if xdg_config_home_str != "":
+    xdg_config_home_pathname = Pathname.create_normalized(xdg_config_home_str)
+else:
+    xdg_config_home_pathname = home_pathname.appended_with(PathnameComponent(".config"))
+del xdg_config_home_str
+
+if xdg_config_home_pathname.is_relative():
     print(
-        f"{proc.argv[0]}: {XDG_CONFIG_HOME}: XDG_CONFIG_HOME environment variable must be an absolute pathname",
+        f"{proc.argv[0]}: {xdg_config_home_pathname}: " +
+        "XDG_CONFIG_HOME environment variable must be an absolute pathname",
         file=proc.stderr,
     )
     proc.exit(50)
+
+# endregion
 
 # endregion
 
@@ -95,8 +116,8 @@ match command_name:
 
             instruction_groups = read_instructions(
                 source_dir_pathname=Pathname(root_dir_pathname),
-                home=Pathname(HOME),
-                xdg_config_home=Pathname(XDG_CONFIG_HOME),
+                home=home_pathname,
+                xdg_config_home=xdg_config_home_pathname,
             )
         except FileNotFoundError as e:
             print(f"{proc.argv[0]}: {command_name}: {e.filename}: no such file", file=proc.stderr)
@@ -188,8 +209,8 @@ match command_name:
 
             instruction_groups = read_instructions(
                 source_dir_pathname=Pathname(root_dir_pathname),
-                home=Pathname(HOME),
-                xdg_config_home=Pathname(XDG_CONFIG_HOME),
+                home=home_pathname,
+                xdg_config_home=xdg_config_home_pathname,
             )
         except FileNotFoundError as e:
             print(f"{proc.argv[0]}: {command_name}: {e.filename}: no such file", file=proc.stderr)
