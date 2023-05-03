@@ -101,6 +101,60 @@ class Pathname:
 
         return not self.is_absolute()
 
+    def basename(self: Pathname) -> PathnameComponent | None:
+        """
+        Return the last component (a.k.a.: "basename" or "filename") of this pathname as an instance of
+        `PathnameComponent`.
+        If this pathname contains no components (i.e.: it is the root pathname), then `None` is returned.
+        """
+
+        pathname_str: str = str(self)
+        i: int = len(pathname_str) - 1
+
+        while i >= 0 and pathname_str[i] == PathnameComponent.separator:
+            i -= 1
+
+        if i < 0:
+            return None
+
+        end_i: int = i
+
+        while i >= 0 and pathname_str[i] != PathnameComponent.separator:
+            i -= 1
+
+        return PathnameComponent(pathname_str[i + 1:end_i + 1])
+
+    def dirname(self: Pathname) -> Pathname:
+        """
+        Return this pathname without the last component and no trailing component separator.
+
+        If this pathname is relative and contains only one component, then a relative pathname with just a single `.`
+        component and no trailing component separator is returned
+
+        If this pathname contains no components (i.e.: it is the root pathname), then it is returned with no
+        modifications.
+        """
+
+        pathname_str: str = str(self)
+        i: int = len(pathname_str) - 1
+
+        while i >= 0 and pathname_str[i] == PathnameComponent.separator:
+            i -= 1
+
+        if i < 0:
+            return self
+
+        while i >= 0 and pathname_str[i] != PathnameComponent.separator:
+            i -= 1
+
+        if i < 0:
+            return Pathname(".")
+
+        while i >= 1 and pathname_str[i] == PathnameComponent.separator:
+            i -= 1
+
+        return Pathname(pathname_str[0:i + 1])
+
     def appended_with(self: Pathname, *suffixes: Pathname | PathnameComponent) -> Pathname:
         """
         Return this pathname, appended with all given suffixes.
