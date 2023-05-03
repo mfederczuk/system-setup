@@ -7,6 +7,18 @@ from dataclasses import dataclass
 from typing import ClassVar, final
 
 
+def _squeeze(base_str: str, char: str) -> str:
+    if len(char) != 1:
+        raise ValueError("Value to squeeze must be a single character (string with length of 1)")
+
+    resulting_str: str = base_str
+
+    while f"{char}{char}" in resulting_str:
+        resulting_str = resulting_str.replace(f"{char}{char}", char)
+
+    return resulting_str
+
+
 @dataclass(frozen=True)
 @final
 class PathnameComponent:
@@ -114,24 +126,45 @@ class Pathname:
         return Pathname(resulting_pathname_str)
 
     def normalized(self: Pathname) -> Pathname:
-        # note: not using `os.path.normpath()` because it also removes '..' components, which is wrong; it changes the
-        #       behavior of the path resolution
+        """
+        Return a normalized form of this pathname.
+        A normalized pathname retains the path resolution behavior of the original pathname.
 
-        normalied_value: str = self._value
+        Normalization is done by squeezing all repeating occurrences of the component separator to a single one and
+        removing all `.` components.
 
-        while "/./" in normalied_value:
-            normalied_value = normalied_value.replace("/./", "/")
+        If the resulting pathname after the normalization would be empty (which will never happen if
+        the original pathname is absolute), then a relative pathname with just a single `.` component and no trailing
+        component separator is returned.
 
-        while "//" in normalied_value:
-            normalied_value = normalied_value.replace("//", "/")
+        If the previous paragraph is not the case and the original pathname has a trailing `.` component, then
+        the returned pathname will have a trailing component separator.
 
-        if normalied_value.startswith("./") and len(self._value) > 2:
-            normalied_value = normalied_value.removeprefix("./")
+        Note that `..` components are NOT removed. This is because doing so would change the path resolution behavior of
+        the pathname if the component directly preceding the `..` component is a symbolic link.
+        """
 
-        if normalied_value.endswith("/."):
-            normalied_value = normalied_value.removesuffix(".")
+        normalized_pathname_str: str = str(self)
 
-        return Pathname(normalied_value)
+        normalized_pathname_str = _squeeze(normalized_pathname_str, PathnameComponent.separator)
+
+        # removing all non-leading and -trailing '.' components
+        while f"{PathnameComponent.separator}.{PathnameComponent.separator}" in normalized_pathname_str:
+            normalized_pathname_str = normalized_pathname_str.replace(
+                f"{PathnameComponent.separator}.{PathnameComponent.separator}",
+                PathnameComponent.separator,
+            )
+
+        normalized_pathname_str = normalized_pathname_str.removeprefix(f".{PathnameComponent.separator}")
+
+        # removing trailing '.' component (trailing component separator is retained)
+        if normalized_pathname_str.endswith(f"{PathnameComponent.separator}."):
+            normalized_pathname_str = normalized_pathname_str[0:-1]
+
+        if normalized_pathname_str == "":
+            normalized_pathname_str = "."
+
+        return Pathname(normalized_pathname_str)
 
     def __str__(self: Pathname) -> str:
         """
