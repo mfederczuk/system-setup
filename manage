@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# -*- python -*-
+# vim: syntax=python
+# code: language=python
 
 # Copyright (c) 2023 Michael Federczuk
 # SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
