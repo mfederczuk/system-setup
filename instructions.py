@@ -39,11 +39,11 @@ class InstructionGroup:
 
 class InstructionsReadError(Exception):
 
-    pathname: str
+    pathname: Pathname
     lineno: int
     msg: str
 
-    def __init__(self, pathname: str, lineno: int, msg: str):
+    def __init__(self, pathname: Pathname, lineno: int, msg: str):
         super().__init__(pathname, lineno, msg)
 
         self.pathname = pathname
@@ -93,9 +93,9 @@ class _ReadFailure:
 def _read_line(
     state: _InstructionsReadState,
     line: str,
-    source_dir_pathname: str,
-    home: str,
-    xdg_config_home: str,
+    source_dir_pathname: Pathname,
+    home: Pathname,
+    xdg_config_home: Pathname,
 ) -> None | _FileInclude | _GroupBegin | _NewFileCopyInstruction | _GroupEnd | _ReadFailure:
     line = line.strip()
 
@@ -123,14 +123,14 @@ def _read_line(
                 target_pathname_str = target_pathname_str.removeprefix("$HOME")
 
                 target_pathname_str = os.path.join(
-                    home,
+                    str(home),
                     os.path.relpath(target_pathname_str, os.path.abspath(os.sep)),
                 )
             elif target_pathname_str.startswith("$XDG_CONFIG_HOME"):
                 target_pathname_str = target_pathname_str.removeprefix("$XDG_CONFIG_HOME")
 
                 target_pathname_str = os.path.join(
-                    xdg_config_home,
+                    str(xdg_config_home),
                     os.path.relpath(target_pathname_str, os.path.abspath(os.sep)),
                 )
 
@@ -150,10 +150,10 @@ def _read_line(
 
     match = re.match(r"^Include\s*\"(?P<pathname>[^\"]+)\"(\s*#.*)?$", line)
     if match is not None:
-        source_dir_pathname_to_include: str = os.path.join(source_dir_pathname, match.group("pathname"))
+        source_dir_pathname_to_include: str = os.path.join(str(source_dir_pathname), match.group("pathname"))
 
         included_instructions: list[InstructionGroup] = read_instructions(
-            source_dir_pathname_to_include,
+            Pathname(source_dir_pathname_to_include),
             home,
             xdg_config_home,
         )
@@ -190,8 +190,12 @@ def _read_line(
 _INSTRUCTIONS_FILE_PATHNAME_COMPONENT: PathnameComponent = PathnameComponent("Instructions.cfg")
 
 
-def read_instructions(source_dir_pathname: str, home: str, xdg_config_home: str) -> list[InstructionGroup]:
-    file_pathname: str = os.path.join(source_dir_pathname, str(_INSTRUCTIONS_FILE_PATHNAME_COMPONENT))
+def read_instructions(
+    source_dir_pathname: Pathname,
+    home: Pathname,
+    xdg_config_home: Pathname,
+) -> list[InstructionGroup]:
+    file_pathname: str = os.path.join(str(source_dir_pathname), str(_INSTRUCTIONS_FILE_PATHNAME_COMPONENT))
 
     if not fs.exists(Pathname(file_pathname)):
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_pathname)
@@ -228,6 +232,6 @@ def read_instructions(source_dir_pathname: str, home: str, xdg_config_home: str)
                         current_instruction_group=None,
                     )
                 case _ReadFailure(message):
-                    raise InstructionsReadError(file_pathname, lineno, message)
+                    raise InstructionsReadError(Pathname(file_pathname), lineno, message)
 
     return instructions

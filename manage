@@ -91,9 +91,9 @@ match command_name:
             root_dir_pathname: str = os.path.relpath(os.path.dirname(__file__), str(proc.getcwd()))
 
             instruction_groups = read_instructions(
-                source_dir_pathname=root_dir_pathname,
-                home=HOME,
-                xdg_config_home=XDG_CONFIG_HOME,
+                source_dir_pathname=Pathname(root_dir_pathname),
+                home=Pathname(HOME),
+                xdg_config_home=Pathname(XDG_CONFIG_HOME),
             )
         except FileNotFoundError as e:
             print(f"{proc.argv[0]}: {command_name}: {e.filename}: no such file", file=proc.stderr)
@@ -184,9 +184,9 @@ match command_name:
             root_dir_pathname: str = os.path.relpath(os.path.dirname(__file__), str(proc.getcwd()))
 
             instruction_groups = read_instructions(
-                source_dir_pathname=root_dir_pathname,
-                home=HOME,
-                xdg_config_home=XDG_CONFIG_HOME,
+                source_dir_pathname=Pathname(root_dir_pathname),
+                home=Pathname(HOME),
+                xdg_config_home=Pathname(XDG_CONFIG_HOME),
             )
         except FileNotFoundError as e:
             print(f"{proc.argv[0]}: {command_name}: {e.filename}: no such file", file=proc.stderr)
