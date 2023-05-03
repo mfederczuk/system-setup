@@ -63,6 +63,24 @@ class Pathname:
 
         return Pathname(value).normalized()
 
+    def is_absolute(self: Pathname) -> bool:
+        """
+        Return whether or not this pathname is absolute.
+
+        This is the inverse operation of `self.is_relative()`.
+        """
+
+        return str(self).startswith(PathnameComponent.separator)
+
+    def is_relative(self: Pathname) -> bool:
+        """
+        Return whether or not this pathname is relative.
+
+        This is the inverse operation of `self.is_absolute()`.
+        """
+
+        return not self.is_absolute()
+
     def normalized(self: Pathname) -> Pathname:
         # note: not using `os.path.normpath()` because it also removes '..' components, which is wrong; it changes the
         #       behavior of the path resolution
