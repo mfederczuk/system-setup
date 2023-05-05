@@ -11,9 +11,12 @@ from __future__ import annotations
 import os
 from abc import ABC, abstractmethod
 
+from instr import commoncodes as cc
 from instr import fs, proc
 from instr.instructions import InstructionGroup, InstructionsReadError, read_instructions
 from instr.pathname import Pathname, PathnameComponent
+
+exit_status: cc.ExitStatus  # <https://github.com/python/mypy/issues/6232>
 
 # region environment variables
 
@@ -22,15 +25,15 @@ from instr.pathname import Pathname, PathnameComponent
 home_str: str = proc.environ.get("HOME", default="")
 
 if home_str == "":
-    print(f"{proc.argv[0]}: HOME environment variable must not be unset nor empty", file=proc.stderr)
-    proc.exit(48)
+    exit_status = cc.EnvironmentalVariableUnsetOrEmptyExitStatus(variable_name="HOME")
+    exit_status.die_with_argv0()
 
 home_pathname: Pathname = Pathname.create_normalized(home_str)
 del home_str
 
 if home_pathname.is_relative():
-    print(f"{proc.argv[0]}: {home_pathname}: HOME environment variable must be an absolute pathname", file=proc.stderr)
-    proc.exit(49)
+    exit_status = cc.EnvironmentVariableIsRelativePathnameExitStatus(variable_name="HOME")
+    exit_status.die_with_argv0()
 
 # endregion
 
@@ -47,12 +50,8 @@ else:
 del xdg_config_home_str
 
 if xdg_config_home_pathname.is_relative():
-    print(
-        f"{proc.argv[0]}: {xdg_config_home_pathname}: " +
-        "XDG_CONFIG_HOME environment variable must be an absolute pathname",
-        file=proc.stderr,
-    )
-    proc.exit(50)
+    exit_status = cc.EnvironmentVariableIsRelativePathnameExitStatus(variable_name="XDG_CONFIG_HOME")
+    exit_status.die_with_argv0()
 
 # endregion
 
@@ -61,22 +60,19 @@ if xdg_config_home_pathname.is_relative():
 # region args
 
 if len(proc.argv) < 2:
-    print(
-        f"{proc.argv[0]}: missing argument: <command>\n" +
-        f"usage: {proc.argv[0]} [un]install [<home>]",
-        file=proc.stderr,
+    exit_status = cc.MissingArgumentExitStatus(
+        usage="[un]install [<home>]",
+        is_multiple_args=False,
+        arguments="<command>",
     )
-    proc.exit(3)
+    exit_status.die_with_argv0()
 
 if proc.argv[1] == "":
-    if len(proc.argv) == 2:
-        print(f"{proc.argv[0]}: argument must not be empty", file=proc.stderr)
-    else:
-        print(f"{proc.argv[0]}: argument 1: must not be empty", file=proc.stderr)
-
-    print(f"usage: {proc.argv[0]} [un]install [<home>]", file=proc.stderr)
-
-    proc.exit(9)
+    exit_status = cc.EmptyArgumentExitStatus(
+        usage="[un]install [<home>]",
+        argument_nr=None if len(proc.argv) == 2 else 1,
+    )
+    exit_status.die_with_argv0()
 
 command_name: str = proc.argv[1]
 
@@ -103,13 +99,13 @@ def query_for_bool_with_default_false(msg: str) -> bool | None:
 class UnnamedCommand(ABC):
 
     @abstractmethod
-    def invoke(self: UnnamedCommand) -> int:
+    def invoke(self: UnnamedCommand) -> cc.ExitStatus:
         raise NotImplementedError("Abstract method is not implemented")
 
 
 class InstallCommand(UnnamedCommand):
 
-    def invoke(self: InstallCommand) -> int:
+    def invoke(self: InstallCommand) -> cc.ExitStatus:
         # region args
 
         dest_dir_pathname: Pathname | None
@@ -120,22 +116,12 @@ class InstallCommand(UnnamedCommand):
 
             case 3:
                 if proc.argv[2] == "":
-                    print(
-                        f"{proc.argv[0]}: argument 2: must not be empty\n" +
-                        f"usage: {proc.argv[0]} {command_name} [<home>]",
-                        file=proc.stderr,
-                    )
-                    return 9
+                    return cc.EmptyArgumentExitStatus(usage="[<home>]", argument_nr=2)
 
                 dest_dir_pathname = Pathname.create_normalized(proc.argv[2])
 
             case _:
-                print(
-                    f"{proc.argv[0]}: too many arguments: {len(proc.argv) - 3}\n" +
-                    f"usage: {proc.argv[0]} {command_name} [<home>]",
-                    file=proc.stderr,
-                )
-                return 4
+                return cc.TooManyArgumentsExitStatus(usage="[<home>]", excessive_arguments_count=len(proc.argv) - 3)
 
         # endregion
 
@@ -149,14 +135,21 @@ class InstallCommand(UnnamedCommand):
                 xdg_config_home=xdg_config_home_pathname,
             )
         except FileNotFoundError as e:
-            print(f"{proc.argv[0]}: {command_name}: {e.filename}: no such file", file=proc.stderr)
-            return 24
+            return cc.NoSuchItemtypeExitStatus(
+                item=e.filename,
+                itemtype="file",
+            )
         except IsADirectoryError as e:
-            print(f"{proc.argv[0]}: {command_name}: {e.filename}: not a file", file=proc.stderr)
-            return 26
+            return cc.WrongItemtypeExitStatus(
+                item=e.filename,
+                itemtype="file",
+            )
         except InstructionsReadError as e:
-            print(f"{proc.argv[0]}: {command_name}: {e.pathname}:{e.lineno}: {e.msg}", file=proc.stderr)
-            return 51
+            return cc.InstructionsSyntaxExitStatus(
+                file_pathname=e.pathname,
+                lineno=e.lineno,
+                error_message=e.msg,
+            )
 
         for instruction_group in instruction_groups:
             for file_copy_instruction in instruction_group.file_copy_instructions:
@@ -182,7 +175,7 @@ class InstallCommand(UnnamedCommand):
 
         if ans is False:
             print("Aborted.", file=proc.stderr)
-            return 52
+            return cc.AbortedExitStatus()
 
         for instruction_group in instruction_groups:
             for file_copy_instruction in instruction_group.file_copy_instructions:
@@ -191,12 +184,12 @@ class InstallCommand(UnnamedCommand):
 
         print("\nDone.", file=proc.stderr)
 
-        return 0
+        return cc.SuccessExitStatus()
 
 
 class UninstallCommand(UnnamedCommand):
 
-    def invoke(self: UninstallCommand) -> int:
+    def invoke(self: UninstallCommand) -> cc.ExitStatus:
         # region args
 
         dest_dir_pathname: Pathname | None = None
@@ -207,22 +200,18 @@ class UninstallCommand(UnnamedCommand):
 
             case 3:
                 if proc.argv[2] == "":
-                    print(
-                        f"{proc.argv[0]}: argument 2: must not be empty\n" +
-                        f"usage: {proc.argv[0]} {command_name} [<home>]",
-                        file=proc.stderr,
+                    return cc.EmptyArgumentExitStatus(
+                        usage="[<home>]",
+                        argument_nr=2,
                     )
-                    return 9
 
                 dest_dir_pathname = Pathname.create_normalized(proc.argv[2])
 
             case _:
-                print(
-                    f"{proc.argv[0]}: too many arguments: {len(proc.argv) - 3}\n" +
-                    f"usage: {proc.argv[0]} {command_name} [<home>]",
-                    file=proc.stderr,
+                return cc.TooManyArgumentsExitStatus(
+                    usage="[<home>]",
+                    excessive_arguments_count=len(proc.argv) - 3,
                 )
-                return 4
 
         # endregion
 
@@ -236,14 +225,21 @@ class UninstallCommand(UnnamedCommand):
                 xdg_config_home=xdg_config_home_pathname,
             )
         except FileNotFoundError as e:
-            print(f"{proc.argv[0]}: {command_name}: {e.filename}: no such file", file=proc.stderr)
-            return 24
+            return cc.NoSuchItemtypeExitStatus(
+                item=e.filename,
+                itemtype="file",
+            )
         except IsADirectoryError as e:
-            print(f"{proc.argv[0]}: {command_name}: {e.filename}: not a file", file=proc.stderr)
-            return 26
+            return cc.WrongItemtypeExitStatus(
+                item=e.filename,
+                itemtype="file",
+            )
         except InstructionsReadError as e:
-            print(f"{proc.argv[0]}: {command_name}: {e.pathname}:{e.lineno}: {e.msg}", file=proc.stderr)
-            return 51
+            return cc.InstructionsSyntaxExitStatus(
+                file_pathname=e.pathname,
+                lineno=e.lineno,
+                error_message=e.msg,
+            )
 
         pathnames_to_remove: list[Pathname] = []
 
@@ -269,7 +265,7 @@ class UninstallCommand(UnnamedCommand):
 
         if ans is False:
             print("Aborted.", file=proc.stderr)
-            return 52
+            return cc.AbortedExitStatus()
 
         removed_count: int = 0
 
@@ -282,7 +278,7 @@ class UninstallCommand(UnnamedCommand):
 
         print(f"\nDone. (removed {removed_count} file(s))", file=proc.stderr)
 
-        return 0
+        return cc.SuccessExitStatus()
 
 
 COMMAND_MAP: dict[str, UnnamedCommand] = {
@@ -293,17 +289,21 @@ COMMAND_MAP: dict[str, UnnamedCommand] = {
 command: UnnamedCommand | None = COMMAND_MAP.get(command_name)
 
 if command is None:
-    print(
-        f"{proc.argv[0]}: {command_name}: unknown command\n" +
-        f"usage: {proc.argv[0]} [un]install [<home>]",
-        file=proc.stderr,
+    exit_status = cc.UnknownCommandExitStatus(
+        usage="[un]install [<home>]",
+        command_name=command_name,
     )
-    proc.exit(8)
+    exit_status.die_with_argv0()
 
 
-command_exc: int = command.invoke()
+command_exit_status: cc.ExitStatus = command.invoke()
 
-if command_exc != 0:
-    proc.exit(command_exc)
+if command_exit_status.is_not_success():
+    argv0: str = proc.argv[0]
+
+    command_exit_status.die(
+        message_prefixes=[argv0, command_name],
+        usage_prefix=f"{argv0} {command_name}",
+    )
 
 # endregion
