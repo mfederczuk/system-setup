@@ -7,4 +7,6 @@ init-hook = "import sys; sys.path.append('.')"
 
 disable = missing-docstring
 
+good-names = e
 max-line-length = 120
+min-public-methods = 1

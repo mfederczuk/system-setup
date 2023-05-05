@@ -6,7 +6,10 @@
 # Copyright (c) 2023 Michael Federczuk
 # SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
 
+from __future__ import annotations
+
 import os
+from abc import ABC, abstractmethod
 
 from instr import fs, proc
 from instr.instructions import InstructionGroup, InstructionsReadError, read_instructions
@@ -79,8 +82,18 @@ command_name: str = proc.argv[1]
 
 # endregion
 
-match command_name:
-    case "install":
+# region main
+
+class UnnamedCommand(ABC):
+
+    @abstractmethod
+    def invoke(self: UnnamedCommand) -> int:
+        raise NotImplementedError("Abstract method is not implemented")
+
+
+class InstallCommand(UnnamedCommand):
+
+    def invoke(self: InstallCommand) -> int:
         # region args
 
         dest_dir_pathname: Pathname | None
@@ -96,7 +109,7 @@ match command_name:
                         f"usage: {proc.argv[0]} {command_name} [<home>]",
                         file=proc.stderr,
                     )
-                    proc.exit(9)
+                    return 9
 
                 dest_dir_pathname = Pathname.create_normalized(proc.argv[2])
 
@@ -106,7 +119,7 @@ match command_name:
                     f"usage: {proc.argv[0]} {command_name} [<home>]",
                     file=proc.stderr,
                 )
-                proc.exit(4)
+                return 4
 
         # endregion
 
@@ -121,13 +134,13 @@ match command_name:
             )
         except FileNotFoundError as e:
             print(f"{proc.argv[0]}: {command_name}: {e.filename}: no such file", file=proc.stderr)
-            proc.exit(24)
+            return 24
         except IsADirectoryError as e:
             print(f"{proc.argv[0]}: {command_name}: {e.filename}: not a file", file=proc.stderr)
-            proc.exit(26)
+            return 26
         except InstructionsReadError as e:
             print(f"{proc.argv[0]}: {command_name}: {e.pathname}:{e.lineno}: {e.msg}", file=proc.stderr)
-            proc.exit(51)
+            return 51
 
         for instruction_group in instruction_groups:
             for file_copy_instruction in instruction_group.file_copy_instructions:
@@ -159,7 +172,7 @@ match command_name:
 
         if not ans.lower().startswith("y"):
             print("Aborted.", file=proc.stderr)
-            proc.exit(52)
+            return 52
 
         for instruction_group in instruction_groups:
             for file_copy_instruction in instruction_group.file_copy_instructions:
@@ -168,7 +181,12 @@ match command_name:
 
         print("\nDone.", file=proc.stderr)
 
-    case "uninstall":
+        return 0
+
+
+class UninstallCommand(UnnamedCommand):
+
+    def invoke(self: UninstallCommand) -> int:
         # region args
 
         dest_dir_pathname: Pathname | None = None
@@ -184,7 +202,7 @@ match command_name:
                         f"usage: {proc.argv[0]} {command_name} [<home>]",
                         file=proc.stderr,
                     )
-                    proc.exit(9)
+                    return 9
 
                 dest_dir_pathname = Pathname.create_normalized(proc.argv[2])
 
@@ -194,7 +212,7 @@ match command_name:
                     f"usage: {proc.argv[0]} {command_name} [<home>]",
                     file=proc.stderr,
                 )
-                proc.exit(4)
+                return 4
 
         # endregion
 
@@ -209,13 +227,13 @@ match command_name:
             )
         except FileNotFoundError as e:
             print(f"{proc.argv[0]}: {command_name}: {e.filename}: no such file", file=proc.stderr)
-            proc.exit(24)
+            return 24
         except IsADirectoryError as e:
             print(f"{proc.argv[0]}: {command_name}: {e.filename}: not a file", file=proc.stderr)
-            proc.exit(26)
+            return 26
         except InstructionsReadError as e:
             print(f"{proc.argv[0]}: {command_name}: {e.pathname}:{e.lineno}: {e.msg}", file=proc.stderr)
-            proc.exit(51)
+            return 51
 
         pathnames_to_remove: list[Pathname] = []
 
@@ -247,7 +265,7 @@ match command_name:
 
         if not ans.lower().startswith("y"):
             print("Aborted.", file=proc.stderr)
-            proc.exit(52)
+            return 52
 
         removed_count: int = 0
 
@@ -260,10 +278,28 @@ match command_name:
 
         print(f"\nDone. (removed {removed_count} file(s))", file=proc.stderr)
 
-    case _:
-        print(
-            f"{proc.argv[0]}: {command_name}: unknown command\n" +
-            f"usage: {proc.argv[0]} [un]install [<home>]",
-            file=proc.stderr,
-        )
-        proc.exit(8)
+        return 0
+
+
+COMMAND_MAP: dict[str, UnnamedCommand] = {
+    "install": InstallCommand(),
+    "uninstall": UninstallCommand(),
+}
+
+command: UnnamedCommand | None = COMMAND_MAP.get(command_name)
+
+if command is None:
+    print(
+        f"{proc.argv[0]}: {command_name}: unknown command\n" +
+        f"usage: {proc.argv[0]} [un]install [<home>]",
+        file=proc.stderr,
+    )
+    proc.exit(8)
+
+
+command_exc: int = command.invoke()
+
+if command_exc != 0:
+    proc.exit(command_exc)
+
+# endregion
