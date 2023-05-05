@@ -83,11 +83,11 @@ match command_name:
     case "install":
         # region args
 
-        dest_dir_pathname: str
+        dest_dir_pathname: Pathname | None
 
         match len(proc.argv):
             case 2:
-                dest_dir_pathname = ""
+                dest_dir_pathname = None
 
             case 3:
                 if proc.argv[2] == "":
@@ -98,7 +98,7 @@ match command_name:
                     )
                     proc.exit(9)
 
-                dest_dir_pathname = proc.argv[2]
+                dest_dir_pathname = Pathname.create_normalized(proc.argv[2])
 
             case _:
                 print(
@@ -112,10 +112,10 @@ match command_name:
 
         instruction_groups: list[InstructionGroup]
         try:
-            root_dir_pathname: str = os.path.relpath(os.path.dirname(__file__), str(proc.getcwd()))
+            root_dir_pathname = Pathname(os.path.relpath(str(Pathname(__file__).dirname()), str(proc.getcwd())))
 
             instruction_groups = read_instructions(
-                source_dir_pathname=Pathname(root_dir_pathname),
+                source_dir_pathname=root_dir_pathname,
                 home=home_pathname,
                 xdg_config_home=xdg_config_home_pathname,
             )
@@ -131,14 +131,9 @@ match command_name:
 
         for instruction_group in instruction_groups:
             for file_copy_instruction in instruction_group.file_copy_instructions:
-                if dest_dir_pathname != "":
+                if dest_dir_pathname is not None:
                     file_copy_instruction.target = file_copy_instruction.target.with_pathname(
-                        Pathname.create_normalized(
-                            os.path.join(
-                                dest_dir_pathname,
-                                os.path.relpath(str(file_copy_instruction.target.pathname), os.path.abspath(os.sep)),
-                            )
-                        )
+                        dest_dir_pathname.appended_with(file_copy_instruction.target.pathname)
                     )
 
         print("Going to copy the following files (missing directories will be created):", file=proc.stderr)
@@ -168,7 +163,7 @@ match command_name:
 
         for instruction_group in instruction_groups:
             for file_copy_instruction in instruction_group.file_copy_instructions:
-                fs.mkdirs(Pathname(os.path.dirname(str(file_copy_instruction.target.pathname))))
+                fs.mkdirs(file_copy_instruction.target.pathname.dirname())
                 fs.copy(source=file_copy_instruction.source.pathname, target=file_copy_instruction.target.pathname)
 
         print("\nDone.", file=proc.stderr)
@@ -176,11 +171,11 @@ match command_name:
     case "uninstall":
         # region args
 
-        dest_dir_pathname: str
+        dest_dir_pathname: Pathname | None = None
 
         match len(proc.argv):
             case 2:
-                dest_dir_pathname = ""
+                dest_dir_pathname = None
 
             case 3:
                 if proc.argv[2] == "":
@@ -191,7 +186,7 @@ match command_name:
                     )
                     proc.exit(9)
 
-                dest_dir_pathname = proc.argv[2]
+                dest_dir_pathname = Pathname.create_normalized(proc.argv[2])
 
             case _:
                 print(
@@ -205,10 +200,10 @@ match command_name:
 
         instruction_groups: list[InstructionGroup]
         try:
-            root_dir_pathname: str = os.path.relpath(os.path.dirname(__file__), str(proc.getcwd()))
+            root_dir_pathname = Pathname(os.path.relpath(str(Pathname(__file__).dirname()), str(proc.getcwd())))
 
             instruction_groups = read_instructions(
-                source_dir_pathname=Pathname(root_dir_pathname),
+                source_dir_pathname=root_dir_pathname,
                 home=home_pathname,
                 xdg_config_home=xdg_config_home_pathname,
             )
@@ -222,17 +217,14 @@ match command_name:
             print(f"{proc.argv[0]}: {command_name}: {e.pathname}:{e.lineno}: {e.msg}", file=proc.stderr)
             proc.exit(51)
 
-        pathnames_to_remove: list[str] = []
+        pathnames_to_remove: list[Pathname] = []
 
         for instruction_group in instruction_groups:
             for file_copy_instruction in instruction_group.file_copy_instructions:
-                target: str = str(file_copy_instruction.target.pathname)
+                target: Pathname = file_copy_instruction.target.pathname
 
-                if dest_dir_pathname != "":
-                    target = os.path.join(
-                        dest_dir_pathname,
-                        os.path.relpath(target, os.path.abspath(os.sep)),
-                    )
+                if dest_dir_pathname is not None:
+                    target = dest_dir_pathname.appended_with(target)
 
                 pathnames_to_remove.append(target)
 
@@ -260,10 +252,10 @@ match command_name:
         removed_count: int = 0
 
         for pathname in pathnames_to_remove:
-            if not fs.exists(Pathname(pathname)):
+            if not fs.exists(pathname):
                 continue
 
-            fs.remove(Pathname(pathname))
+            fs.remove(pathname)
             removed_count += 1
 
         print(f"\nDone. (removed {removed_count} file(s))", file=proc.stderr)

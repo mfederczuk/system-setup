@@ -117,24 +117,18 @@ def _read_line(
         )
         if match is not None:
             source_pathname: Pathname = Pathname.create_normalized(match.group("source_pathname"))
+            target_pathname = Pathname(match.group("target_pathname"))
 
-            target_pathname_str: str = match.group("target_pathname")
-            if target_pathname_str.startswith("$HOME"):
-                target_pathname_str = target_pathname_str.removeprefix("$HOME")
+            if str(target_pathname).startswith("$HOME"):
+                target_pathname = Pathname(str(target_pathname).removeprefix("$HOME"))
 
-                target_pathname_str = os.path.join(
-                    str(home),
-                    os.path.relpath(target_pathname_str, os.path.abspath(os.sep)),
-                )
-            elif target_pathname_str.startswith("$XDG_CONFIG_HOME"):
-                target_pathname_str = target_pathname_str.removeprefix("$XDG_CONFIG_HOME")
+                target_pathname = home.appended_with(target_pathname)
+            elif str(target_pathname).startswith("$XDG_CONFIG_HOME"):
+                target_pathname = Pathname(str(target_pathname).removeprefix("$XDG_CONFIG_HOME"))
 
-                target_pathname_str = os.path.join(
-                    str(xdg_config_home),
-                    os.path.relpath(target_pathname_str, os.path.abspath(os.sep)),
-                )
+                target_pathname = xdg_config_home.appended_with(target_pathname)
 
-            target_pathname: Pathname = Pathname.create_normalized(target_pathname_str)
+            target_pathname = target_pathname.normalized()
 
             file_copy_instruction = FileCopyInstruction(
                 source=File(source_pathname),
@@ -150,23 +144,25 @@ def _read_line(
 
     match = re.match(r"^Include\s*\"(?P<pathname>[^\"]+)\"(\s*#.*)?$", line)
     if match is not None:
-        source_dir_pathname_to_include: str = os.path.join(str(source_dir_pathname), match.group("pathname"))
+        source_dir_pathname_to_include: Pathname = source_dir_pathname \
+            .appended_with(Pathname(match.group("pathname"))) \
+            .normalized()
 
         included_instructions: list[InstructionGroup] = read_instructions(
-            Pathname(source_dir_pathname_to_include),
+            source_dir_pathname_to_include,
             home,
             xdg_config_home,
         )
         for instruction in included_instructions:
             for (i, file_copy_instruction) in enumerate(instruction.file_copy_instructions):
+                basename: PathnameComponent | None = source_dir_pathname_to_include.basename()
+                assert basename is not None
+
                 instruction.file_copy_instructions[i] = FileCopyInstruction(
                     source=File(
-                        Pathname.create_normalized(
-                            os.path.join(
-                                os.path.basename(source_dir_pathname_to_include),
-                                str(file_copy_instruction.source.pathname),
-                            )
-                        )
+                        Pathname.create_relative_of_component(basename)
+                        .appended_with(file_copy_instruction.source.pathname)
+                        .normalized()
                     ),
                     target=file_copy_instruction.target,
                 )
@@ -195,17 +191,17 @@ def read_instructions(
     home: Pathname,
     xdg_config_home: Pathname,
 ) -> list[InstructionGroup]:
-    file_pathname: str = os.path.join(str(source_dir_pathname), str(_INSTRUCTIONS_FILE_PATHNAME_COMPONENT))
+    file_pathname: Pathname = source_dir_pathname.appended_with(_INSTRUCTIONS_FILE_PATHNAME_COMPONENT)
 
-    if not fs.exists(Pathname(file_pathname)):
-        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_pathname)
+    if not fs.exists(file_pathname):
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), str(file_pathname))
 
-    if fs.is_directory(Pathname(file_pathname)):
-        raise IsADirectoryError(errno.EISDIR, os.strerror(errno.EISDIR), file_pathname)
+    if fs.is_directory(file_pathname):
+        raise IsADirectoryError(errno.EISDIR, os.strerror(errno.EISDIR), str(file_pathname))
 
     instructions: list[InstructionGroup] = []
 
-    with open(file_pathname, "r", encoding="utf8") as file_io_wrapper:
+    with open(str(file_pathname), "r", encoding="utf8") as file_io_wrapper:
         lineno: int = 0
 
         state = _InstructionsReadState(
@@ -232,6 +228,6 @@ def read_instructions(
                         current_instruction_group=None,
                     )
                 case _ReadFailure(message):
-                    raise InstructionsReadError(Pathname(file_pathname), lineno, message)
+                    raise InstructionsReadError(file_pathname, lineno, message)
 
     return instructions
