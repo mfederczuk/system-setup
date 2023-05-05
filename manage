@@ -65,9 +65,7 @@ if len(proc.argv) < 2:
     )
     proc.exit(3)
 
-command_name: str = proc.argv[1]
-
-if command_name == "":
+if proc.argv[1] == "":
     if len(proc.argv) == 2:
         print(f"{proc.argv[0]}: argument must not be empty", file=proc.stderr)
     else:
@@ -76,6 +74,8 @@ if command_name == "":
     print(f"usage: {proc.argv[0]} [un]install [<home>]", file=proc.stderr)
 
     proc.exit(9)
+
+command_name: str = proc.argv[1]
 
 # endregion
 
