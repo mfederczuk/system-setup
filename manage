@@ -9,8 +9,8 @@
 import os
 
 from instr import fs, proc
-from instr.pathname import PathnameComponent
-from instructions import InstructionGroup, InstructionsReadError, Pathname, read_instructions
+from instr.pathname import Pathname, PathnameComponent
+from instructions import InstructionGroup, InstructionsReadError, read_instructions
 
 # region environment variables
 
