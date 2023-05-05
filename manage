@@ -84,6 +84,22 @@ command_name: str = proc.argv[1]
 
 # region main
 
+
+def query_for_bool_with_default_false(msg: str) -> bool | None:
+    ans: str
+
+    print(msg + " [y/N] ", end="", file=proc.stderr)
+
+    try:
+        ans = input()
+    except EOFError:
+        return None
+    except KeyboardInterrupt:
+        return None
+
+    return ans.lower().startswith("y")
+
+
 class UnnamedCommand(ABC):
 
     @abstractmethod
@@ -158,19 +174,13 @@ class InstallCommand(UnnamedCommand):
                     file=proc.stderr,
                 )
 
-        print("Continue? [y/N] ", end="", file=proc.stderr)
+        ans: bool | None = query_for_bool_with_default_false(msg="Continue?")
 
-        ans: str
-        try:
-            ans = input()
-        except EOFError:
-            ans = ""
-            print("", file=proc.stderr)
-        except KeyboardInterrupt:
-            ans = ""
-            print("", file=proc.stderr)
+        if ans is None:
+            print(file=proc.stderr)
+            ans = False
 
-        if not ans.lower().startswith("y"):
+        if ans is False:
             print("Aborted.", file=proc.stderr)
             return 52
 
@@ -251,19 +261,13 @@ class UninstallCommand(UnnamedCommand):
         for pathname in pathnames_to_remove:
             print(f" * {pathname}", file=proc.stderr)
 
-        print("Continue? [y/N] ", end="", file=proc.stderr)
+        ans: bool | None = query_for_bool_with_default_false(msg="Continue?")
 
-        ans: str
-        try:
-            ans = input()
-        except EOFError:
-            ans = ""
-            print("", file=proc.stderr)
-        except KeyboardInterrupt:
-            ans = ""
-            print("", file=proc.stderr)
+        if ans is None:
+            print(file=proc.stderr)
+            ans = False
 
-        if not ans.lower().startswith("y"):
+        if ans is False:
             print("Aborted.", file=proc.stderr)
             return 52
 
