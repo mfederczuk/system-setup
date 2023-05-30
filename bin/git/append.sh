@@ -56,6 +56,8 @@ marker=''
 
 if printf '%s' "$HEAD_commit_subject" | grep -Eiq '^(!)?(tmp|wip)(!)?([^[:alnum:]_]|$)'; then
 	marker='wip'
+elif printf '%s' "$HEAD_commit_subject" | grep -Eiq '^(!)?todo(!)?([^[:alnum:]_]|$)'; then
+	marker='todo'
 fi
 
 readonly marker
