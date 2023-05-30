@@ -46,14 +46,30 @@ readonly argv0
 
 #region main
 
+#region extracting marker
+
 HEAD_commit_subject="$(git --no-pager show --no-patch --pretty='format:%s' HEAD)"
 readonly HEAD_commit_subject
 
+
+marker=''
+
 if printf '%s' "$HEAD_commit_subject" | grep -Eiq '^(!)?(tmp|wip)(!)?([^[:alnum:]_]|$)'; then
-	reset_date=true
-else
-	reset_date=false
+	marker='wip'
 fi
+
+readonly marker
+
+#endregion
+
+reset_date=false
+
+case "$marker" in
+	('wip')
+		reset_date=true
+		;;
+esac
+
 readonly reset_date
 
 
