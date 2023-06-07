@@ -65,14 +65,19 @@ readonly marker
 #endregion
 
 reset_date=false
+should_ask_for_message_edit=false
 
 case "$marker" in
 	('wip')
 		reset_date=true
+		should_ask_for_message_edit=true
+		;;
+	('todo')
+		should_ask_for_message_edit=true
 		;;
 esac
 
-readonly reset_date
+readonly reset_date should_ask_for_message_edit
 
 
 git_commit_date_option=''
@@ -102,6 +107,34 @@ fi
 readonly git_commit_date_option
 
 
-git commit --amend --no-edit $git_commit_date_option "$@"
+git_commit_edit_option='--no-edit'
+
+if [ -t 2 ] && $should_ask_for_message_edit; then
+	git_status="$(git --no-pager status --porcelain=v1)"
+
+	if [ -z "$git_status" ]; then
+		printf 'No more unstaged changes. Edit the commit message? [Y/n] ' >&2
+
+		read -r ans
+
+		case "$ans" in
+			(['yY']|'') should_edit_message=true  ;;
+			(*)         should_edit_message=false ;;
+		esac
+
+		if $should_edit_message; then
+			git_commit_edit_option='--edit'
+		fi
+
+		unset -v should_edit_message ans
+	fi
+
+	unset -v git_status
+fi
+
+readonly git_commit_edit_option
+
+
+git commit --amend "$git_commit_edit_option" $git_commit_date_option "$@"
 
 #endregion
