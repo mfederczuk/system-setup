@@ -91,7 +91,7 @@ fi
 
 #endregion
 
-#region programming languages / enviroments
+#region programming languages / environments
 
 # C & C++
 export CC="${CC:-"cc"}"
