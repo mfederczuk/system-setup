@@ -53,6 +53,19 @@ fi
 
 #endregion
 
+#region checking for clean working tree
+
+tmp="$(git status --porcelain=v1 | wc -c)"
+
+if [ "$tmp" -eq 0 ]; then
+	printf 'Nothing to purge: working tree is clean.\n' >&2
+	exit 0
+fi
+
+unset -v tmp
+
+#endregion
+
 #region user prompting
 
 {
