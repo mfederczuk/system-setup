@@ -53,9 +53,26 @@ fi
 
 #endregion
 
+#region checking for clean working tree
+
+tmp="$(git status --porcelain=v1 | wc -c)"
+
+if [ "$tmp" -eq 0 ]; then
+	printf 'Nothing to purge: working tree is clean.\n' >&2
+	exit 0
+fi
+
+unset -v tmp
+
+#endregion
+
 #region user prompting
 
+git status --short
+git diff --stat
+
 {
+	printf '\n'
 	printf 'Purge all changes?\n'
 	printf 'This operation will remove ALL of your uncommitted changes and will leave the index and working tree in a clean state.\n'
 	printf 'Continue? [y/N] '
