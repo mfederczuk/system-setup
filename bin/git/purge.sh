@@ -68,7 +68,11 @@ unset -v tmp
 
 #region user prompting
 
+git status --short
+git diff --stat
+
 {
+	printf '\n'
 	printf 'Purge all changes?\n'
 	printf 'This operation will remove ALL of your uncommitted changes and will leave the index and working tree in a clean state.\n'
 	printf 'Continue? [y/N] '
