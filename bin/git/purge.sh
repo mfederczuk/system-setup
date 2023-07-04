@@ -53,6 +53,9 @@ fi
 
 #endregion
 
+toplevel_pathname="$(git rev-parse --path-format=relative --show-toplevel)"
+readonly toplevel_pathname
+
 #region checking for clean working tree
 
 tmp="$(git status --porcelain=v1 | wc -c)"
@@ -107,6 +110,6 @@ printf 'Safety commit with all purged changes: %s (unreachable)\n' "$commit_hash
 
 #endregion
 
-git restore --source=HEAD --staged --worktree # removes staged & unstaged changes
+git restore --source=HEAD --staged --worktree -- "$toplevel_pathname" # removes staged & unstaged changes
 
-git clean -d --force # removes untracked files
+git clean -d --force -- "$toplevel_pathname" # removes untracked files
