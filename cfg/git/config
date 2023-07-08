@@ -22,6 +22,9 @@
 [diff]
 	noprefix = true
 
+[status]
+	showStash = true
+
 [pull]
 	ff = only
 

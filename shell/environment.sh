@@ -93,9 +93,25 @@ fi
 
 #region programming languages / environments
 
-# C & C++
-export CC="${CC:-"cc"}"
-export CXX="${CXX:-"c++"}"
+#region C & C++
+
+if command -v cc > '/dev/null'; then
+	export CC=cc
+elif command -v gcc > '/dev/null'; then
+	export CC=gcc
+elif command -v clang > '/dev/null'; then
+	export CC=clang
+fi
+
+if command -v c++ > '/dev/null'; then
+	export CXX=c++
+elif command -v g++ > '/dev/null'; then
+	export CXX=g++
+elif command -v clang++ > '/dev/null'; then
+	export CXX=clang++
+fi
+
+#endregion
 
 #region Node.js
 
