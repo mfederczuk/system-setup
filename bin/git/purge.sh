@@ -102,7 +102,7 @@ unset -v ans
 git add --all
 
 tree_hash="$(git write-tree)"
-commit_hash="$(git commit-tree -p HEAD -m 'Safety commit before the purge' "$tree_hash")"
+commit_hash="$(GIT_COMMITTER_NAME='git-purge' git commit-tree -p HEAD -m 'Safety commit before the purge' "$tree_hash")"
 readonly commit_hash
 unset -v tree_hash
 
