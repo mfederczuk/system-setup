@@ -20,7 +20,13 @@ function __dotfiles_bash_funcs_goodnight__exec_mkbak() {
 	local today new_backup_archive_filename || return
 
 	today="$(date +'%Y-%m-%d')" || return
-	new_backup_archive_filename="$today.tar.gz" || return
+	new_backup_archive_filename="backups/$today.tar.gz" || return
+
+	local backup_archive_parent_directory_filename || return
+	backup_archive_parent_directory_filename="$(dirname -- "$new_backup_archive_filename" && printf x)" || return
+	backup_archive_parent_directory_filename="${backup_archive_parent_directory_filename%$'\nx'}" || return
+	mkdir -p -- "$backup_archive_parent_directory_filename" || return
+	unset -v backup_archive_parent_directory_filename || return
 
 	if [ -e "$new_backup_archive_filename" ]; then
 		# we're assuming GNU system here, because otherwise it'd be a pain trying to get the birth/mod time in hours
