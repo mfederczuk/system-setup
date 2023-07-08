@@ -39,11 +39,7 @@
 
 	# TODO: these aliases should be in their own executable file
 
-	list-all = !{ git --no-pager ls-tree --full-tree -r --name-only HEAD && git -P diff --staged --name-only";" } # TODO: ever needed?
-	null-list-all = !{ git --no-pager ls-tree --full-tree -r --name-only -z HEAD && git -P diff --staged --name-only -z";" } # TODO: only needed for `git-sed`, inline it into it's executable and remove it?
-	sed = !git null-list-all | xargs -0 sed -i
 	reword = !git reset && git commit --amend # TODO: in the future add support for more than just rewording HEAD
-	backup = !git stash push --include-untracked --message 'Backup' && git stash apply
 
 	# ====================== #
 

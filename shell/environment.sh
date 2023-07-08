@@ -106,14 +106,31 @@ fi
 
 #region programming languages / environments
 
-# C & C++
-export CC="${CC:-"cc"}"
-export CXX="${CXX:-"c++"}"
+#region C & C++
+
+if command -v cc > '/dev/null'; then
+	export CC=cc
+elif command -v gcc > '/dev/null'; then
+	export CC=gcc
+elif command -v clang > '/dev/null'; then
+	export CC=clang
+fi
+
+if command -v c++ > '/dev/null'; then
+	export CXX=c++
+elif command -v g++ > '/dev/null'; then
+	export CXX=g++
+elif command -v clang++ > '/dev/null'; then
+	export CXX=clang++
+fi
+
+#endregion
 
 # Android
 if [ -d "$HOME/Android/Sdk" ]; then
-	export ANDROID_SDK="${ANDROID_SDK:-"$HOME/Android/Sdk"}"
-	export ANDROID_HOME="${ANDROID_HOME:-"$ANDROID_SDK"}"
+	# TODO: move these into $XDG_DATA_HOME ?
+	export ANDROID_HOME="$HOME/Android/Sdk"
+	export ANDROID_USER_HOME="$HOME/.android"
 fi
 
 #region Node.js
@@ -132,7 +149,7 @@ fi
 
 # .NET
 export DOTNET_ROOT='/opt/dotnet'
-export DOTNET_CLI_TELEMETRY_OPTOUT="${DOTNET_CLI_TELEMETRY_OPTOUT:-1}"
+export DOTNET_CLI_TELEMETRY_OPTOUT='-1'
 
 #endregion
 
