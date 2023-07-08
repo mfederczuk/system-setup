@@ -1,0 +1,86 @@
+#!/bin/sh
+# -*- sh -*-
+# vim: syntax=sh
+# code: language=shellscript
+
+# Copyright (c) 2023 Michael Federczuk
+# SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
+
+#region preamble
+
+case "$-" in
+	(*'i'*)
+		\command printf 'script was called interactively\n' >&2
+		return 124
+		;;
+esac
+
+set -o errexit
+set -o nounset
+
+# enabling POSIX-compliant behavior for GNU programs
+export POSIXLY_CORRECT=yes POSIX_ME_HARDER=yes
+
+if [ "${0#/}" = "$0" ]; then
+	argv0="$0"
+else
+	argv0="$(basename -- "$0" && printf x)"
+	argv0="${argv0%"$(printf '\nx')"}"
+fi
+readonly argv0
+
+#endregion
+
+#region args
+
+if [ $# -gt 0 ]; then
+	printf '%s: too many arguments: %i\n' "$argv0" $# >&2
+	exit 4
+fi
+
+#endregion
+
+#region main
+
+tag_name='v0.1.0-indev01'
+readonly tag_name
+
+mkbak_url="https://github.com/mfederczuk/mkbak/releases/download/$tag_name/mkbak"
+readonly mkbak_url
+
+root_dir_pathname="$(dirname -- "$0" && printf x)"
+root_dir_pathname="${root_dir_pathname%"$(printf '\nx')"}"
+readonly root_dir_pathname
+
+#region setting up temporary file
+
+tmp_file_pathname="$root_dir_pathname/_mkbak_tmp.bash"
+readonly tmp_file_pathname
+
+remove_tmp_file() {
+	rm -f -- "$tmp_file_pathname"
+}
+
+trap remove_tmp_file EXIT
+trap 'trap - EXIT; remove_tmp_file' INT QUIT TERM
+
+#endregion
+
+if command -v curl > '/dev/null'; then
+	curl --location --output "$tmp_file_pathname" -- "$mkbak_url"
+elif command -v wget > '/dev/null'; then
+	wget --output-document="$tmp_file_pathname" -- "$mkbak_url"
+else
+	printf '%s: nether curl nor wget is installed\n' "$argv0" >&2
+	exit 48
+fi
+
+{
+	head -n8 -- "$tmp_file_pathname"
+	printf '# <https://github.com/mfederczuk/mkbak/releases/tag/%s>\n' "$tag_name"
+	tail -n+8 -- "$tmp_file_pathname"
+} > "$root_dir_pathname/mkbak.bash"
+
+chmod +x "$root_dir_pathname/mkbak.bash"
+
+#endregion
