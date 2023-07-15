@@ -140,7 +140,7 @@ else
 fi
 
 if __bash_aliases__is_program_gnu_coreutils du; then
-	alias du='du --bytes --human-readable'
+	alias du='du --bytes --total --human-readable'
 fi
 
 #endregion
