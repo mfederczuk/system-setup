@@ -122,7 +122,7 @@ if command -v npm > '/dev/null' && command -v try_as_root > '/dev/null'; then
 			return
 		fi
 
-		trace_cmd try_as_root npm install --global "${packages[@]}" >&2
+		trace_cmd npm install --global "${packages[@]}" >&2
 	}
 
 	complete npm-up
