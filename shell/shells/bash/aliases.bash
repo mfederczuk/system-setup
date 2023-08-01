@@ -140,7 +140,7 @@ else
 fi
 
 if __bash_aliases__is_program_gnu_coreutils du; then
-	alias du='du --bytes --human-readable'
+	alias du='du --bytes --total --human-readable'
 fi
 
 #endregion
@@ -349,6 +349,10 @@ fi
 
 if command -v update-alternatives > '/dev/null'; then
 	alias update-alternatives-local='update-alternatives --altdir ~/.local/etc/alternatives --admindir ~/.local/var/lib/alternatives'
+fi
+
+if command -v ktlint > '/dev/null'; then
+	alias ktlint='ktlint --relative'
 fi
 
 if command -v mocp > '/dev/null'; then
