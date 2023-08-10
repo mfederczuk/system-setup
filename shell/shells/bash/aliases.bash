@@ -335,7 +335,7 @@ if __bash_aliases__is_program_gnu_coreutils shred; then
 fi
 
 if command -v youtube-dl > '/dev/null'; then
-	alias youtube-dl-to-mp3="youtube-dl --format=bestaudio -x --audio-format=mp3 --audio-quality=0 --prefer-ffmpeg -o '%(title)s.%(ext)s'"
+	alias youtube-dl-to-opus="youtube-dl --format=bestaudio -x --audio-format=opus --audio-quality=0 --prefer-ffmpeg -o '%(title)s.%(ext)s'"
 fi
 
 if command -v gzip > '/dev/null'; then
