@@ -24,7 +24,7 @@ Date:   %ad %C(auto,dim)(%ar)%C(auto)%n\
 Author:      %C(auto,bold)%aN%C(auto) <%C(auto,bold)%aE%C(auto)>%n\
 Author Date: %C(auto,bold)%ad%C(auto) %C(auto,dim)(%ar)%C(auto)%n\
 %n\
-Committer:   %C(auto,bold)%cN%C(auto) <%C(auto,bold)%aE%C(auto)>%n\
+Committer:   %C(auto,bold)%cN%C(auto) <%C(auto,bold)%cE%C(auto)>%n\
 Commit Date: %C(auto,bold)%cd%C(auto) %C(auto,dim)(%cr)%C(auto)%n\
 %n\
 %w(0,8,8)%C(auto,dim)If applied, this commit will...%C(auto)%n\
