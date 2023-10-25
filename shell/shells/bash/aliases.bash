@@ -363,7 +363,7 @@ if command -v update-alternatives > '/dev/null'; then
 fi
 
 if command -v ktlint > '/dev/null'; then
-	alias ktlint='ktlint --relative'
+	alias ktlint='ktlint --color --relative'
 fi
 
 if command -v mocp > '/dev/null'; then
