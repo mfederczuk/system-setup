@@ -44,8 +44,32 @@ readonly argv0
 
 #endregion
 
+#region patch option
+
+patch=false
+
+if [ $# -ge 1 ] &&
+   { [ "$1" = '-p' ] || [ "$1" = '--patch' ]; }; then
+
+	patch=true
+	shift 1
+fi
+
+readonly patch
+
+
+patch_opt=''
+
+if $patch; then
+	patch_opt='--patch'
+fi
+
+readonly patch_opt
+
+#endregion
+
 if [ $# -ne 0 ]; then
-	git restore --staged -- "$@"
+	git restore $patch_opt --staged -- "$@"
 	exit
 fi
 
@@ -53,27 +77,29 @@ fi
 
 #region prompting
 
-printf 'Unstage all? [Y/n] ' >&2
+if ! $patch; then
+	printf 'Unstage all? [Y/n] ' >&2
 
-read -r ans
+	read -r ans
 
-case "$ans" in
-	(['Yy']|'')
-		# continue
-		;;
-	(*)
-		printf 'Aborted.\n' >&2
-		exit 32
-		;;
-esac
+	case "$ans" in
+		(['Yy']|'')
+			# continue
+			;;
+		(*)
+			printf 'Aborted.\n' >&2
+			exit 32
+			;;
+	esac
 
-unset -v ans
+	unset -v ans
+fi
 
 #endregion
 
 toplevel_pathname="$(git rev-parse --path-format=relative --show-toplevel)"
 readonly toplevel_pathname
 
-git restore --staged -- "$toplevel_pathname"
+git restore $patch_opt --staged -- "$toplevel_pathname"
 
 #endregion

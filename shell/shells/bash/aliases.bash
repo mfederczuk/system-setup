@@ -309,7 +309,7 @@ fi
 
 declare __bash_aliases__7z_cmd
 
-for __bash_aliases__7z_cmd in 7z 7za 7zr; do
+for __bash_aliases__7z_cmd in 7z 7za 7zr 7zz; do
 	if ! command -v $__bash_aliases__7z_cmd > '/dev/null'; then
 		continue
 	fi
@@ -347,7 +347,7 @@ if __bash_aliases__is_program_gnu_coreutils shred; then
 fi
 
 if command -v youtube-dl > '/dev/null'; then
-	alias youtube-dl-to-mp3="youtube-dl --format=bestaudio -x --audio-format=mp3 --audio-quality=0 --prefer-ffmpeg -o '%(title)s.%(ext)s'"
+	alias youtube-dl-to-opus="youtube-dl --format=bestaudio -x --audio-format=opus --audio-quality=0 --prefer-ffmpeg -o '%(title)s.%(ext)s'"
 fi
 
 if command -v gzip > '/dev/null'; then
@@ -375,7 +375,7 @@ if command -v update-alternatives > '/dev/null'; then
 fi
 
 if command -v ktlint > '/dev/null'; then
-	alias ktlint='ktlint --relative'
+	alias ktlint='ktlint --color --relative'
 fi
 
 if command -v mocp > '/dev/null'; then
