@@ -4,7 +4,7 @@
 -->
 
 <!-- markdownlint-disable-next-line no-inline-html  -->
-# Personal System Setup<sub>(Fedora 37 branch)</sub> #
+# Personal System Setup<sub>(Fedora 37 branch) [ABANDONED]</sub> #
 
 This repository tracks all of my user/system configurations, preferences, dotfiles, custom aliases, functions, scripts,
 programs, etc. of my personally used Linux distributions.
