@@ -310,13 +310,25 @@ unset -v __bash_aliases__7z_cmd
 
 #endregion
 
-#region other
+#region Neovim & Vim
 
-if command -v vim > '/dev/null'; then
+if command -v nvim > '/dev/null'; then
+	# -n  ->  no swap file, use memory only
+	# -p  ->  open one tab page for each file
+	alias nvim='nvim -np'
+fi
+
+if command -v nvim > '/dev/null' && ! command -v vim > '/dev/null'; then
+	alias vim='nvim'
+elif command -v vim > '/dev/null'; then
 	# -n  ->  no swap file, use memory only
 	# -p  ->  open one tab page for each file
 	alias vim='vim -np'
 fi
+
+#endregion
+
+#region other
 
 if command -v less > '/dev/null'; then
 	# -+X  ->  enable termcap initialization/deinitialization
