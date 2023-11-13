@@ -58,9 +58,6 @@ export HOME="${HOME:-"$(\command grep -E "^[^:]*:[^:]*:$(id -u):$(\command id -g
 _add_to_path front '.bin' \
                    'node_modules/.bin' \
                    "$HOME/.local/bin" \
-                   "$HOME/bin" \
-                   "$HOME/bin/git" \
-                   "$HOME/bin/repos" \
                    "$HOME/.dotnet/tools"
 
 export PATH
