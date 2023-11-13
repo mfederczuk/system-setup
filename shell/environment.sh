@@ -81,7 +81,10 @@ export XDG_CONFIG_DIRS="${XDG_CONFIG_DIRS:-"$PREFIX/etc/xdg"}"
 
 #region editors
 
-if command -v vim > '/dev/null'; then
+if command -v nvim > '/dev/null'; then
+	export EDITOR='nvim'
+	export VISUAL='nvim'
+elif command -v vim > '/dev/null'; then
 	export EDITOR='vim'
 	export VISUAL='vim'
 elif command -v nano > '/dev/null'; then
