@@ -14,7 +14,6 @@
 	# staging
 	addall = add --all --verbose
 	adduv  = add --update --verbose
-	ai     = add --interactive
 	a      = add --verbose
 	patch  = add --patch
 
