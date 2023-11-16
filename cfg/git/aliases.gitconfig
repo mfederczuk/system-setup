@@ -14,7 +14,6 @@
 	# staging
 	addall = add --all --verbose
 	adduv  = add --update --verbose
-	ai     = add --interactive
 	a      = add --verbose
 	patch  = add --patch
 
@@ -40,6 +39,7 @@
 	# TODO: these aliases should be in their own executable file
 
 	reword = !git reset && git commit --amend # TODO: in the future add support for more than just rewording HEAD
+	graph = git log --pretty=custom-oneline --graph
 
 	# ====================== #
 
@@ -47,4 +47,4 @@
 	set-editor-codium-no-workspace = config core.editor 'codium --wait --new-window'
 	set-editor-gedit               = !printf \"\\033[31mgedit is dead. Long live gnome-text-editor\\033[0m\\n\"
 	set-editor-gnome-text-editor   = !printf \"\\033[31mNot supported yet.\\033[0m\\n\"
-	set-editor-vim                 = config core.editor 'vim -n'
+	set-editor-nvim                = config core.editor 'nvim -n'

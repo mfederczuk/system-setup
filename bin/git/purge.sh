@@ -106,7 +106,7 @@ commit_hash="$(GIT_COMMITTER_NAME='git-purge' git commit-tree -p HEAD -m 'Safety
 readonly commit_hash
 unset -v tree_hash
 
-printf 'Safety commit with all purged changes: %s (unreachable)\n' "$commit_hash" >&2
+printf '\nSafety commit with all purged changes: %s (unreachable)\n' "$commit_hash" >&2
 
 #endregion
 
