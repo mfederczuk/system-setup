@@ -8,7 +8,7 @@
 	email = federczuk.michael@protonmail.com
 
 [core]
-	editor = vim -n
+	editor = nvim -n
 
 	# -+X -> enable termcap initialization/deinitialization (disabled by default for whatever reason)
 	pager = less --quit-if-one-screen --ignore-case --quit-on-intr --LONG-PROMPT --RAW-CONTROL-CHARS --chop-long-lines -+X --file-size --

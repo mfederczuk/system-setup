@@ -14,7 +14,6 @@
 	# staging
 	addall = add --all --verbose
 	adduv  = add --update --verbose
-	ai     = add --interactive
 	a      = add --verbose
 	patch  = add --patch
 
@@ -40,5 +39,6 @@
 	# TODO: these aliases should be in their own executable file
 
 	reword = !git reset && git commit --amend # TODO: in the future add support for more than just rewording HEAD
+	graph = git log --pretty=custom-oneline --graph
 
 	# ====================== #
