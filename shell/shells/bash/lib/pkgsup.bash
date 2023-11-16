@@ -7,7 +7,7 @@ fi
 
 #region distinct package managers
 
-# BASE: <cmd>-up comamnd for system's native package manager
+# BASE: <cmd>-up command for system's native package manager
 
 if command -v flatpak > '/dev/null'; then
 	function flatpak-up() {
