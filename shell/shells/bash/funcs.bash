@@ -146,6 +146,13 @@ function normalize_pathname() {
 
 	#endregion
 
+	# if a pathname starts with exactly two consecutive slashes, pathname resolution is implementation-defined so we
+	# don't normalize the pathname
+	if [[ "$input_pathname" =~ ^'//'([^'/']|$) ]]; then
+		printf '%s' "$input_pathname"
+		exit
+	fi
+
 	#region normalizing the pathname
 
 	local normalized_pathname || return
