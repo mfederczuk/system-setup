@@ -1,0 +1,114 @@
+#!/bin/bash
+# -*- sh -*-
+# vim: set syntax=sh
+# code: language=shellscript
+
+set -o errexit
+set -o nounset
+
+declare -a extra_log_args=()
+
+declare scope='local' \
+        include_stashes=true \
+        include_unreachable_commits=false \
+        format='custom-oneline' additional_newline=false \
+        today=false
+
+for arg in "$@"; do
+	case "$arg" in
+		'--full')
+			scope='full'
+			include_stashes=true
+			;;
+		'--local')
+			scope='local'
+			include_stashes=true
+			;;
+		'--remote')
+			scope='remote'
+			include_stashes=false
+			;;
+
+		'--stashes')
+			include_stashes=true
+			;;
+		'--no-stashes')
+			include_stashes=false
+			;;
+
+		'--unreachable')
+			include_unreachable_commits=true
+			;;
+		'--no-unreachable')
+			include_unreachable_commits=false
+			;;
+
+		'--no-names'|'--no-collab')
+			format='custom-oneline'
+			;;
+		'--names'|'--collab')
+			format='custom-oneline-name'
+			;;
+		'--names-with-emails'|'--emails')
+			format='custom-oneline-name-email'
+			;;
+		'--newline'|'--nl')
+			additional_newline=true
+			;;
+		'--no-newline'|'--no-nl')
+			additional_newline=false
+			;;
+
+		'--today')
+			today=true
+			;;
+		'--all-time')
+			today=false
+			;;
+
+		*)
+			extra_log_args+=("$arg")
+			;;
+	esac
+done
+
+if $additional_newline; then
+	format="$(git config --get "pretty.$format")%n"
+fi
+
+declare -a date_modifiers=()
+if $today; then
+	date_modifiers=('--since=0:00')
+fi
+
+declare -a stash_hashes=()
+if $include_stashes; then
+	mapfile -t stash_hashes < <(git reflog show --format='%h' stash 2> '/dev/null')
+fi
+
+declare -a unreachable_commit_hashes=()
+if $include_unreachable_commits; then
+	mapfile -t unreachable_commit_hashes < <(git --no-pager fsck --no-progress --unreachable |
+		                                         grep -Po '(?<=commit ).*$' |
+		                                         cat 2> /dev/null)
+fi
+
+declare -a scope_args=()
+case "$scope" in
+	'full')
+		scope_args=('--all')
+		;;
+	'local')
+		scope_args=('--exclude=refs/remotes/*' '--exclude=refs/tags/*' '--all')
+		;;
+	'remote')
+		scope_args=('--remotes')
+		;;
+esac
+
+git log --graph --pretty="$format" \
+    "${date_modifiers[@]}" \
+    "${scope_args[@]}" \
+    "${stash_hashes[@]}" \
+    "${unreachable_commit_hashes[@]}" \
+    "${extra_log_args[@]}"

@@ -7,6 +7,10 @@
 	custom-oneline-name       = %C(auto)%h%d %s %C(reset)%C(dim default)(%C(no-dim magenta)%aN%C(dim default), %C(yellow)%ar%C(default))
 	custom-oneline-name-email = %C(auto)%h%d %s %C(reset)%C(dim default)(%C(no-dim magenta)%aN%C(dim default) <%C(no-dim magenta)%C(bold)%aE%C(no-bold)%C(dim default)>, %C(yellow)%ar%C(default))
 
+	graph-default = custom-oneline
+	graph-with-author-name = custom-oneline-name
+	graph-with-author-name-and-email = custom-oneline-name-email
+
 	# the leading string "format:" for these formats is important. without it, we get some extra trailing newlines
 
 	custom-medium = format:%C(auto,yellow)commit%C(auto) %H %C(auto,dim yellow){%C(auto)%h%C(auto,dim yellow)}%C(auto)%d%n\
