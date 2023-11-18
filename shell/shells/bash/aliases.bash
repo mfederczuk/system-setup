@@ -282,15 +282,6 @@ unset -v __bash_aliases__c_cxx_compiler_args_str \
 
 #endregion
 
-#region VLC
-
-if command -v vlc > '/dev/null'; then
-	alias vlc-no-one-instance='vlc --no-one-instance'
-	alias vlc-one-instance-playlist-enqueue='vlc --one-instance --playlist-enqueue'
-fi
-
-#endregion
-
 #region 7z
 
 # for some reason there are like 3 different 7z commands and different Linux distros use only some of these commands
