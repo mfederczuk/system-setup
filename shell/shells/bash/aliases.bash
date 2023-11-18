@@ -284,7 +284,7 @@ unset -v __bash_aliases__c_cxx_compiler_args_str \
 
 #region 7z
 
-# for some reason there are like 3 different 7z commands and different Linux distros use only some of these commands
+# for some reason there are like 4 different 7z commands and different Linux distros use only some of these commands
 
 declare __bash_aliases__7z_cmd
 
