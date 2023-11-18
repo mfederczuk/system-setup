@@ -369,10 +369,6 @@ if command -v ktlint > '/dev/null'; then
 	alias ktlint='ktlint --color --relative'
 fi
 
-if command -v mocp > '/dev/null'; then
-	alias mocp='mocp --theme=transparent-background'
-fi
-
 #endregion
 
 unset -f __bash_aliases__is_program_gnu_coreutils \
