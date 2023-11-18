@@ -337,6 +337,10 @@ if __bash_aliases__is_program_gnu_coreutils shred; then
 	alias shred='shred -u --verbose --zero'
 fi
 
+if command -v mpv > '/dev/null'; then
+	alias mpv-audio-only='mpv --ytdl-format=bestaudio --no-video'
+fi
+
 if command -v youtube-dl > '/dev/null'; then
 	alias youtube-dl-to-opus="youtube-dl --format=bestaudio -x --audio-format=opus --audio-quality=0 --prefer-ffmpeg -o '%(title)s.%(ext)s'"
 fi
