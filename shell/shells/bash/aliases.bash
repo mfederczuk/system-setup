@@ -149,11 +149,11 @@ fi
 
 if command -v apt > '/dev/null'; then
 	if command -v try_as_root > '/dev/null'; then
-		alias dnf='try_as_root apt'
+		alias apt='try_as_root apt'
 	elif command -v doas > '/dev/null'; then
-		alias dnf='doas apt'
+		alias apt='doas apt'
 	elif command -v sudo > '/dev/null'; then
-		alias dnf='sudo apt'
+		alias apt='sudo apt'
 	fi
 fi
 
