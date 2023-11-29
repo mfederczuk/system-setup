@@ -377,16 +377,8 @@ if command -v dos2unix > '/dev/null'; then
 	alias dos2unix='dos2unix --keepdate'
 fi
 
-if command -v update-alternatives > '/dev/null'; then
-	alias update-alternatives-local='update-alternatives --altdir ~/.local/etc/alternatives --admindir ~/.local/var/lib/alternatives'
-fi
-
 if command -v ktlint > '/dev/null'; then
 	alias ktlint='ktlint --color --relative'
-fi
-
-if command -v mocp > '/dev/null'; then
-	alias mocp='mocp --theme=transparent-background'
 fi
 
 #endregion
