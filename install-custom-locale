@@ -1,0 +1,56 @@
+#!/bin/sh
+# -*- sh -*-
+# vim: syntax=sh
+# code: language=shellscript
+
+# Copyright (c) 2024 Michael Federczuk
+# SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
+
+#region preamble
+
+case "$-" in
+	(*'i'*)
+		\command printf 'script was called interactively\n' >&2
+		return 124
+		;;
+esac
+
+set -o errexit
+set -o nounset
+
+# enabling POSIX-compliant behavior for GNU programs
+export POSIXLY_CORRECT=yes POSIX_ME_HARDER=yes
+
+if [ "${0#/}" = "$0" ]; then
+	argv0="$0"
+else
+	argv0="$(basename -- "$0" && printf x)"
+	argv0="${argv0%"$(printf '\nx')"}"
+fi
+readonly argv0
+
+#endregion
+
+if [ $# -gt 0 ]; then
+	printf '%s: too many arguments: %i\n' "$argv0" $# >&2
+	exit 4
+fi
+
+if ! command -v localedef > '/dev/null'; then
+	printf '%s: localedef: program missing\n' "$argv0" >&2
+	exit 27
+fi
+
+root_dir_pathname="$(dirname -- "$0" && printf x)"
+root_dir_pathname="${root_dir_pathname%"$(printf '\nx')"}"
+readonly root_dir_pathname
+
+custom_locale_file_pathname="$root_dir_pathname/cfg/en_AT@custom"
+readonly custom_locale_file_pathname
+
+default_locale_definition_files_dir_pathname='/usr/share/i18n/locales'
+readonly default_locale_definition_files_dir_pathname
+
+cp -f -- "$custom_locale_file_pathname" "$default_locale_definition_files_dir_pathname/"
+
+localedef -c -f UTF-8 -i "$custom_locale_file_pathname" 'en_AT.UTF-8@custom'
