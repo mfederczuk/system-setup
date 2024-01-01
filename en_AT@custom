@@ -1,0 +1,141 @@
+comment_char %
+escape_char /
+
+% custom English language locale for Austria
+
+% this custom locale was created by combining parts from the GNU C Library's en_US, en_GB, de_AT and de_DE locale files
+% see the man page locale(5) for more information
+% <https://paveloom.github.io/blog/how-to-create-a-custom-locale-on-fedora/>
+% <https://unix.stackexchange.com/a/197693/328583>
+
+LC_IDENTIFICATION
+title      "Custom English locale for Austria"
+source     "Michael Federczuk"
+address    ""
+contact    ""
+email      "federczuk.michael@protonmail.com"
+tel        ""
+fax        ""
+language   "American English"
+territory  "Austria"
+revision   "1.0"
+date       "2023-12-30"
+
+category "i18n:2012";LC_IDENTIFICATION
+category "i18n:2012";LC_CTYPE
+category "i18n:2012";LC_COLLATE
+category "i18n:2012";LC_TIME
+category "i18n:2012";LC_NUMERIC
+category "i18n:2012";LC_MONETARY
+category "i18n:2012";LC_MESSAGES
+category "i18n:2012";LC_PAPER
+category "i18n:2012";LC_NAME
+category "i18n:2012";LC_ADDRESS
+category "i18n:2012";LC_TELEPHONE
+category "i18n:2012";LC_MEASUREMENT
+END LC_IDENTIFICATION
+
+LC_CTYPE
+copy "de_AT"
+END LC_CTYPE
+
+LC_COLLATE
+copy "de_AT"
+END LC_COLLATE
+
+LC_MESSAGES
+copy "en_US"
+END LC_MESSAGES
+
+LC_PAPER
+copy "de_AT"
+END LC_PAPER
+
+LC_NAME
+copy "en_US"
+END LC_NAME
+
+LC_ADDRESS
+copy "de_AT"
+END LC_ADDRESS
+
+LC_TELEPHONE
+copy "de_AT"
+END LC_TELEPHONE
+
+LC_MEASUREMENT
+copy "de_AT"
+END LC_MEASUREMENT
+
+LC_TIME
+week 7;19971130;4
+
+abday "Sun";"Mon";"Tue";"Wed";"Thu";"Fri";"Sat"
+day   "Sunday";/
+      "Monday";/
+      "Tuesday";/
+      "Wednesday";/
+      "Thursday";/
+      "Friday";/
+      "Saturday"
+
+first_weekday 2
+first_workday 2
+
+abmon "Jan";"Feb";"Mar";"Apr";"May";"Jun";/
+      "Jul";"Aug";"Sep";"Oct";"Nov";"Dec"
+mon   "January";/
+      "February";/
+      "March";/
+      "April";/
+      "May";/
+      "June";/
+      "July";/
+      "August";/
+      "September";/
+      "October";/
+      "November";/
+      "December"
+
+t_fmt      "%T"
+am_pm      "";""
+t_fmt_ampm ""
+
+d_fmt   "%d.%m.%Y"
+
+d_t_fmt "%a %d %b %Y %T"
+date_fmt "%a %d %b %Y %T %Z"
+END LC_TIME
+
+LC_NUMERIC
+decimal_point   "."
+thousands_sep   "<U202F>"
+grouping        3;3
+END LC_NUMERIC
+
+LC_MONETARY
+int_curr_symbol "EUR "
+currency_symbol "<U20AC>"
+
+mon_decimal_point "."
+mon_thousands_sep "<U202F>"
+mon_grouping      3;3
+
+positive_sign ""
+negative_sign "-"
+
+int_frac_digits 2
+frac_digits     2
+
+% 0 => symbol succeeds value
+p_cs_precedes 0
+n_cs_precedes 0
+
+int_p_sep_by_space 1
+int_n_sep_by_space 1
+p_sep_by_space     0
+n_sep_by_space     0
+
+p_sign_posn 1
+n_sign_posn 1
+END LC_MONETARY
