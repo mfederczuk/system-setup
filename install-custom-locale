@@ -45,7 +45,7 @@ root_dir_pathname="$(dirname -- "$0" && printf x)"
 root_dir_pathname="${root_dir_pathname%"$(printf '\nx')"}"
 readonly root_dir_pathname
 
-custom_locale_file_pathname="$root_dir_pathname/cfg/en_AT@custom"
+custom_locale_file_pathname="$root_dir_pathname/en_AT@custom"
 readonly custom_locale_file_pathname
 
 default_locale_definition_files_dir_pathname='/usr/share/i18n/locales'
