@@ -62,8 +62,8 @@ where.
 I use a custom locale, which is a combination of the US American English language and Austrian regional formats.
 (along with some personal customizations to those formats)
 
-This custom locale can be installed using the script [`install-custom-local`](install-custom-locale) and then set as
-the system's locale with the script [`set-custom-locale`](set-custom-locale).
+This custom locale can be installed using the script [`install-custom-local`](install-custom-locale)
+(root access is required) and then set as the system's locale with the script [`set-custom-locale`](set-custom-locale).
 
 ## Licensing ##
 
