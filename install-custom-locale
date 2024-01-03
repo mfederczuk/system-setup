@@ -41,16 +41,74 @@ if ! command -v localedef > '/dev/null'; then
 	exit 27
 fi
 
+uid="$(id -u)"
+readonly uid
+
+if [ "$uid" != '0' ] && [ -t 2 ]; then
+	printf 'The script should be executed as the root user. Continue anyway? [y/N] ' >&2
+
+	read -r ans
+
+	case "$ans" in
+		([yY]*)
+			# continue
+			;;
+		(*)
+			printf 'Aborted.\n' >&2
+			exit 48
+			;;
+	esac
+
+	unset -v ans
+fi
+
 root_dir_pathname="$(dirname -- "$0" && printf x)"
 root_dir_pathname="${root_dir_pathname%"$(printf '\nx')"}"
 readonly root_dir_pathname
 
-custom_locale_file_pathname="$root_dir_pathname/en_AT@custom"
-readonly custom_locale_file_pathname
+custom_locale_defintion_filename='en_AT@custom'
+readonly custom_locale_defintion_filename
 
-default_locale_definition_files_dir_pathname='/usr/share/i18n/locales'
-readonly default_locale_definition_files_dir_pathname
+custom_locale_definition_file_source_pathname="$root_dir_pathname/$custom_locale_defintion_filename"
+readonly custom_locale_definition_file_source_pathname
 
-cp -f -- "$custom_locale_file_pathname" "$default_locale_definition_files_dir_pathname/"
+custom_locale_definition_file_target_pathname="/usr/share/i18n/locales/$custom_locale_defintion_filename"
+readonly custom_locale_definition_file_target_pathname
 
-localedef -c -f UTF-8 -i "$custom_locale_file_pathname" 'en_AT.UTF-8@custom'
+if [ -e "$custom_locale_definition_file_target_pathname" ]; then
+	if [ ! -f "$custom_locale_definition_file_target_pathname" ]; then
+		if [ -d "$custom_locale_definition_file_target_pathname" ]; then
+			what='file'
+		else
+			what='regular file'
+		fi
+		readonly what
+
+		printf '%s: %s: not a %s\n' "$argv0" "$custom_locale_definition_file_target_pathname" "$what" >&2
+		exit
+	fi
+
+	if [ -t 2 ]; then
+		printf 'The file %s already exists. Override it? [y/N] ' "$custom_locale_definition_file_target_pathname" >&2
+
+		read -r ans
+
+		case "$ans" in
+			([yY]*)
+				# continue
+				;;
+			(*)
+				printf 'Aborted.\n' >&2
+				exit 49
+				;;
+		esac
+
+		unset -v ans
+	fi
+
+	rm -- "$custom_locale_definition_file_target_pathname"
+fi
+
+cp -f -- "$custom_locale_definition_file_source_pathname" "$custom_locale_definition_file_target_pathname"
+
+localedef -c -f UTF-8 -i "$custom_locale_definition_file_target_pathname" 'en_AT.UTF-8@custom'
