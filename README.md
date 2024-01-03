@@ -53,9 +53,11 @@ Changes are primarily made on this branch and then get merged into the active `d
 
 ## Installation ##
 
-To install (or uninstall) the files to their correct locations, the [`manage`](manage) script is used.  
-This script will read the [`Instructions.cfg`](Instructions.cfg) files, which declare which files need to be installed
-where.
+The files are installed using the script [`manage`](manage).  
+Passing the command "`install`" or "`uninstall`" will copy all files to the intended locations or
+remove them from there again, respectively.
+
+Where each file will be installed to is declared in the `Instructions.cfg` files.
 
 ### Custom Locale ###
 
