@@ -1,6 +1,9 @@
 comment_char %
 escape_char /
 
+% Copyright (c) 2024 Michael Federczuk
+% SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
+
 % custom English language locale for Austria
 
 % this custom locale was created by combining parts from the GNU C Library's en_US, en_GB, de_AT and de_DE locale files
