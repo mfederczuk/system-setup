@@ -53,17 +53,19 @@ Changes are primarily made on this branch and then get merged into the active `d
 
 ## Installation ##
 
-To install (or uninstall) the files to their correct locations, the [`manage`](manage) script is used.  
-This script will read the [`Instructions.cfg`](Instructions.cfg) files, which declare which files need to be installed
-where.
+The files are installed using the script [`manage`](manage).  
+Passing the command "`install`" or "`uninstall`" will copy all files to the intended locations or
+remove them from there again, respectively.
+
+Where each file will be installed to is declared in the `Instructions.cfg` files.
 
 ### Custom Locale ###
 
 I use a custom locale, which is a combination of the US American English language and Austrian regional formats.
 (along with some personal customizations to those formats)
 
-This custom locale can be installed using the script [`install-custom-local`](install-custom-locale) and then set as
-the system's locale with the script [`set-custom-locale`](set-custom-locale).
+This custom locale can be installed using the script [`install-custom-local`](install-custom-locale)
+(root access is required) and then set as the system's locale with the script [`set-custom-locale`](set-custom-locale).
 
 ## Licensing ##
 
