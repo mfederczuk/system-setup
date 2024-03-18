@@ -353,6 +353,9 @@ if command -v mpv > '/dev/null'; then
 	alias mpv-audio-only='mpv --ytdl-format=bestaudio --no-video'
 fi
 
+if command -v yt-dlp > '/dev/null'; then
+	alias yt-dlp-to-opus="yt-dlp --format=bestaudio -x --audio-format=opus --audio-quality=0 --prefer-ffmpeg -o '%(title)s.%(ext)s'"
+fi
 if command -v youtube-dl > '/dev/null'; then
 	alias youtube-dl-to-opus="youtube-dl --format=bestaudio -x --audio-format=opus --audio-quality=0 --prefer-ffmpeg -o '%(title)s.%(ext)s'"
 fi
