@@ -31,20 +31,27 @@ readonly argv0
 
 #endregion
 
+if [ "${1-}" = '--help' ]; then
+	printf 'usage: %s <directory>...\n' "$argv0"
+	printf '    Remove all <directory> arguments recursively if - and only if - the hierarchies contains only (empty) directories.\n'
+	printf '\n'
+	printf 'GitHub Repository: <https://github.com/mfederczuk/system-setup>\n'
+	exit
+fi
+
+sparse=false
+if [ "${1-}" = '--sparse' ]; then
+	sparse=true
+	shift 1
+fi
+readonly sparse
+
 if [ $# -eq 0 ]; then
 	{
 		printf '%s: missing arguments: <directory>...\n' "$argv0"
 		printf 'usage: %s <directory>...\n' "$argv0"
 	} >&2
 	exit 3
-fi
-
-if [ "$1" = '--help' ]; then
-	printf 'usage: %s <directory>...\n' "$argv0"
-	printf '    Remove all <directory> arguments recursively if - and only if - the hierarchies contains only (empty) directories.\n'
-	printf '\n'
-	printf 'GitHub Repository: <https://github.com/mfederczuk/system-setup>\n'
-	exit
 fi
 
 normalize_pathname() {
@@ -112,6 +119,10 @@ check_empty_tree_recursively() {
 		esac
 
 		if [ ! -d "$2" ]; then
+			if $sparse; then
+				return
+			fi
+
 			printf '%s: %s: directory not empty\n' "$argv0" "$1" >&2
 			return 48
 		fi
@@ -184,6 +195,12 @@ remove_empty_tree_recursively() {
 		esac
 
 		if [ ! -d "$2" ]; then
+			if $sparse; then
+				set -- "$1" "$(quote_pathname "$2")"
+				printf 'Skipped non-empty directory %s (--sparse)\n' "$2" >&2
+				return 32
+			fi
+
 			printf '%s: %s: directory not empty\n' "$argv0" "$1" >&2
 			return 48
 		fi
