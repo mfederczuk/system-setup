@@ -6,6 +6,7 @@
 	# direct aliases
 	go   = switch
 	pick = cherry-pick
+	rb   = rebase
 	stat = status
 	wip  = wip-dump
 
