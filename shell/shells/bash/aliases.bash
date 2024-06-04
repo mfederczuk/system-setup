@@ -52,11 +52,11 @@ if [ "$(id -u)" != '0' ]; then
 	# non-root user
 
 	if __bash_aliases__is_program_gnu_coreutils cp; then
-		alias cp='cp --verbose'
+		alias cp='cp --verbose --interactive'
 	fi
 
 	if __bash_aliases__is_program_gnu_coreutils mv; then
-		alias mv='mv --verbose'
+		alias mv='mv --verbose --interactive'
 	fi
 
 	if __bash_aliases__is_program_gnu_coreutils rm; then
@@ -66,13 +66,13 @@ else
 	# root user
 
 	if __bash_aliases__is_program_gnu_coreutils cp; then
-		alias cp='cp --verbose --interactive'
+		alias cp='cp --verbose --no-clobber'
 	else
 		alias cp='cp -i'
 	fi
 
 	if __bash_aliases__is_program_gnu_coreutils mv; then
-		alias mv='mv --verbose --interactive'
+		alias mv='mv --verbose --no-clobber'
 	else
 		alias mv='mv -i'
 	fi
