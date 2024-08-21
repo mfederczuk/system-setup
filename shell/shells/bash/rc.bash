@@ -36,9 +36,31 @@ declare HISTFILESIZE=$((HISTSIZE * 2)) # double to account for the timestamp lin
 shopt -s globstar
 shopt -u sourcepath # disables PATH lookup for the `.` (dot) and `source` builtins
 
+#region ls colors
+
 if command -v dircolors > '/dev/null'; then
 	eval "$(dircolors -b)"
 fi
+
+# support for JPEG XL files
+if [[ ! "${LS_COLORS-}" =~ (^|':')'*.jxl='[^':']*(':'|$) ]] && \
+	[[ "${LS_COLORS-}" =~ (^|':')'*.jp'('e')?'g='([^':']+)(':'|$) ]]; then
+
+	declare __bashrc__jxl_ls_color_entry
+	__bashrc__jxl_ls_color_entry="*.jxl=${BASH_REMATCH[3]}"
+
+	if [[ "$LS_COLORS" =~ ':'$ ]]; then
+		__bashrc__jxl_ls_color_entry+=':'
+	else
+		__bashrc__jxl_ls_color_entry=":$__bashrc__jxl_ls_color_entry"
+	fi
+
+	LS_COLORS+="$__bashrc__jxl_ls_color_entry"
+
+	unset -v __bashrc__jxl_ls_color_entry
+fi
+
+#endregion
 
 if command -v git > '/dev/null'; then
 	# BASE: sourcing git prompt command file if it exists
