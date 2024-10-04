@@ -42,7 +42,7 @@ fi
 
 #region main
 
-tag_name='v0.1.0'
+tag_name='v0.2.0'
 readonly tag_name
 
 root_dir_pathname="$(dirname -- "$0" && printf x)"
