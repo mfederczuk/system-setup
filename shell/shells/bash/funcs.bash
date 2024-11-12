@@ -150,7 +150,7 @@ function normalize_pathname() {
 	# don't normalize the pathname
 	if [[ "$input_pathname" =~ ^'//'([^'/']|$) ]]; then
 		printf '%s' "$input_pathname"
-		exit
+		return
 	fi
 
 	#region normalizing the pathname
