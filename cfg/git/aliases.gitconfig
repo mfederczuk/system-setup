@@ -6,6 +6,7 @@
 	# direct aliases
 	go   = switch
 	pick = cherry-pick
+	rb   = rebase
 	stat = status
 	wip  = wip-dump
 
@@ -27,6 +28,7 @@
 	xcopy-changes = xcopy-diff --staged
 
 	# other
+	lease = push --force-with-lease
 	branchall = branch --all --verbose --verbose # yes, 2x --verbose is correct
 	ff = merge --ff-only
 	hist = log --patch --follow --
@@ -39,6 +41,6 @@
 	# TODO: these aliases should be in their own executable file
 
 	reword = !git reset && git commit --amend # TODO: in the future add support for more than just rewording HEAD
-	graph = log --pretty=custom-oneline --graph
+	graph = log --pretty=custom-oneline --graph --branches
 
 	# ====================== #

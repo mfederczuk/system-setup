@@ -52,11 +52,11 @@ if [ "$(id -u)" != '0' ]; then
 	# non-root user
 
 	if __bash_aliases__is_program_gnu_coreutils cp; then
-		alias cp='cp --verbose'
+		alias cp='cp --verbose --interactive'
 	fi
 
 	if __bash_aliases__is_program_gnu_coreutils mv; then
-		alias mv='mv --verbose'
+		alias mv='mv --verbose --interactive'
 	fi
 
 	if __bash_aliases__is_program_gnu_coreutils rm; then
@@ -66,13 +66,13 @@ else
 	# root user
 
 	if __bash_aliases__is_program_gnu_coreutils cp; then
-		alias cp='cp --verbose --interactive'
+		alias cp='cp --verbose --no-clobber'
 	else
 		alias cp='cp -i'
 	fi
 
 	if __bash_aliases__is_program_gnu_coreutils mv; then
-		alias mv='mv --verbose --interactive'
+		alias mv='mv --verbose --no-clobber'
 	else
 		alias mv='mv -i'
 	fi
@@ -282,7 +282,7 @@ unset -v __bash_aliases__c_cxx_compiler_args_str \
 
 #region 7z
 
-# for some reason there are like 3 different 7z commands and different Linux distros use only some of these commands
+# for some reason there are like 4 different 7z commands and different Linux distros use only some of these commands
 
 declare __bash_aliases__7z_cmd
 
@@ -335,6 +335,13 @@ if __bash_aliases__is_program_gnu_coreutils shred; then
 	alias shred='shred -u --verbose --zero'
 fi
 
+if command -v mpv > '/dev/null'; then
+	alias mpv-audio-only='mpv --ytdl-format=bestaudio --no-video'
+fi
+
+if command -v yt-dlp > '/dev/null'; then
+	alias yt-dlp-to-opus="yt-dlp --format=bestaudio -x --audio-format=opus --audio-quality=0 --prefer-ffmpeg -o '%(title)s.%(ext)s'"
+fi
 if command -v youtube-dl > '/dev/null'; then
 	alias youtube-dl-to-opus="youtube-dl --format=bestaudio -x --audio-format=opus --audio-quality=0 --prefer-ffmpeg -o '%(title)s.%(ext)s'"
 fi
@@ -359,16 +366,8 @@ if command -v dos2unix > '/dev/null'; then
 	alias dos2unix='dos2unix --keepdate'
 fi
 
-if command -v update-alternatives > '/dev/null'; then
-	alias update-alternatives-local='update-alternatives --altdir ~/.local/etc/alternatives --admindir ~/.local/var/lib/alternatives'
-fi
-
 if command -v ktlint > '/dev/null'; then
 	alias ktlint='ktlint --color --relative'
-fi
-
-if command -v mocp > '/dev/null'; then
-	alias mocp='mocp --theme=transparent-background'
 fi
 
 #endregion
