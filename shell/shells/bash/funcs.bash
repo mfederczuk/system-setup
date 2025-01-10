@@ -292,7 +292,7 @@ function is_color_supported() {
 	fi
 
 	case "$TERM" in
-		('xterm-color'|*'-256color'|'xterm-kitty')
+		('xterm-color'|*'-256color'|'xterm-kitty'|'xterm-ghostty')
 			return 0
 			;;
 	esac
