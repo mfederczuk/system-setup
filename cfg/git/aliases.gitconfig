@@ -41,6 +41,4 @@
 	# TODO: these aliases should be in their own executable file
 
 	reword = !git reset && git commit --amend # TODO: in the future add support for more than just rewording HEAD
-	graph = log --pretty=custom-oneline --graph --branches
-
-	# ====================== #
+	graph = log --pretty=custom-oneline --graph HEAD
