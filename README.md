@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2024 Michael Federczuk
+  Copyright (c) 2025 Michael Federczuk
   SPDX-License-Identifier: CC-BY-SA-4.0
 -->
 
@@ -64,8 +64,9 @@ Where each file will be installed to is declared in the `Instructions.cfg` files
 I use a custom locale, which is a combination of the US American English language and Austrian regional formats.
 (along with some personal customizations to those formats)
 
-This custom locale can be installed using the script [`install-custom-local`](install-custom-locale)
-(root access is required) and then set as the system's locale with the script [`set-custom-locale`](set-custom-locale).
+This custom locale can be installed using the script [`custom-local/install`](custom-local/install)
+(root access is required) and then set as the system's locale with
+the script [`custom-locale/set-as-system-locale`](custom-locale/set-as-system-locale).
 
 ## Licensing ##
 
