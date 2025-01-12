@@ -87,9 +87,9 @@ ignored_pathnames=(
 	'CODE_OF_CONDUCT.md' # copied from <https://www.contributor-covenant.org/version/2/1/code_of_conduct/code_of_conduct.md>
 
 	# already contain license header comments
-	'bin/atype.bash'
-	'shell/shells/bash/completions/adb.bash'
-	'shell/shells/bash/completions/gradle.bash'
+	'setup/bin/atype.bash'
+	'setup/shell/shells/bash/completions/adb.bash'
+	'setup/shell/shells/bash/completions/gradle.bash'
 )
 readonly ignored_pathnames
 

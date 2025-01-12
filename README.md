@@ -9,38 +9,38 @@
 This repository tracks all of my user/system configurations, preferences, dotfiles, custom aliases, functions, scripts,
 programs, etc. of my personally used Linux distributions.
 
-## Directory Structure ##
+## [`setup`](setup) Directory Structure ##
 
-* [`bin/`](bin)  
+* [`bin/`](setup/bin)  
   Executable files, which all get installed to `$HOME/.local/bin/`
 
-  * [`git/`](bin/git)  
+  * [`git/`](setup/bin/git)  
     Custom Git commands, which also get installed to `$HOME/.local/bin/`
 
-* [`cfg/`](cfg)  
+* [`cfg/`](setup/cfg)  
   Configuration files for various programs, which mostly get installed either to `$HOME` or under `$XDG_CONFIG_HOME`
 
-  * [`git/`](cfg/git)  
+  * [`git/`](setup/cfg/git)  
     Git configuration files, which get installed specifically to `$XDG_CONFIG_HOME/git/`
 
-* [`shell/`](shell)  
+* [`shell/`](setup/shell)  
   Shell setup files, which get installed under either `$HOME` or `$XDG_CONFIG_HOME`.  
   POSIX sh related files get installed specifically to `$HOME`
 
-  * [`shells/`](shell/shells)  
+  * [`shells/`](setup/shell/shells)  
     Subdirectories for different Unix shells
 
-    * [`bash/`](shell/shells/bash)  
+    * [`bash/`](setup/shell/shells/bash)  
       GNU Bash startup files, which get installed either under `$HOME` or to `$XDG_CONFIG_HOME/bash/`
 
-      * [`lib/`](shell/shells/bash/lib)  
+      * [`lib/`](setup/shell/shells/bash/lib)  
         GNU Bash files that define various custom functions, which get installed to `$XDG_CONFIG_HOME/bash/lib/`
 
-      * [`completions/`](shell/shells/bash/completions)  
+      * [`completions/`](setup/shell/shells/bash/completions)  
         GNU Bash files that define completion functions, which get installed to `$XDG_CONFIG_HOME/bash/completions/`
 
-        * [`git/`](shell/shells/bash/completions/git)  
-          GNU Bash files that define completion functions for the custom Git commands located in [`bin/git/`](bin/git),
+        * [`git/`](setup/shell/shells/bash/completions/git)  
+          GNU Bash files that define completion functions for the custom Git commands located in [`bin/git/`](setup/bin/git),
           which also get installed to `$XDG_CONFIG_HOME/bash/completions/`
 
 ## Distributions ##
@@ -64,9 +64,9 @@ Where each file will be installed to is declared in the `Instructions.cfg` files
 I use a custom locale, which is a combination of the US American English language and Austrian regional formats.
 (along with some personal customizations to those formats)
 
-This custom locale can be installed using the script [`custom-local/install`](custom-local/install)
+This custom locale can be installed using the script [`setup/custom-locale/install`](setup/custom-locale/install)
 (root access is required) and then set as the system's locale with
-the script [`custom-locale/set-as-system-locale`](custom-locale/set-as-system-locale).
+the script [`setup/custom-locale/set-as-system-locale`](setup/custom-locale/set-as-system-locale).
 
 ## Licensing ##
 

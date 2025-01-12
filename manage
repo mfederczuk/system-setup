@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2023 Michael Federczuk
+# Copyright (c) 2025 Michael Federczuk
 # SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
 
 import os
@@ -87,12 +87,13 @@ match command_name:
 
         # endregion
 
+        setup_dir_pathname: str = os.path.relpath(os.path.dirname(__file__), os.getcwd())
+        setup_dir_pathname += "/setup"
+
         instruction_groups: list[InstructionGroup]
         try:
-            root_dir_pathname: str = os.path.relpath(os.path.dirname(__file__), os.getcwd())
-
             instruction_groups = read_instructions(
-                source_dir_pathname=root_dir_pathname,
+                source_dir_pathname=setup_dir_pathname,
                 HOME=HOME,
                 XDG_CONFIG_HOME=XDG_CONFIG_HOME,
             )
@@ -122,8 +123,11 @@ match command_name:
 
         for instruction_group in instruction_groups:
             for file_copy_instruction in instruction_group.file_copy_instructions:
+                source_pathname: str = os.path.join(setup_dir_pathname, file_copy_instruction.source.pathname.value)
+                source_pathname = os.path.relpath(source_pathname, os.getcwd())
+
                 print(
-                    f" * {file_copy_instruction.source.pathname} -> {file_copy_instruction.target.pathname}",
+                    f" * {source_pathname} -> {file_copy_instruction.target.pathname}",
                     file=sys.stderr,
                 )
 
@@ -145,8 +149,11 @@ match command_name:
 
         for instruction_group in instruction_groups:
             for file_copy_instruction in instruction_group.file_copy_instructions:
+                source_pathname: str = os.path.join(setup_dir_pathname, file_copy_instruction.source.pathname.value)
+                source_pathname = os.path.relpath(source_pathname, os.getcwd())
+
                 os.makedirs(os.path.dirname(file_copy_instruction.target.pathname.value), exist_ok=True)
-                shutil.copy(file_copy_instruction.source.pathname.value, file_copy_instruction.target.pathname.value)
+                shutil.copy(source_pathname, file_copy_instruction.target.pathname.value)
 
         print(f"\nDone.", file=sys.stderr)
 
@@ -182,10 +189,11 @@ match command_name:
 
         instruction_groups: list[InstructionGroup]
         try:
-            root_dir_pathname: str = os.path.relpath(os.path.dirname(__file__), os.getcwd())
+            setup_dir_pathname: str = os.path.relpath(os.path.dirname(__file__), os.getcwd())
+            setup_dir_pathname += "/setup"
 
             instruction_groups = read_instructions(
-                source_dir_pathname=root_dir_pathname,
+                source_dir_pathname=setup_dir_pathname,
                 HOME=HOME,
                 XDG_CONFIG_HOME=XDG_CONFIG_HOME,
             )
