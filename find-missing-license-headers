@@ -88,6 +88,7 @@ ignored_pathnames=(
 
 	# already contain license header comments
 	'setup/bin/atype.bash'
+	'setup/cfg/neovim/colorscheme-codedark.vim'
 	'setup/shell/shells/bash/completions/adb.bash'
 	'setup/shell/shells/bash/completions/gradle.bash'
 )

@@ -70,7 +70,22 @@ readonly commit_hash
 
 {
 	head -n3 -- "$tmp_repo_dir_pathname/colors/codedark.vim"
-	printf "\" <https://github.com/tomasiser/vim-code-dark/blob/%s/colors/codedark.vim>\\n" "$commit_hash"
+
+	while read -r license_line; do
+		if [ -n "$license_line" ]; then
+			license_line=" $license_line"
+		fi
+
+		license_line="\"$license_line"
+
+		printf '%s\n' "$license_line"
+	done < "$tmp_repo_dir_pathname/LICENSE.md"
+	unset -v license_line
+
+	printf '\n'
+
+	printf '" <https://github.com/tomasiser/vim-code-dark/blob/%s/colors/codedark.vim>\n' "$commit_hash"
+
 	tail -n+3 -- "$tmp_repo_dir_pathname/colors/codedark.vim"
 } > "$script_dir_pathname/colorscheme-codedark.vim"
 
