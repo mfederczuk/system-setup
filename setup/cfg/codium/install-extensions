@@ -1,0 +1,94 @@
+#!/bin/bash
+# -*- sh -*-
+# vim: syntax=sh
+# code: language=shellscript
+
+# Copyright (c) 2025 Michael Federczuk
+# SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
+
+#region preamble
+
+case "$-" in
+	(*'i'*)
+		if \command test -n "${BASH_VERSION-}"; then
+			# using `eval` here in case a non-Bash shell tries to parse this branch even if the condition is false
+			\command eval "\\command printf '%s: ' \"\${BASH_SOURCE[0]}\" >&2"
+		fi
+
+		\command printf 'script was called interactively\n' >&2
+		return 124
+		;;
+esac
+
+set -o errexit
+set -o nounset
+
+# enabling POSIX-compliant behavior for GNU programs
+export POSIXLY_CORRECT=yes POSIX_ME_HARDER=yes
+
+if [ -z "${BASH_VERSION-}" ]; then
+	if [ "${0#/}" = "$0" ]; then
+		argv0="$0"
+	else
+		argv0="$(basename -- "$0" && printf x)"
+		argv0="${argv0%"$(printf '\nx')"}"
+	fi
+	readonly argv0
+
+	printf '%s: GNU Bash is required for this script\n' "$argv0" >&2
+	exit 1
+fi
+
+declare argv0
+if [[ ! "$0" =~ ^'/' ]]; then
+	argv0="$0"
+else
+	argv0="$(basename -- "$0" && printf x)"
+	argv0="${argv0%$'\nx'}"
+fi
+readonly argv0
+
+#endregion
+
+declare script_dir_path
+script_dir_path="$(dirname -- "$0" && printf x)"
+script_dir_path="${script_dir_path%$'\nx'}"
+readonly script_dir_path
+
+#region reading extension IDs
+
+declare extension_ids_file_path
+extension_ids_file_path="$script_dir_path/extensions.cfg"
+readonly extension_ids_file_path
+
+declare -a extension_ids
+extension_ids=()
+
+while read -r line; do
+	if [[ "$line" =~ ^(.*)'#'.*$ ]]; then
+		line="${BASH_REMATCH[1]}"
+	fi
+
+	if [[ "$line" =~ ^[[:space:]]*$ ]]; then
+		continue
+	fi
+
+	extension_ids+=("$line")
+done < "$extension_ids_file_path"
+
+readonly extension_ids
+
+#endregion
+
+declare -a args
+args=()
+
+declare extension_id
+for extension_id in "${extension_ids[@]}"; do
+	args+=(--install-extension "$extension_id")
+done
+unset -v extension_id
+
+readonly args
+
+codium "${args[@]}"

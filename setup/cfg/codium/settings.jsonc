@@ -1,0 +1,28 @@
+{
+	"editor.insertSpaces": false,
+	"editor.renderLineHighlight": "all",
+	"editor.renderWhitespace": "all",
+	"editor.rulers": [120],
+	"editor.scrollBeyondLastColumn": 8,
+
+	"explorer.sortOrderLexicographicOptions": "upper",
+
+	"files.autoSave": "afterDelay",
+	"files.autoSaveDelay": 1001,
+	"files.eol": "\n",
+	"files.insertFinalNewline": true,
+	"files.trimFinalNewlines": true,
+
+	"telemetry.telemetryLevel": "off",
+
+	"window.dialogStyle": "custom",
+	"window.titleBarStyle": "custom",
+
+	"workbench.list.openMode": "doubleClick",
+	"workbench.tree.indent": 16,
+
+	"[git-commit]": {
+		"editor.rulers": [50, 72],
+		"workbench.editor.restoreViewState": false,
+	},
+}
