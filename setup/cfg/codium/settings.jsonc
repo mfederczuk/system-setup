@@ -33,4 +33,26 @@
 		"editor.rulers": [50, 72],
 		"workbench.editor.restoreViewState": false,
 	},
+
+	"cSpell.language": "en,en-US,en-GB",
+	"cSpell.customDictionaries": {
+		"custom-user-public": {
+			"name": "custom-user-public",
+			"path": "~/.config/VSCodium/User/cSpell-dictionaries/public.txt",
+			"addWords": true,
+			"scope": "user",
+		},
+		"custom-user-private": {
+			"name": "custom-user-private",
+			"path": "~/.config/VSCodium/User/cSpell-dictionaries/private.txt",
+			"addWords": true,
+			"scope": "user",
+		},
+	},
+	"cSpell.dictionaries": [
+		"git",
+		"lorem-ipsum",
+		"custom-user-public",
+		"custom-user-private",
+	],
 }
