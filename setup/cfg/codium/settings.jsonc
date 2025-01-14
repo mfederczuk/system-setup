@@ -19,6 +19,13 @@
 	"window.dialogStyle": "custom",
 	"window.titleBarStyle": "custom",
 
+	"workbench.colorTheme": "Default Dark Modern",
+	"workbench.colorCustomizations": {
+		"[Default Dark Modern]": {
+			// Same as "activityBar.activeBorder" but with an alpha value of 0x1F.
+			"activityBar.activeBackground": "#0078d41f",
+		},
+	},
 	"workbench.list.openMode": "doubleClick",
 	"workbench.tree.indent": 16,
 
