@@ -13,7 +13,7 @@
 .vscode/
 
 *.swp
-__pycache__
+__pycache__/
 node_modules/
 
 *.todo
