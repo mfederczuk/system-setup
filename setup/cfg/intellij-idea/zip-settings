@@ -41,8 +41,9 @@ readonly settings_dir_path
 keymap_file_path="$settings_dir_path/keymap.xml"
 editor_settings_file_path="$settings_dir_path/editor.xml"
 ui_settings_file_path="$settings_dir_path/ui.xml"
+advanced_settings_file_path="$settings_dir_path/advanced.xml"
 plugins_file_path="$settings_dir_path/plugins.cfg"
-readonly keymap_file_path editor_settings_file_path ui_settings_file_path plugins_file_path
+readonly keymap_file_path editor_settings_file_path ui_settings_file_path advanced_settings_file_path plugins_file_path
 
 keymap_name="$(grep -E -- 'name="[^"]+"' "$keymap_file_path" | head -n1 | sed s/'^.*name="\([^"]\{1,\}\)".*$'/'\1'/)"
 readonly keymap_name
@@ -68,6 +69,7 @@ rm -f -- "$tmp_dir_path/../settings.zip"
 mkdir -p -- "$tmp_dir_path/options"
 cp -- "$editor_settings_file_path" "$tmp_dir_path/options/editor.xml"
 cp -- "$ui_settings_file_path" "$tmp_dir_path/options/ui.lnf.xml"
+cp -- "$advanced_settings_file_path" "$tmp_dir_path/options/advancedSettings.xml"
 
 mkdir -p -- "$tmp_dir_path/keymaps"
 cp -- "$keymap_file_path" "$tmp_dir_path/keymaps/$keymap_name.xml"
