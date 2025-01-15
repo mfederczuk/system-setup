@@ -57,6 +57,8 @@ mkdir -p -- "$tmp_dir_path"
 
 #endregion
 
+rm -f -- "$tmp_dir_path/../settings.zip"
+
 mkdir -p -- "$tmp_dir_path/keymaps"
 cp -- "$keymap_file_path" "$tmp_dir_path/keymaps/$keymap_name.xml"
 
