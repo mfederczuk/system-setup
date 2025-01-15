@@ -35,15 +35,22 @@ script_dir_path="$(dirname -- "$0" && printf x)"
 script_dir_path="${script_dir_path%"$(printf '\nx')"}"
 readonly script_dir_path
 
-keymap_file_path="$script_dir_path/keymap.xml"
-readonly keymap_file_path
+settings_dir_path="$script_dir_path/settings"
+readonly settings_dir_path
+
+keymap_file_path="$settings_dir_path/keymap.xml"
+editor_settings_file_path="$settings_dir_path/editor.xml"
+ui_settings_file_path="$settings_dir_path/ui.xml"
+advanced_settings_file_path="$settings_dir_path/advanced.xml"
+plugins_file_path="$settings_dir_path/plugins.cfg"
+readonly keymap_file_path editor_settings_file_path ui_settings_file_path advanced_settings_file_path plugins_file_path
 
 keymap_name="$(grep -E -- 'name="[^"]+"' "$keymap_file_path" | head -n1 | sed s/'^.*name="\([^"]\{1,\}\)".*$'/'\1'/)"
 readonly keymap_name
 
 #region setting up temporary directory
 
-tmp_dir_path="$script_dir_path/_settings"
+tmp_dir_path="$script_dir_path/_settings_zip"
 readonly tmp_dir_path
 
 remove_tmp_dir() {
@@ -57,6 +64,13 @@ mkdir -p -- "$tmp_dir_path"
 
 #endregion
 
+rm -f -- "$tmp_dir_path/../settings.zip"
+
+mkdir -p -- "$tmp_dir_path/options"
+cp -- "$editor_settings_file_path" "$tmp_dir_path/options/editor.xml"
+cp -- "$ui_settings_file_path" "$tmp_dir_path/options/ui.lnf.xml"
+cp -- "$advanced_settings_file_path" "$tmp_dir_path/options/advancedSettings.xml"
+
 mkdir -p -- "$tmp_dir_path/keymaps"
 cp -- "$keymap_file_path" "$tmp_dir_path/keymaps/$keymap_name.xml"
 
@@ -68,6 +82,10 @@ mkdir -p -- "$tmp_dir_path/options/linux"
 	printf '\t</component>\n'
 	printf '</application>\n'
 } > "$tmp_dir_path/options/linux/keymap.xml"
+
+grep -Ev '^[[:space:]]*(#.*)?$' "$plugins_file_path" > "$tmp_dir_path/installed.txt"
+
+touch -- "$tmp_dir_path/IntelliJ IDEA Global Settings"
 
 (
 	cd -- "$tmp_dir_path"

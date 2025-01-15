@@ -1,0 +1,10 @@
+<!-- SPDX-License-Identifier: CC0-1.0 -->
+<application>
+	<component name="AdvancedSettings">
+		<option name="settings">
+			<map>
+				<entry key="gradle.download.sources" value="true" />
+			</map>
+		</option>
+	</component>
+</application>

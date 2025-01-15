@@ -55,4 +55,7 @@
 		"custom-user-public",
 		"custom-user-private",
 	],
+
+	"redhat.telemetry.enabled": false,
+	"xml.format.maxLineWidth": 120,
 }
