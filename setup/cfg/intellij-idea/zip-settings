@@ -35,7 +35,10 @@ script_dir_path="$(dirname -- "$0" && printf x)"
 script_dir_path="${script_dir_path%"$(printf '\nx')"}"
 readonly script_dir_path
 
-keymap_file_path="$script_dir_path/keymap.xml"
+settings_dir_path="$script_dir_path/settings"
+readonly settings_dir_path
+
+keymap_file_path="$settings_dir_path/keymap.xml"
 readonly keymap_file_path
 
 keymap_name="$(grep -E -- 'name="[^"]+"' "$keymap_file_path" | head -n1 | sed s/'^.*name="\([^"]\{1,\}\)".*$'/'\1'/)"
@@ -43,7 +46,7 @@ readonly keymap_name
 
 #region setting up temporary directory
 
-tmp_dir_path="$script_dir_path/_settings"
+tmp_dir_path="$script_dir_path/_settings_zip"
 readonly tmp_dir_path
 
 remove_tmp_dir() {
