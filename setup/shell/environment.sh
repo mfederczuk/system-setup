@@ -145,6 +145,10 @@ if command -v node > '/dev/null'; then
 	export TS_NODE_HISTORY="$XDG_STATE_HOME/ts-node/repl_history"
 fi
 
+if command -v npm > '/dev/null'; then
+	export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
+fi
+
 #endregion
 
 # .NET
