@@ -107,24 +107,29 @@ fi
 
 #endregion
 
+export PAGER='less --ignore-case --quit-on-intr --LONG-PROMPT --RAW-CONTROL-CHARS --chop-long-lines -+X'
+
+export SYSTEMD_PAGERSECURE='true'
+export SYSTEMD_PAGER='less --quit-if-one-screen --ignore-case --quit-on-intr --LONG-PROMPT --RAW-CONTROL-CHARS --chop-long-lines -+X --file-size'
+
 #region programming languages / environments
 
 #region C & C++
 
 if command -v cc > '/dev/null'; then
-	export CC=cc
+	export CC='cc'
 elif command -v gcc > '/dev/null'; then
-	export CC=gcc
+	export CC='gcc'
 elif command -v clang > '/dev/null'; then
-	export CC=clang
+	export CC='clang'
 fi
 
 if command -v c++ > '/dev/null'; then
-	export CXX=c++
+	export CXX='c++'
 elif command -v g++ > '/dev/null'; then
-	export CXX=g++
+	export CXX='g++'
 elif command -v clang++ > '/dev/null'; then
-	export CXX=clang++
+	export CXX='clang++'
 fi
 
 #endregion
@@ -155,23 +160,14 @@ fi
 #endregion
 
 # .NET
-export DOTNET_ROOT='/opt/dotnet'
-export DOTNET_CLI_TELEMETRY_OPTOUT='-1'
+export DOTNET_CLI_TELEMETRY_OPTOUT='1' # <https://learn.microsoft.com/en-us/dotnet/core/tools/telemetry#how-to-opt-out>
 
 #endregion
 
-export PAGER='less --ignore-case --quit-on-intr --LONG-PROMPT --RAW-CONTROL-CHARS --chop-long-lines -+X'
-
-export SYSTEMD_PAGERSECURE='true'
-export SYSTEMD_PAGER='less --quit-if-one-screen --ignore-case --quit-on-intr --LONG-PROMPT --RAW-CONTROL-CHARS --chop-long-lines -+X --file-size'
-
-#region Git
-
+# Git
 if command -v git > '/dev/null'; then
 	export GIT_PS1_SHOWDIRTYSTATE='yes'
 
 	export GIT_COMPLETION_SHOW_ALL_COMMANDS='1' # exposes completion for plumbing commands
 	export GIT_COMPLETION_SHOW_ALL='1' # exposes completion for rarely used options
 fi
-
-#endregion
