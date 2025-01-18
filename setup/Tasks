@@ -1,0 +1,62 @@
+# SPDX-License-Identifier: CC0-1.0
+
+include (
+	"shell"
+	"cfg"
+	"bin"
+	"custom-locale"
+)
+
+task updateRemoteFiles {
+	ExecTask "cfg".updateRemoteFiles
+	ExecTask "bin".updateRemoteFiles
+}
+
+task install(
+	dailyDriver: Bool,
+	usingBashPromptCommand: Bool,
+	withGui: Bool,
+	usbAccess: Bool,
+	useGitCommitSigning: Bool,
+	TODO,
+) {
+	ExecTask "shell".install(dailyDriver, usingBashPromptCommand, withGui, usbAccess)
+
+	ExecTask "cfg".install(useGitCommitSigning, withGui)
+
+	ExecTask "bin".install(withGui, TODO) # TODO
+
+	if (withGui) {
+		ExecTask "custom-locale".install
+	}
+}
+
+task install:fedora41-dailyDriver {
+	ExecTask install(
+		dailyDriver: true,
+		usingBashPromptCommand: true,
+		withGui: true,
+		usbAccess: true,
+		TODO,
+	)
+}
+
+task install:`ubuntu22.04-server` {
+	ExecTask install(
+		dailyDriver: false,
+		usingBashPromptCommand: true,
+		withGui: false,
+		usbAccess: false,
+		TODO,
+	)
+}
+
+task install:androidTermux {
+	ExecTask install(
+		dailyDriver: false,
+		usingBashPromptCommand: false,
+		withGui: false,
+		usbAccess: false,
+		TODO,
+	)
+}

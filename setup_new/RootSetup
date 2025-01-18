@@ -1,0 +1,42 @@
+dimensions {
+	enum? init-system(systemd)
+
+	enum? desktop-environment(gnome)
+
+	enum? distro(fedora-41, ubuntu-22.04, android-termux)
+
+	bool usb-access
+}
+
+phases {
+	fetch-remote-files
+
+	install-package-repositories
+
+	install : install-package-repositories
+
+	configure : install
+}
+
+presets {
+	fedora-41-daily-driver {
+		init-system = systemd
+		desktop-environment = gnome
+		distro = fedora-41
+		usb-access = true
+	}
+
+	ubuntu-22.04-server {
+		init-system = systemd
+		desktop-environment = <none>
+		distro = ubuntu-22.04
+		usb-access = false
+	}
+
+	android-termux {
+		init-system = <none>
+		desktop-environment = <none>
+		distro = android-termux
+		usb-access = false
+	}
+}

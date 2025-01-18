@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: CC0-1.0
+
+[init-system(systemd) || desktop-environment(gnome)]
+configure {
+	ExecFile as root "install"
+
+	if (init-system == systemd) {
+		# doesn't require root for some reason
+		ExecFile "set-as-systemd-locale"
+	}
+
+	if (desktop-environment == gnome) {
+		ExecFile "set-as-gnome-system-locale"
+	}
+}

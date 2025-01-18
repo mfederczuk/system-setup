@@ -1,0 +1,21 @@
+1. install package repositories
+   for DNF, custom repos (vscodium) and coprs (zeno/scrcpy, rafatosta/zapzap, g3tchoo/prismlauncher, pgdev/ghostty)
+
+2. install packages
+
+3. install other programs (jetbrains toolbox)
+
+4. copy files, run scripts and print info (for manually required things)
+
+
+phases:
+	install-package-repositories
+	install
+	configure
+
+
+=== tasks ===
+
+install-package-repositories
+
+install-packages --> install-package-repositories

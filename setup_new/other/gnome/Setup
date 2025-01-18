@@ -1,0 +1,4 @@
+[desktop-environment(gnome)]
+configure {
+	Copy file="custom-shell-theme.css" to file="$HOME/.themes/custom/gnome-shell/gnome-shell.css"
+}

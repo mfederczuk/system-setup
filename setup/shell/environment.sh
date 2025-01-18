@@ -148,7 +148,6 @@ if command -v node > '/dev/null'; then
 		export NODE_PATH="${NODE_PATH:-"/usr/lib/node_modules"}"
 	fi
 
-	# TODO: these directories must be created manually
 	export NODE_REPL_HISTORY="$XDG_STATE_HOME/node/repl_history"
 	export TS_NODE_HISTORY="$XDG_STATE_HOME/ts-node/repl_history"
 fi

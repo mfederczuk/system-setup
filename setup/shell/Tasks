@@ -1,0 +1,30 @@
+# SPDX-License-Identifier: CC0-1.0
+
+include (
+	"shells"
+)
+
+task updateRemoteFiles {
+	ExecTask "shells".updateRemoteFiles
+}
+
+task install(
+	dailyDriver: Bool,
+	usingBashPromptCommand: Bool,
+	withGui: Bool,
+	usbAccess: Bool,
+) {
+	# Required for the REPL history files.
+	CreateDirectories "$XDG_STATE_HOME/node"
+	CreateDirectories "$XDG_STATE_HOME/ts-node"
+
+	Copy
+		files=(
+			"environment.sh" as ".environment.sh",
+			"profile.sh" as ".profile",
+		)
+		into
+		directory="$HOME"
+
+	ExecTask "shells".install(dailyDriver, usingBashPromptCommand, withGui, usbAccess)
+}

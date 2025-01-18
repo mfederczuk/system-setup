@@ -1,0 +1,18 @@
+[distro(fedora-41, ubuntu-22.04, android-termux)]
+install {
+	switch (distro) {
+		case fedora-41: {
+			ExecShell as root "dnf install git"
+		}
+		case ubuntu-22.04: {
+			ExecShell as root "apt install git"
+		}
+		case android-termux: {
+			ExecShell "pkg install git"
+		}
+	}
+}
+
+configure {
+	...
+}

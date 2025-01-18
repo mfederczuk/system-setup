@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: CC0-1.0
+
+task install {
+	ExecFile "open-toolbox-download-page-if-not-installed"
+
+	ExecFile "zip-settings"
+	PrintInfo "IntelliJ IDEA (and Android Studio) settings must imported manually"
+}

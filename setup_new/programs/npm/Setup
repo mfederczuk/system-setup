@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: CC0-1.0
+
+[distro(fedora-41)]
+install {
+	ExecShell as root "dnf install nodejs-npm"
+}
+
+configure {
+	Copy file="npmrc" to file="$XDG_CONFIG_HOME/npm/npmrc"
+}

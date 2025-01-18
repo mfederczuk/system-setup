@@ -1,0 +1,20 @@
+[distro(fedora-41, ubuntu-22.04, android-termux)]
+install {
+	switch (distro) {
+		case fedora-41: {
+			ExecShell as root "dnf install vim"
+		}
+
+		case ubuntu-22.04: {
+			ExecShell as root "apt install vim"
+		}
+
+		case android-termux: {
+			ExecShell "pkg install vim"
+		}
+	}
+}
+
+configure {
+	Copy file="vimrc.vim" to file="$HOME/.vimrc"
+}

@@ -1,0 +1,56 @@
+# SPDX-License-Identifier: CC0-1.0
+
+include (
+	"git",
+)
+
+task updateRemoteFiles {
+	ExecFile "update-atype"
+	ExecFile "update-ktlint-install"
+	ExecFile "update-mkbak"
+}
+
+task install(withGui: Bool, TODO) {
+	Copy
+		files=(
+			if (withGui) "alert.bash" as "alert",
+
+			if (withGui) "atype.bash" as "atype",
+
+			if (TODO) "avdmanager-wrapper.sh" as "avdmanager",
+
+			"determine-shared-prefix.bash" as "determine-shared-prefix",
+
+			if (withGui) "gnome-shell-notify-send.sh" as "gnome-shell-notify-send",
+
+			if (TODO) "ktlint-install.sh" as "ktlint-install",
+
+			if (TODO) "lenny.sh" as "lenny",
+
+			if (TODO) "mkbak.bash" as "mkbak",
+
+			if (TODO) "prune-codium-workspaces.sh" as "prune-codium-workspaces"
+
+			"remove-shared-prefix.bash" as "remove-shared-prefix",
+
+			"repeat.sh" as "repeat",
+
+			"retry.sh" as "retry",
+
+			"rmtree.sh" as "rmtree",
+
+			"shasum-dir.bash" as "shasum-dir",
+
+			"slugify.sh" as "slugify",
+
+			"sortfile.sh" as "sortfile",
+
+			if (withGui) "xdg.bash" as "xdg",
+
+			if (TODO) "zoop.sh" as "zoop",
+		)
+		into
+		directory="$HOME/.local/bin"
+
+	ExecTask "git".install
+}
