@@ -1,7 +1,0 @@
-# SPDX-License-Identifier: CC0-1.0
-
-task install {
-	Copy file="theme-ambience-from-terminator.cfg" to file="$XDG_CONFIG_HOME/ghostty/themes/Ambience from Terminator"
-
-	Copy file="config.cfg" to file="$XDG_CONFIG_HOME/ghostty/config"
-}

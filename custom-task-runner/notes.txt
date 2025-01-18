@@ -1,7 +1,0 @@
-$ custom-task-runner updateRemoteFiles
-
-$ custom-task-runner install dailyDriver=true ...
-
-$ custom-task-runner install:fedora41-dailyDriver
-
-usage: custom-task-runner <task> [(<input_name>=<value>)...]

@@ -1,9 +1,0 @@
-[desktop-environment(*) && distro(fedora-41)]
-install {
-	ExecShell as root "dnf install mpv mpv-mpris"
-}
-
-[desktop-environment(*)]
-configure {
-	Copy file="mpv.conf" to file="$XDG_CONFIG_HOME/mpv/mpv.conf"
-}

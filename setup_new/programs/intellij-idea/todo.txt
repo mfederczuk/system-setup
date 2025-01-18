@@ -1,9 +1,0 @@
-editor
-	color scheme
-	code style
-	inlay hints
-	intentions
-
-android logcat history
-
-discord integration

@@ -7,12 +7,7 @@ fi
 
 #region distinct package managers
 
-#%% switch (packageManager) {
-	#%% case APT
-		# TODO
-	#%% case DNF
-		# TODO
-#%% }
+# BASE: <cmd>-up command for system's native package manager
 
 if command -v flatpak > '/dev/null'; then
 	function flatpak-up() {
@@ -130,12 +125,7 @@ if $__dotfiles_bash_funcs_pkgsup__any_up_commands_present; then
 		fi
 
 		local -ar package_managers=(
-			#%% switch (packageManager) {
-				#%% case APT
-					apt
-				#%% case DNF
-					dnf
-			#%% }
+			# BASE: system's native package manager command
 			flatpak
 			npm
 		) || return
