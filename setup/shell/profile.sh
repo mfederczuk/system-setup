@@ -9,14 +9,14 @@ umask 022
 
 if [ -n "${HOME-}" ]; then
 	if [ -f "$HOME/.environment.sh" ]; then
-		# shellcheck source=shell/environment.sh
+		# shellcheck source=environment.sh
 		. "$HOME/.environment.sh"
 	fi
 
 	#region shell specific runcoms
 
 	if [ -n "$BASH_VERSION" ] && [ -f "$HOME/.bashrc" ]; then
-		# shellcheck source=shell/shells/bash/rc.bash
+		# shellcheck source=shells/bash/rc.bash
 		. "$HOME/.bashrc"
 	fi
 
