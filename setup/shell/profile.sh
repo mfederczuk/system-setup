@@ -10,12 +10,6 @@ umask 022
 if [ -n "${HOME-}" ] && [ -f "$HOME/.environment.sh" ]; then
 	# shellcheck source=shell/environment.sh
 	. "$HOME/.environment.sh"
-elif [ -f ~'/.environment.sh' ]; then
-	# shellcheck source=shell/environment.sh
-	. ~'/.environment.sh'
-elif [ -f '.environment.sh' ]; then
-	# shellcheck source=shell/environment.sh
-	. '.environment.sh'
 fi
 
 #region shell specific runcoms
