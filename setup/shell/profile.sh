@@ -7,41 +7,31 @@
 
 umask 022
 
-if [ -n "${HOME-}" ] && [ -f "$HOME/.environment.sh" ]; then
-	# shellcheck source=shell/environment.sh
-	. "$HOME/.environment.sh"
-elif [ -f ~'/.environment.sh' ]; then
-	# shellcheck source=shell/environment.sh
-	. ~'/.environment.sh'
-elif [ -f '.environment.sh' ]; then
-	# shellcheck source=shell/environment.sh
-	. '.environment.sh'
-fi
+if [ -n "${HOME-}" ]; then
+	if [ -f "$HOME/.environment.sh" ]; then
+		# shellcheck source=environment.sh
+		. "$HOME/.environment.sh"
+	fi
 
-#region shell specific runcoms
+	#region shell specific runcoms
 
-if [ -n "$BASH_VERSION" ]; then
-	if [ -f "$HOME/.bashrc" ]; then
-		# shellcheck source=shell/shells/bash/rc.bash
+	if [ -n "$BASH_VERSION" ] && [ -f "$HOME/.bashrc" ]; then
+		# shellcheck source=shells/bash/rc.bash
 		. "$HOME/.bashrc"
 	fi
-fi
 
-if [ -n "$ZSH_VERSION" ]; then
-	if [ -f "$HOME/.zshrc" ]; then
+	if [ -n "$ZSH_VERSION" ] && [ -f "$HOME/.zshrc" ]; then
 		# shellcheck disable=1091
 		. "$HOME/.zshrc"
 	fi
-fi
 
-if [ -n "$FISH_VERSION" ]; then
-	if [ -f "$HOME/.fishrc" ]; then
+	if [ -n "$FISH_VERSION" ] && [ -f "$HOME/.fishrc" ]; then
 		# shellcheck disable=1091
 		. "$HOME/.fishrc"
 	fi
-fi
 
-#endregion
+	#endregion
+fi
 
 #region cleaning up environment variable PATH
 

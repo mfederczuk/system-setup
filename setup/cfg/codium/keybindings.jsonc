@@ -1,0 +1,73 @@
+// SPDX-License-Identifier: CC0-1.0
+[
+	//#region [Ctrl]+[F] ("Find" & "Replace")
+
+	{
+		"key": "ctrl+f",
+		"command": "-actions.find",
+		"when": "editorFocus || editorIsOpen"
+	},
+
+	{
+		"key": "ctrl+f",
+		"command": "actions.find",
+		"when": "(editorFocus || editorIsOpen) && editorReadonly"
+	},
+	{
+		"key": "ctrl+f",
+		"command": "editor.action.startFindReplaceAction",
+		"when": "(editorFocus || editorIsOpen) && !editorReadonly"
+	},
+
+	//#endregion
+
+	//#region rebinding [Ctrl]+[D] to "Copy Line Down"
+
+	{
+		"key": "ctrl+d",
+		"command": "-editor.action.addSelectionToNextFindMatch",
+		"when": "editorFocus",
+	},
+	{
+		"key": "ctrl+d",
+		"command": "editor.action.copyLinesDownAction",
+		"when": "editorTextFocus && !editorReadonly",
+	},
+
+	//#endregion
+
+	//#region rebinding [Ctrl]+[Shift]+[F] to "Format Document"
+
+	{
+		"key": "ctrl+shift+f",
+		"command": "-workbench.view.search",
+		"when": "workbench.view.search.active && neverMatch =~ /doesNotMatch/",
+	},
+	{
+		"key": "ctrl+shift+f",
+		"command": "-workbench.action.findInFiles",
+	},
+
+	{
+		"key": "ctrl+shift+f",
+		"command": "editor.action.formatDocument",
+		"when": "editorHasDocumentFormattingProvider && editorTextFocus && !editorReadonly && !inCompositeEditor",
+	},
+
+	//#endregion
+
+	//#region adding bindings for "Toggle Line Comment" and "Toggle Block Comment"
+
+	{
+		"key": "ctrl+[Backslash]",
+		"command": "editor.action.commentLine",
+		"when": "editorTextFocus && !editorReadonly",
+	},
+	{
+		"key": "ctrl+shift+[Backslash]",
+		"command": "editor.action.blockComment",
+		"when": "editorTextFocus && !editorReadonly",
+	},
+
+	//#endregion
+]
