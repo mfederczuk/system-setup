@@ -58,4 +58,45 @@
 
 	"redhat.telemetry.enabled": false,
 	"xml.format.maxLineWidth": 120,
+
+	//#region Todo Tree
+
+	"todo-tree.filtering.excludeGlobs": [
+		"**/.git/**",
+		"**/node_modules/**",
+	],
+	"todo-tree.general.tags": [
+		"FIXME",
+		"TODO",
+		"WIP",
+	],
+	"todo-tree.highlights.customHighlight": {
+		"FIXME": {
+			"foreground": "#EFEFEF",
+			"background": "#EF0000",
+			"opacity": 50,
+			"icon": "alert",
+			"iconColour": "#BF2F2F",
+			"gutterIcon": true,
+		},
+		"TODO": {
+			"foreground": "#EFEFEF",
+			"background": "#EFEF00",
+			"opacity": 45,
+			"icon": "issue-opened",
+			"iconColour": "#CFCF3F",
+		},
+		"WIP": {
+			"foreground": "#9F9F9F",
+			"background": "#000000",
+			"opacity": 60,
+			"icon": "pencil",
+			"iconColour": "#9F9F9F",
+			"gutterIcon": true,
+		},
+	},
+	"todo-tree.tree.flat": true,
+	"todo-tree.tree.showCountsInTree": true,
+
+	//#endregion
 }
