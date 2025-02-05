@@ -4,6 +4,8 @@ ebnf
 federczuk
 ghostty
 mfederczuk
+modeline
 modelines
 shellcheck
+sideloaded
 vimrc
