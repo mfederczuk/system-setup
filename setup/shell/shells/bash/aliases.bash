@@ -388,10 +388,6 @@ if command -v ktlint > '/dev/null'; then
 	alias ktlint='ktlint --color --relative'
 fi
 
-if command -v gem > '/dev/null'; then
-	alias gem='gem --bindir ~/.local/bin'
-fi
-
 #endregion
 
 unset -f __bash_aliases__is_program_gnu_coreutils \
