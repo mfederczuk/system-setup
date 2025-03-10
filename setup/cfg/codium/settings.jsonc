@@ -28,6 +28,9 @@
 	},
 	"workbench.list.openMode": "doubleClick",
 	"workbench.tree.indent": 16,
+	"workbench.editorAssociations": {
+		"git-rebase-todo": "default",
+	},
 
 	"[git-commit]": {
 		"editor.rulers": [50, 72],

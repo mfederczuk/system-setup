@@ -31,11 +31,32 @@ readonly argv0
 
 #endregion
 
-if command -v codium > '/dev/null'; then
-	working_tree_dir_path="$(git --no-pager rev-parse --show-toplevel)"
-	readonly working_tree_dir_path
+get_top_level_original_working_tree_path() {
+	set -- "${GIT_DIR:-".git"}"
+	set -- "$1" "$(git --no-pager rev-parse --show-toplevel)"
 
-	exec codium --wait --new-window "$working_tree_dir_path" "$@"
+	if [ ! -f "$2/$1" ]; then
+		printf '%s' "$2"
+		return
+	fi
+
+	set -- "$1" "$2" "$(cat -- "$2/$1")"
+	set -- "$1" "$2" "$3" "${3#"gitdir: "}"
+
+	if [ "$3" = "$4" ]; then
+		printf '%s' "$2"
+		return
+	fi
+
+	set -- "${4%"/$1/worktrees/"*}"
+	printf '%s' "$1"
+}
+
+if [ -z "${SSH_CONNECTION-}" ] && command -v codium > '/dev/null'; then
+	top_level_original_working_tree_path="$(get_top_level_original_working_tree_path)"
+	readonly top_level_original_working_tree_path
+
+	exec codium --wait --new-window "$top_level_original_working_tree_path" "$@"
 fi
 
 if command -v nvim > '/dev/null'; then
