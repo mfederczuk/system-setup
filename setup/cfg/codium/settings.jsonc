@@ -37,7 +37,7 @@
 		"workbench.editor.restoreViewState": false,
 	},
 
-	"cSpell.language": "en,en-US,en-GB",
+	"cSpell.language": "en,en-US,en-GB,de-AT,de,de-DE",
 	"cSpell.customDictionaries": {
 		"custom-user-public": {
 			"name": "custom-user-public",
