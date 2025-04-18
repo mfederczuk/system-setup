@@ -1,0 +1,31 @@
+# SPDX-License-Identifier: CC0-1.0
+
+task install-for(distro: enum("fedora-41", "ubuntu-22.04", "android-termux")) {
+	switch distro {
+		case "fedora-41" {
+			ExecShell as root "dnf install git"
+		}
+
+		case "ubuntu-22.04" {
+			ExecShell as root "apt install git"
+		}
+
+		case "android-termux" {
+			ExecShell "pkg install git"
+		}
+	}
+}
+
+task install-configuration-files(include-commit-signing: Bool) {
+	Copy
+		files=(
+			"aliases.gitconfig",
+			"pretty-formats.gitconfig",
+			if (include-commit-signing) "signing.gitconfig",
+			"global.gitconfig" as "config",
+
+			"global.gitignore" as "ignore",
+		)
+		into
+		directory="$XDG_CONFIG_HOME/git"
+}

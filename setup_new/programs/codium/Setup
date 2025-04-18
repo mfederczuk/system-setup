@@ -1,0 +1,20 @@
+# SPDX-License-Identifier: CC0-1.0
+
+[desktop-environment(*) && distro(fedora-41)]
+install-package-repositories (
+	# <https://vscodium.com/#install>
+)
+
+[desktop-environment(*) && distro(fedora-41)]
+install {
+	ExecShell as root "dnf install codium"
+}
+
+[desktop-environment(*)]
+configure {
+	ExecFile "install-custom-cspell-dictionary"
+
+	Copy file="settings.jsonc" to file="$XDG_CONFIG_HOME/VSCodium/User/settings.json"
+
+	ExecFile "install-extensions"
+}

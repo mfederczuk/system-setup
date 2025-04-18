@@ -1,0 +1,3 @@
+merged-distros notes:
+
+every "thing" (program or other) has one main task and we pass the action along what we want to do: either "install-and-configure" or "configure-only"

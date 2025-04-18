@@ -1,0 +1,4 @@
+[distro(fedora-41)]
+install {
+	ExecShell as root "install-packages remaining-packages.fedora-41.cfg"
+}
