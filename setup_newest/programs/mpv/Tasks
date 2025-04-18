@@ -1,9 +1,0 @@
-# SPDX-License-Identifier: CC0-1.0
-
-task install-for-fedora-41 {
-	ExecShell as root "dnf install mpv mpv-mpris"
-}
-
-task install-configuration-files {
-	Copy file="mpv.conf" to file="$XDG_CONFIG_HOME/mpv/mpv.conf"
-}

@@ -108,11 +108,9 @@ fi
 #endregion
 
 export PAGER='less --ignore-case --quit-on-intr --LONG-PROMPT --RAW-CONTROL-CHARS --chop-long-lines -+X'
-## if systemd {
 
 export SYSTEMD_PAGERSECURE='true'
 export SYSTEMD_PAGER='less --quit-if-one-screen --ignore-case --quit-on-intr --LONG-PROMPT --RAW-CONTROL-CHARS --chop-long-lines -+X --file-size'
-## }
 
 #region programming languages / environments
 
@@ -135,7 +133,6 @@ elif command -v clang++ > '/dev/null'; then
 fi
 
 #endregion
-## if android_development {
 
 # Android
 if [ -d "$HOME/Android/Sdk" ]; then
@@ -143,7 +140,6 @@ if [ -d "$HOME/Android/Sdk" ]; then
 	export ANDROID_HOME="$HOME/Android/Sdk"
 	export ANDROID_USER_HOME="$HOME/.android"
 fi
-## }
 
 #region Node.js
 
@@ -152,6 +148,7 @@ if command -v node > '/dev/null'; then
 		export NODE_PATH="${NODE_PATH:-"/usr/lib/node_modules"}"
 	fi
 
+	# TODO: these directories must be created manually
 	export NODE_REPL_HISTORY="$XDG_STATE_HOME/node/repl_history"
 	export TS_NODE_HISTORY="$XDG_STATE_HOME/ts-node/repl_history"
 fi
