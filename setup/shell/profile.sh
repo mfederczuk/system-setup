@@ -16,7 +16,7 @@ if [ -n "${HOME-}" ]; then
 	#region shell specific runcoms
 
 	if [ -n "$BASH_VERSION" ] && [ -f "$HOME/.bashrc" ]; then
-		# shellcheck source=shells/bash/rc.bash
+		# shellcheck source=../programs/bash/rc.bash
 		. "$HOME/.bashrc"
 	fi
 

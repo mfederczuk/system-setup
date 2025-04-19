@@ -388,6 +388,10 @@ if command -v ktlint > '/dev/null'; then
 	alias ktlint='ktlint --color --relative'
 fi
 
+if command -v kitten > '/dev/null' && kitten icat --detect-support > '/dev/null'; then
+	alias icat='kitten icat'
+fi
+
 #endregion
 
 unset -f __bash_aliases__is_program_gnu_coreutils \
