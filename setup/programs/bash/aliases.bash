@@ -366,12 +366,16 @@ if command -v dos2unix > '/dev/null'; then
 	alias dos2unix='dos2unix --keepdate'
 fi
 
+if command -v cjxl > '/dev/null'; then
+	alias cjxl-ultra='cjxl --distance=0 --effort=9'
+fi
+
 if command -v ktlint > '/dev/null'; then
 	alias ktlint='ktlint --color --relative'
 fi
 
-if command -v gem > '/dev/null'; then
-	alias gem='gem --bindir ~/.local/bin'
+if command -v kitten > '/dev/null' && kitten icat --detect-support > '/dev/null'; then
+	alias icat='kitten icat'
 fi
 
 #endregion

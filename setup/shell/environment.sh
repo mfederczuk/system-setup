@@ -94,24 +94,26 @@ fi
 
 #endregion
 
+export PAGER='less --ignore-case --quit-on-intr --LONG-PROMPT --RAW-CONTROL-CHARS --chop-long-lines -+X'
+
 #region programming languages / environments
 
 #region C & C++
 
 if command -v cc > '/dev/null'; then
-	export CC=cc
+	export CC='cc'
 elif command -v gcc > '/dev/null'; then
-	export CC=gcc
+	export CC='gcc'
 elif command -v clang > '/dev/null'; then
-	export CC=clang
+	export CC='clang'
 fi
 
 if command -v c++ > '/dev/null'; then
-	export CXX=c++
+	export CXX='c++'
 elif command -v g++ > '/dev/null'; then
-	export CXX=g++
+	export CXX='g++'
 elif command -v clang++ > '/dev/null'; then
-	export CXX=clang++
+	export CXX='clang++'
 fi
 
 #endregion
@@ -124,19 +126,18 @@ if command -v node > '/dev/null'; then
 	export TS_NODE_HISTORY="$XDG_STATE_HOME/ts-node/repl_history"
 fi
 
-#endregion
+if command -v npm > '/dev/null'; then
+	export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
+fi
 
 #endregion
 
-export PAGER='less --ignore-case --quit-on-intr --LONG-PROMPT --RAW-CONTROL-CHARS --chop-long-lines -+X'
+#endregion
 
-#region Git
-
+# Git
 if command -v git > '/dev/null'; then
 	export GIT_PS1_SHOWDIRTYSTATE='yes'
 
 	export GIT_COMPLETION_SHOW_ALL_COMMANDS='1' # exposes completion for plumbing commands
 	export GIT_COMPLETION_SHOW_ALL='1' # exposes completion for rarely used options
 fi
-
-#endregion
