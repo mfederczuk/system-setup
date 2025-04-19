@@ -17,31 +17,21 @@ programs, etc. of my personally used Linux distributions.
   * [`git/`](setup/bin/git)  
     Custom Git commands, which also get installed to `$HOME/.local/bin/`
 
-* [`cfg/`](setup/cfg)  
-  Configuration files for various programs, which mostly get installed either to `$HOME` or under `$XDG_CONFIG_HOME`
+* [`custom-locale/`](setup/custom-locale)  
+  Files and scripts for my custom locale (see [the section Custom Locale](#custom-locale))
 
-  * [`git/`](setup/cfg/git)  
-    Git configuration files, which get installed specifically to `$XDG_CONFIG_HOME/git/`
+* [`gnome/`](setup/gnome)  
+  Custom GNOME shell theme, which gets installed to `$HOME/.themes`
+
+* [`gtk/`](setup/gtk)  
+  GTK configuration files, which get installed under `$XDG_CONFIG_HOME`
+
+* [`programs/`](setup/programs)  
+  Configuration files for various programs, which mostly get installed either to `$HOME` or under `$XDG_CONFIG_HOME`.  
+  Each separate program has its own subdirectory.
 
 * [`shell/`](setup/shell)  
-  Shell setup files, which get installed under either `$HOME` or `$XDG_CONFIG_HOME`.  
-  POSIX sh related files get installed specifically to `$HOME`
-
-  * [`shells/`](setup/shell/shells)  
-    Subdirectories for different Unix shells
-
-    * [`bash/`](setup/shell/shells/bash)  
-      GNU Bash startup files, which get installed either under `$HOME` or to `$XDG_CONFIG_HOME/bash/`
-
-      * [`lib/`](setup/shell/shells/bash/lib)  
-        GNU Bash files that define various custom functions, which get installed to `$XDG_CONFIG_HOME/bash/lib/`
-
-      * [`completions/`](setup/shell/shells/bash/completions)  
-        GNU Bash files that define completion functions, which get installed to `$XDG_CONFIG_HOME/bash/completions/`
-
-        * [`git/`](setup/shell/shells/bash/completions/git)  
-          GNU Bash files that define completion functions for the custom Git commands located in [`bin/git/`](setup/bin/git),
-          which also get installed to `$XDG_CONFIG_HOME/bash/completions/`
+  Shell setup files, which get installed to `$HOME`
 
 ## Distributions ##
 
