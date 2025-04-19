@@ -35,6 +35,8 @@
 [rebase]
 	autoStash = true
 	autoSquash = true
+	missingCommitsCheck = warn
+	rebaseMerges = true
 
 [stash]
 	showIncludeUntracked = true

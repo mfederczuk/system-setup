@@ -6,7 +6,7 @@
 # SPDX-License-Identifier: CC0-1.0
 
 if [ -f "$HOME/.environment.sh" ]; then
-	# shellcheck source=shell/environment.sh
+	# shellcheck source=../../shell/environment.sh
 	. "$HOME/.environment.sh"
 fi
 
@@ -78,12 +78,12 @@ fi
 #region sourcing other bash files
 
 if [ -f "$XDG_CONFIG_HOME/bash/funcs.bash" ]; then
-	# shellcheck source=shell/shells/bash/funcs.bash
+	# shellcheck source=funcs.bash
 	. "$XDG_CONFIG_HOME/bash/funcs.bash"
 fi
 
 if [ -f "$XDG_CONFIG_HOME/bash/aliases.bash" ]; then
-	# shellcheck source=shell/shells/bash/aliases.bash
+	# shellcheck source=aliases.bash
 	. "$XDG_CONFIG_HOME/bash/aliases.bash"
 fi
 
