@@ -1,0 +1,7 @@
+fedora41 task install() {
+}
+
+task configure() {
+	copy "custom-cspell-dictionary.txt" to "$XDG_CONFIG_HOME/VSCodium/User/cSpell-dictionaries/public.txt"
+	copy "settings.jsonc" to "$XDG_CONFIG_HOME/VSCodium/User/settings.json"
+}

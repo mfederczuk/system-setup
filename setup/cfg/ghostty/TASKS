@@ -1,0 +1,12 @@
+fedora41 task enableCoprRepo() {
+	dnf copr enable "pgdev/ghostty"
+}
+
+fedora41 task install() {
+	dnf install "ghostty"
+}
+
+task configure() {
+	copy "theme-ambience-from-terminator.cfg" to "$XDG_CONFIG_HOME/ghostty/themes/Ambience from Terminator"
+	copy "config.cfg" to "$XDG_CONFIG_HOME/ghostty/config"
+}
