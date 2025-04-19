@@ -6,7 +6,7 @@
 # SPDX-License-Identifier: CC0-1.0
 
 if [ -f "$HOME/.environment.sh" ]; then
-	# shellcheck source=../../environment.sh
+	# shellcheck source=../../shell/environment.sh
 	. "$HOME/.environment.sh"
 fi
 

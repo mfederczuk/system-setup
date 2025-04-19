@@ -48,7 +48,7 @@ find 'setup/bin' \( -name '*.sh' -or -name '*.bash' \) \
 find 'setup' \( -name '*.sh' -or -name '*.bash' \) \
              -not -path 'setup/bin/*' \
              -not \( \
-	             -path 'setup/shell/shells/bash/completions/adb.bash' -or \
-	             -path 'setup/shell/shells/bash/completions/gradle.bash' \
+	             -path 'setup/programs/bash/completions/adb.bash' -or \
+	             -path 'setup/programs/bash/completions/gradle.bash' \
              \) \
              -exec shellcheck --external-sources {} +
