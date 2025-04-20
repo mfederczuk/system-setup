@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: CC0-1.0
+
+fedora task install_packages {
+	dnf install "mpv" "mpv-mpris"
+}
+
+task install_configuration {
+	copy "mpv.conf" to "$XDG_CONFIG_HOME/mpv/mpv.conf"
+}

@@ -1,0 +1,49 @@
+$ ./setup-manager install
+[+] bin::install
+    > Copied the file 'bin/xdg.bin' to '~/.local/bin/xdg' (executable)
+[+] cfg::install
+[+] `-- cfg::ghostty::install
+        > Enabled the COPR 'pgdev/ghostty'
+
+while running:
+[/] bin::install
+[-] bin::install
+[\] bin::install
+[|] bin::install
+[/] bin::install
+[-] bin::install
+[\] bin::install
+[|] bin::install
+
+``` .preset ```
+fedora41-daily-driver
+```
+
+
+
+
+~~~
+each task can be modified with a distro keyword: `fedora`, `termux` or `ubuntu`
+
+adding the keyword adds additional actions specific for that distro (i.e.: package manager)
+
+the same task can be "overloaded" with distro keywords
+~~~
+
+
+distro-agnostic task:
+	task foo() {
+		...
+	}
+
+distro-specific task:
+	fedora task foo() {
+		...
+	}
+
+multi-distro task:
+	distro task foo()
+		fedora {
+			...
+		}
+all distros MUST be specified

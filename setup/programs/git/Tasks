@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: CC0-1.0
+
+distro task install_package
+	fedora {
+		dnf install "git"
+	}
+	termux {
+		pkg install "git"
+	}
+	ubuntu {
+		apt install "git"
+	}
+
+task install_configuration {
+	copy "signing.gitconfig" to "$XDG_CONFIG_HOME/git/signing.gitconfig"
+	copy "pretty-formats.gitconfig" to "$XDG_CONFIG_HOME/git/pretty-formats.gitconfig"
+	copy "aliases.gitconfig" to "$XDG_CONFIG_HOME/git/aliases.gitconfig"
+
+	copy "global.gitconfig" to "$XDG_CONFIG_HOME/git/config"
+	copy "global.gitignore" to "$XDG_CONFIG_HOME/git/ignore"
+}

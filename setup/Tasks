@@ -1,0 +1,36 @@
+# SPDX-License-Identifier: CC0-1.0
+
+input use_gnome_desktop_environment: bool
+
+import "bin"
+import "custom-locale"
+import "gnome"
+import "gtk"
+import "programs"(use_desktop_environment: use_gnome_desktop_environment)
+import "shell"
+
+fedora task install_repositories {
+	"programs"::install_repositories
+	# TODO: remaining repositories
+}
+
+task install_packages {
+	"programs"::install_packages
+	# TODO: remaining packages
+}
+
+task install_configurations {
+	# TODO: shell
+
+	"programs"::install_configurations
+
+	# TODO: bin
+
+	if use_gnome_desktop_environment {
+		"gtk"::install_settings
+		"gnome"::install_custom_shell_theme
+		"custom-locale"::install_and_set_as_system_locale
+	}
+}
+
+# TODO

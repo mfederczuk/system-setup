@@ -50,6 +50,34 @@ readonly argv0
 
 #endregion
 
+function print_usage() {
+	printf 'usage: %s [un]install\n' "$argv0"
+}
+
+declare option
+case $# in
+	(0)
+		# TODO
+		;;
+	(1)
+		case "$1" in
+			('install') option='--install-extension' ;;
+			('uninstall') option='--uninstall-extension' ;;
+			(*)
+				# TODO
+				;;
+		esac
+		;;
+	(*)
+		{
+			printf '%s: too many arguments: %d\n' "$argv0" $(($# - 1))
+			print_usage
+		} >&2
+		exit 4
+		;;
+esac
+readonly option
+
 declare script_dir_path
 script_dir_path="$(dirname -- "$0" && printf x)"
 script_dir_path="${script_dir_path%$'\nx'}"
@@ -85,7 +113,7 @@ args=()
 
 declare extension_id
 for extension_id in "${extension_ids[@]}"; do
-	args+=(--install-extension "$extension_id")
+	args+=("$option" "$extension_id")
 done
 unset -v extension_id
 

@@ -1,0 +1,24 @@
+# SPDX-License-Identifier: CC0-1.0
+
+fedora task install_repository {
+	copy as root "vscodium.dnf.repo" to "/etc/yum.repos.d/vscodium.repo"
+}
+
+fedora task install_package {
+	dnf install "codium"
+}
+
+task install_configuration {
+	copy "keybindings.jsonc" to "$XDG_CONFIG_HOME/VSCodium/User/keybindings.json"
+	copy "settings.jsonc" to "$XDG_CONFIG_HOME/VSCodium/User/settings.json"
+
+	exec "./manage-custom-cspell-dictionary install"
+		reverse {
+			exec "./manage-custom-cspell-dictionary uninstall"
+		}
+
+	exec "./manage-extensions install"
+		reverse {
+			exec "./manage-extensions uninstall"
+		}
+}

@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: CC0-1.0
+
+task update_colorscheme {
+	exec "./update-colorscheme-codedark"
+}
+
+distro task install_package
+	fedora {
+		dnf install "neovim"
+	}
+	termux {
+		pkg install "neovim"
+	}
+	ubuntu {
+		apt install "neovim"
+	}
+
+task install_configuration {
+	copy "colorscheme-codedark.vim" to "$XDG_CONFIG_HOME/nvim/colors/codedark.vim"
+	copy "init.vim" to "$XDG_CONFIG_HOME/nvim/init.vim"
+}

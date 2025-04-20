@@ -1,0 +1,16 @@
+# SPDX-License-Identifier: CC0-1.0
+
+distro task install_package
+	fedora {
+		dnf install "nodejs"
+	}
+	termux {
+		pkg install "nodejs"
+	}
+	ubuntu {
+		apt install "npm"
+	}
+
+task install_configuration {
+	copy "npmrc" to "$XDG_CONFIG_HOME/npm/npmrc"
+}

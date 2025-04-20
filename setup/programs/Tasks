@@ -1,0 +1,64 @@
+# SPDX-License-Identifier: CC0-1.0
+
+import "bash"
+import "codium"
+import "ghostty"
+import "git"
+import "jetbrains-ides"
+import "mpv"
+import "neovim"
+import "npm"
+import "tmux"
+import "vim"
+
+# [workstation] or [work laptop] => has desktop environment
+input use_desktop_environment: bool
+
+# TODO: neovim::update_colorscheme
+
+fedora task install_repositories {
+	if use_desktop_environment {
+		"codium"::install_repository # if: [workstation] or [work laptop]
+		"ghostty"::enable_copr_repository # if: [workstation] or [work laptop]
+	}
+}
+
+task install_packages {
+	"bash"::install_packages
+
+	"git"::install_package
+	"neovim"::install_package
+	"npm"::install_package
+	"tmux"::install_package
+	"vim"::install_package
+
+	if use_desktop_environment {
+		if distro == fedora {
+			"codium"::install_package # if: [workstation] or [work laptop]
+			"ghostty"::install_package # if: [workstation] or [work laptop]
+		}
+
+		"jetbrains-ides"::open_toolbox_download_page_if_not_installed # if: [workstation] or [work laptop]
+
+		if distro == fedora {
+			"mpv"::install_packages # if: [workstation] or [work laptop]
+		}
+	}
+}
+
+task install_configurations {
+	# TODO: bash. will need more IFs and inputs
+
+	"git"::install_configuration
+	"neovim"::install_configuration
+	"npm"::install_configuration
+	"tmux"::install_configuration
+	"vim"::install_configuration
+
+	if use_desktop_environment {
+		"codium"::install_configuration
+		"ghostty"::install_configuration
+		"jetbrains-ides"::zip_settings
+		"mpv"::install_configuration
+	}
+}
