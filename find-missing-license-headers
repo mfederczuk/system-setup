@@ -93,6 +93,9 @@ ignored_pathnames=(
 	'setup/programs/bash/completions/adb.bash'
 	'setup/programs/bash/completions/gradle.bash'
 	'setup/programs/neovim/colorscheme-codedark.vim'
+
+	# other type of attribution found in the file
+	'setup/programs/codium/vscodium.dnf.repo'
 )
 readonly ignored_pathnames
 
