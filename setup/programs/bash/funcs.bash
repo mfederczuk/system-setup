@@ -90,8 +90,8 @@ function readlink_portable() {
 	fi
 
 
-	# this is rather complicated because POSIX doesn't specifiy a proper utiltiy to read a symlink's target, only `ls`
-	# is capable of it
+	# this is rather complicated because POSIX doesn't specify a proper utility to read a symlink's target, only `ls` is
+	# capable of it
 
 	local ls_out
 
