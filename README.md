@@ -17,15 +17,6 @@ programs, etc. of my personally used Linux distributions.
   * [`git/`](setup/bin/git)  
     Custom Git commands, which also get installed to `$HOME/.local/bin/`
 
-* [`custom-locale/`](setup/custom-locale)  
-  Files and scripts for my custom locale (see [the section Custom Locale](#custom-locale))
-
-* [`gnome/`](setup/gnome)  
-  Custom GNOME shell theme, which gets installed to `$HOME/.themes`
-
-* [`gtk/`](setup/gtk)  
-  GTK configuration files, which get installed under `$XDG_CONFIG_HOME`
-
 * [`programs/`](setup/programs)  
   Configuration files for various programs, which mostly get installed either to `$HOME` or under `$XDG_CONFIG_HOME`.  
   Each separate program has its own subdirectory.
