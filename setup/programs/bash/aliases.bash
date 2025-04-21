@@ -376,7 +376,7 @@ if command -v ktlint > '/dev/null'; then
 	alias ktlint='ktlint --color --relative'
 fi
 
-if command -v kitten > '/dev/null' && kitten icat --detect-support > '/dev/null'; then
+if command -v kitten > '/dev/null' && kitten icat --detect-support 2> '/dev/null'; then
 	alias icat='kitten icat'
 fi
 
