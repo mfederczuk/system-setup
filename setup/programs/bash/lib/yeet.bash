@@ -97,19 +97,6 @@ function yeet() {
 
 	#endregion
 
-	#region checking color support
-
-	local color_supported || return
-	color_supported=false || return
-
-	if is_color_supported 2; then
-		color_supported=true || return
-	fi
-
-	readonly color_supported || return
-
-	#endregion
-
 	#region pretty device pathnames
 
 	local -a pretty_device_pathnames || return
@@ -127,8 +114,8 @@ function yeet() {
 			pretty_device_pathname="'$device_pathname'" || return
 		fi
 
-		if $color_supported; then
-			pretty_device_pathname="$(tput setaf 3)${pretty_device_pathname}$(tput sgr0)" || return
+		if [ -t 2 ] && command -v termfx > '/dev/null'; then
+			pretty_device_pathname="$(termfx color.yellow)${pretty_device_pathname}$(termfx reset)" || return
 		fi
 
 		pretty_device_pathnames+=("$pretty_device_pathname") || return
@@ -147,9 +134,9 @@ function yeet() {
 	yeet='yeet' || return
 	yeeted='yeeted' || return
 
-	if $color_supported; then
-		yeet="$(tput sitm)${yeet}$(tput ritm)" || return
-		yeeted="$(tput sitm)${yeeted}$(tput ritm)" || return
+	if [ -t 2 ] && command -v termfx > '/dev/null'; then
+		yeet="$(termfx font.style.italic)${yeet}$(termfx font.style.regular)" || return
+		yeeted="$(termfx font.style.italic)${yeeted}$(termfx font.style.regular)" || return
 	fi
 
 	readonly yeeted yeet || return

@@ -1088,22 +1088,22 @@ function __dotfiles_bash_funcs_prompt_command__update_ps_vars() {
 	fx_lit_cyan=''         || return
 	fx_lit_lightcyan=''    || return
 
-	if command -v is_color_supported > '/dev/null' && is_color_supported 2; then
-		fx_reset="\\[$(tput sgr0)\\]"                || fx_reset=''                           || return
-		fx_lit_bold="\\[$(tput bold)\\]"             || fx_lit_bold=''                        || return
-		fx_lit_gray="\\[$(tput setaf 8)\\]"          || fx_lit_gray="$fx_reset"               || return
-		fx_lit_red="\\[$(tput setaf 1)\\]"           || fx_lit_red="$fx_reset"                || return
-		fx_lit_lightred="\\[$(tput setaf 9)\\]"      || fx_lit_lightred="$fx_lit_red"         || return
-		fx_lit_green="\\[$(tput setaf 2)\\]"         || fx_lit_green="$fx_reset"              || return
-		fx_lit_lightgreen="\\[$(tput setaf 10)\\]"   || fx_lit_lightgreen="$fx_lit_green"     || return
-		fx_lit_yellow="\\[$(tput setaf 3)\\]"        || fx_lit_yellow="$fx_reset"             || return
-		fx_lit_lightyellow="\\[$(tput setaf 11)\\]"  || fx_lit_lightyellow="$fx_lit_yellow"   || return
-		fx_lit_blue="\\[$(tput setaf 4)\\]"          || fx_lit_blue="$fx_reset"               || return
-		fx_lit_lightblue="\\[$(tput setaf 12)\\]"    || fx_lit_lightblue="$fx_lit_blue"       || return
-		fx_lit_magenta="\\[$(tput setaf 5)\\]"       || fx_lit_magenta="$fx_reset"            || return
-		fx_lit_lightmagenta="\\[$(tput setaf 13)\\]" || fx_lit_lightmagenta="$fx_lit_magenta" || return
-		fx_lit_cyan="\\[$(tput setaf 6)\\]"          || fx_lit_cyan="$fx_reset"               || return
-		fx_lit_lightcyan="\\[$(tput setaf 14)\\]"    || fx_lit_lightcyan="$fx_lit_cyan"       || return
+	if [ -t 2 ] && command -v termfx > '/dev/null'; then
+		fx_reset="\\[$(termfx reset)\\]"                           || fx_reset=''                           || return
+		fx_lit_bold="\\[$(termfx font.weight.bold)\\]"             || fx_lit_bold=''                        || return
+		fx_lit_gray="\\[$(termfx color.dark_gray)\\]"              || fx_lit_gray="$fx_reset"               || return
+		fx_lit_red="\\[$(termfx color.red)\\]"                     || fx_lit_red="$fx_reset"                || return
+		fx_lit_lightred="\\[$(termfx color.bright_red)\\]"         || fx_lit_lightred="$fx_lit_red"         || return
+		fx_lit_green="\\[$(termfx color.green)\\]"                 || fx_lit_green="$fx_reset"              || return
+		fx_lit_lightgreen="\\[$(termfx color.bright_green)\\]"     || fx_lit_lightgreen="$fx_lit_green"     || return
+		fx_lit_yellow="\\[$(termfx color.yellow)\\]"               || fx_lit_yellow="$fx_reset"             || return
+		fx_lit_lightyellow="\\[$(termfx color.bright_yellow)\\]"   || fx_lit_lightyellow="$fx_lit_yellow"   || return
+		fx_lit_blue="\\[$(termfx color.blue)\\]"                   || fx_lit_blue="$fx_reset"               || return
+		fx_lit_lightblue="\\[$(termfx color.bright_blue)\\]"       || fx_lit_lightblue="$fx_lit_blue"       || return
+		fx_lit_magenta="\\[$(termfx color.magenta)\\]"             || fx_lit_magenta="$fx_reset"            || return
+		fx_lit_lightmagenta="\\[$(termfx color.bright_magenta)\\]" || fx_lit_lightmagenta="$fx_lit_magenta" || return
+		fx_lit_cyan="\\[$(termfx color.cyan)\\]"                   || fx_lit_cyan="$fx_reset"               || return
+		fx_lit_lightcyan="\\[$(termfx color.bright_cyan)\\]"       || fx_lit_lightcyan="$fx_lit_cyan"       || return
 	fi
 
 	readonly fx_lit_lightcyan || return

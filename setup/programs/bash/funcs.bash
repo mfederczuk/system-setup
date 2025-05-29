@@ -253,60 +253,6 @@ function pretty_quote() {
 }
 complete pretty_quote
 
-function is_color_supported() {
-	#region args
-
-	local fd || return
-
-	case $# in
-		(0)
-			{
-				printf '%s: missing argument: <fd>\n' "${FUNCNAME[0]}"
-				printf 'usage: %s <fd>\n' "${FUNCNAME[0]}"
-			} >&2
-			return 3
-			;;
-		(1)
-			if [ -z "$1" ]; then
-				printf '%s: argument must not be empty\n' "${FUNCNAME[0]}" >&2
-				return 9
-			fi
-
-			fd="$1" || return
-			;;
-		(*)
-			{
-				printf '%s: too many arguments: %i\n' "${FUNCNAME[0]}" $(($# - 1))
-				printf 'usage: %s <fd>\n' "${FUNCNAME[0]}"
-			} >&2
-			return 4
-			;;
-	esac
-
-	readonly fd || return
-
-	#endregion
-
-	if [ -n "${NO_COLOR-}" ] || [ ! -t "$fd" ] || ! command -v tput > '/dev/null'; then
-		return 32
-	fi
-
-	case "$TERM" in
-		('xterm-color'|*'-256color'|'xterm-kitty'|'xterm-ghostty')
-			return 0
-			;;
-	esac
-
-	if tput 'setaf' '1' >& '/dev/null'; then
-		# We have color support; assume it's compliant with Ecma-48 (ISO/IEC-6429).
-		# Lack of such support is extremely rare, and such a case would tend to support setf rather than setaf.)
-		return 0
-	else
-		return 32
-	fi
-}
-complete is_color_supported
-
 function trace_cmd() {
 	if (($# == 0)); then
 		{
@@ -356,19 +302,6 @@ function trace_cmd() {
 
 	#endregion
 
-	#region checking for color support
-
-	local color_supported || return
-	color_supported=false || return
-
-	if is_color_supported 2; then
-		color_supported=true || return
-	fi
-
-	readonly color_supported || return
-
-	#endregion
-
 	#region level
 
 	local -i lvl || return
@@ -390,8 +323,8 @@ function trace_cmd() {
 	done
 	unset -v i
 
-	if $color_supported; then
-		{ tput bold && tput setaf 4; } >&2 || return
+	if [ -t 2 ] && command -v termfx > '/dev/null'; then
+		{ termfx font.weight.bold && termfx color.blue; } >&2 || return
 	fi
 
 	{
@@ -399,8 +332,8 @@ function trace_cmd() {
 		printf ' %s' "${pretty_args[@]}" || return
 	} >&2
 
-	if $color_supported; then
-		tput sgr0 >&2 || return
+	if [ -t 2 ] && command -v termfx > '/dev/null'; then
+		termfx reset >&2 || return
 	fi
 
 	printf '\n' >&2 || return
