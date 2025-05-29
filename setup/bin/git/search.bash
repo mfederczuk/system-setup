@@ -217,31 +217,13 @@ readonly found_pathnames_via_contents
 
 #region terminal effects
 
-function is_stdin_effects_supported() {
-	if [ -n "${NO_COLOR-}" ] || [ ! -t 1 ] || ! command -v tput > '/dev/null'; then
-		return 32;
-	fi
-
-	case "${TERM-}" in
-		('xterm-color'|*'-256color'|'xterm-kitty')
-			return 0
-			;;
-	esac
-
-	if tput 'setaf' '1' >&'/dev/null'; then
-		return 0;
-	else
-		return 32;
-	fi
-}
-
 declare fx_reset fx_bold fx_red fx_green fx_blue
-if is_stdin_effects_supported; then
-	fx_reset="$(tput sgr0)"
-	fx_bold="$(tput bold)"
-	fx_red="$(tput setaf 1)"
-	fx_green="$(tput setaf 2)"
-	fx_blue="$(tput setaf 4)"
+if [ -t 1 ] && command -v termfx > '/dev/null'; then
+	fx_reset="$(termfx reset)"
+	fx_bold="$(termfx font.weight.bold)"
+	fx_red="$(termfx color.red)"
+	fx_green="$(termfx color.green)"
+	fx_blue="$(termfx color.blue)"
 else
 	fx_reset=''
 	fx_bold=''
