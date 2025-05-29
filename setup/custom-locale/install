@@ -66,13 +66,13 @@ root_dir_pathname="$(dirname -- "$0" && printf x)"
 root_dir_pathname="${root_dir_pathname%"$(printf '\nx')"}"
 readonly root_dir_pathname
 
-custom_locale_defintion_filename='en_AT@custom'
-readonly custom_locale_defintion_filename
+custom_locale_definition_filename='en_AT@custom'
+readonly custom_locale_definition_filename
 
-custom_locale_definition_file_source_pathname="$root_dir_pathname/$custom_locale_defintion_filename"
+custom_locale_definition_file_source_pathname="$root_dir_pathname/$custom_locale_definition_filename"
 readonly custom_locale_definition_file_source_pathname
 
-custom_locale_definition_file_target_pathname="/usr/share/i18n/locales/$custom_locale_defintion_filename"
+custom_locale_definition_file_target_pathname="/usr/share/i18n/locales/$custom_locale_definition_filename"
 readonly custom_locale_definition_file_target_pathname
 
 if [ -e "$custom_locale_definition_file_target_pathname" ]; then

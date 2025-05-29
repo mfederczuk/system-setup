@@ -4,9 +4,16 @@ apk
 ebnf
 federczuk
 ghostty
+jetbrains
+ktlint
 mfederczuk
 modeline
 modelines
+neovim
+redhat
 shellcheck
 sideloaded
+spdx
+termux
 vimrc
+youtube

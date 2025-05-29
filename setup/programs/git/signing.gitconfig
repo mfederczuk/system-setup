@@ -6,8 +6,8 @@
 	signingKey = 99AAC0A42200C66D
 
 [gpg]
-	# git uses by default the `gpg` binary, which on some older systems may still be GnuPG v1.x, so let's explictly tell
-	# git to use v2.x instead
+	# git uses by default the `gpg` binary, which on some older systems may still be GnuPG v1.x, so let's explicitly
+	# tell git to use v2.x instead
 	program = gpg2
 
 [commit]
