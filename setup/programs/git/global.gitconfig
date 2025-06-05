@@ -14,6 +14,11 @@
 [format]
 	pretty = custom-fuller
 
+[gpg]
+	# git uses by default the `gpg` binary, which on some older systems may still be GnuPG v1.x, so let's explicitly
+	# tell git to use v2.x instead
+	program = gpg2
+
 [grep]
 	lineNumber = true
 	patternType = extended
@@ -47,11 +52,9 @@
 	showStash = true
 
 [user]
-	email = federczuk.michael@protonmail.com
-	name = Michael Federczuk
+	useConfigOnly = true
 
 [include]
-	path = signing.gitconfig
 	path = pretty-formats.gitconfig
 	path = aliases.gitconfig
 	path = secret.gitconfig
