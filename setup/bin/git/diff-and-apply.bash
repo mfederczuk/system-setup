@@ -96,7 +96,7 @@ readonly diff_args_post_dash_dash diff_args_pre_dash_dash
 #endregion
 
 function git_plumbing() {
-	git -c diff.noprefix=false --no-pager "$@"
+	git -c diff.noPrefix=false --no-pager "$@"
 }
 
 function git_rawdiff() {
