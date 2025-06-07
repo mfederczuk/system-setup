@@ -2,35 +2,40 @@
 
 # SPDX-License-Identifier: CC0-1.0
 
-[user]
-	name = Michael Federczuk
-	email = federczuk.michael@protonmail.com
-
 [core]
 	editor = _git_preferred_editor
 
 	# -+X -> enable termcap initialization/deinitialization (disabled by default for whatever reason)
 	pager = less --quit-if-one-screen --ignore-case --quit-on-intr --LONG-PROMPT --RAW-CONTROL-CHARS --chop-long-lines -+X --file-size --
 
+[diff]
+	noPrefix = true
+
 [format]
 	pretty = custom-fuller
+
+[gpg]
+	# git uses by default the `gpg` binary, which on some older systems may still be GnuPG v1.x, so let's explicitly
+	# tell git to use v2.x instead
+	program = gpg2
+
+[grep]
+	lineNumber = true
+	patternType = extended
 
 [init]
 	defaultBranch = master
 
-[diff]
-	noprefix = true
+[merge]
+	conflictStyle = diff3
+	ff = false
+	tool = vimdiff
 
-[status]
-	showStash = true
+[mergetool]
+	keepBackup = false
 
 [pull]
 	ff = only
-
-[merge]
-	ff = false
-	conflictstyle = diff3
-	tool = vimdiff
 
 [rebase]
 	autoStash = true
@@ -43,12 +48,11 @@
 	showPatch = true
 	showStat = true
 
-[grep]
-	lineNumber = true
-	patternType = extended
+[status]
+	showStash = true
 
-[mergetool]
-	keepBackup = false
+[user]
+	useConfigOnly = true
 
 [include]
 	path = pretty-formats.gitconfig
