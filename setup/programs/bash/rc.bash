@@ -243,3 +243,8 @@ if command -v git > '/dev/null'; then
 	declare git_empty_tree_hash
 	git_empty_tree_hash="$(git --no-pager hash-object -t tree '/dev/null')"
 fi
+
+# This is required to make Git commit GPG signing work on Termux (see <https://superuser.com/a/1407685/1506991> and
+# the man page gpg-agent(1))
+GPG_TTY="$(tty)"
+export GPG_TTY
