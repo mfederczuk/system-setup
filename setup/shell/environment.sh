@@ -52,7 +52,9 @@ export HOME="${HOME:-"$PREFIX/../home"}"
 # sorted from most to least priority
 _add_to_path front '.bin' \
                    'node_modules/.bin' \
-                   "$HOME/.local/bin"
+                   "$HOME/.local/bin" \
+                   "$HOME/.local/bin/ruby-bundler" \
+                   "$HOME/.local/bin/ruby-gem"
 
 export PATH
 
@@ -131,6 +133,11 @@ if command -v npm > '/dev/null'; then
 fi
 
 #endregion
+
+# Ruby Bundler
+export BUNDLE_USER_CACHE="$XDG_CACHE_HOME/bundle"
+export BUNDLE_USER_CONFIG="$XDG_CONFIG_HOME/bundle/config"
+export BUNDLE_USER_PLUGIN="$XDG_DATA_HOME/bundle"
 
 #endregion
 
