@@ -58,9 +58,8 @@ export HOME="${HOME:-"$(\command grep -E "^[^:]*:[^:]*:$(id -u):$(\command id -g
 _add_to_path front '.bin' \
                    'node_modules/.bin' \
                    "$HOME/.local/bin" \
-                   "$HOME/bin" \
-                   "$HOME/bin/git" \
-                   "$HOME/bin/repos" \
+                   "$HOME/.local/bin/ruby-bundler" \
+                   "$HOME/.local/bin/ruby-gem" \
                    "$HOME/.dotnet/tools"
 
 export PATH
@@ -158,6 +157,11 @@ if command -v npm > '/dev/null'; then
 fi
 
 #endregion
+
+# Ruby Bundler
+export BUNDLE_USER_CACHE="$XDG_CACHE_HOME/bundle"
+export BUNDLE_USER_CONFIG="$XDG_CONFIG_HOME/bundle/config"
+export BUNDLE_USER_PLUGIN="$XDG_DATA_HOME/bundle"
 
 # .NET
 export DOTNET_CLI_TELEMETRY_OPTOUT='1' # <https://learn.microsoft.com/en-us/dotnet/core/tools/telemetry#how-to-opt-out>
