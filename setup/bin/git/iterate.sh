@@ -3,7 +3,7 @@
 # vim: syntax=sh
 # code: language=shellscript
 
-# Copyright (c) 2023 Michael Federczuk
+# Copyright (c) 2025 Michael Federczuk
 # SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
 
 #region preamble
@@ -47,13 +47,13 @@ readonly argv0
 #region args
 
 print_usage() {
-	printf 'usage: %s <commit>\n' "$argv0"
+	printf 'usage: %s <upstream|revision-range>\n' "$argv0"
 }
 
 case $# in
 	(0)
 		{
-			printf '%s: missing argument: <commit>\n' "$argv0"
+			printf '%s: missing argument: <upstream|revision-range>\n' "$argv0"
 			print_usage
 		} >&2
 		exit 3
@@ -67,7 +67,7 @@ case $# in
 			exit 9
 		fi
 
-		parent_begin_commit="$1"
+		upstream_or_revision_range="$1"
 		;;
 	(*)
 		{
@@ -80,7 +80,7 @@ esac
 
 unset -f print_usage
 
-readonly parent_begin_commit
+readonly upstream_or_revision_range
 
 #endregion
 
@@ -96,14 +96,14 @@ ends_with() {
 
 pager_cmd="$(git --no-pager config --get core.pager)"
 pager_cmd="${pager_cmd-"${PAGER-"${SYSTEMD_PAGER-}"}"}"
+pager_cmd="$(printf '%s' "$pager_cmd" | tr -s '[:space:]' ' ')"
 
-if starts_with "$pager_cmd" 'less'; then
-	pager_cmd="$(printf '%s' "$pager_cmd" | sed -e s/'--quit-if-one-screen'/'-+F'/g -e s/'-F'/'-+F'/g)"
-
-	if ends_with "$pager_cmd" '--'; then
-		pager_cmd="${pager_cmd%"--"} -+F --"
+if { printf '%s' "$pager_cmd" | grep -Eq '^less( .*)?$'; }; then
+	# less: The --+ syntax resets the option.
+	if { printf '%s' "$pager_cmd" | grep -Eq ' --$'; }; then
+		pager_cmd="$pager_cmd+quit-if-one-screen --"
 	else
-		pager_cmd="$pager_cmd -+F"
+		pager_cmd="$pager_cmd --+quit-if-one-screen"
 	fi
 fi
 
@@ -113,7 +113,35 @@ readonly pager_cmd
 
 #region collecting commits
 
-commit_hashes="$(git --no-pager rev-list --reverse "$parent_begin_commit..HEAD" && printf x)"
+exc=0
+tmp="$(git --no-pager rev-parse --verify --quiet --end-of-options "$upstream_or_revision_range")" || exc=$?
+
+case $exc in
+	(0)
+		revisions="$tmp..HEAD"
+		;;
+	(1)
+		if [ -z "$tmp" ]; then
+			printf "fatal: bad revision '%s'\\n" "$upstream_or_revision_range" >&2
+			exit 128
+		fi
+
+		revisions="$(printf '%s' "$tmp" | tr -s '[:space:]' ' ')"
+		;;
+	(*)
+		exit $exc
+		;;
+esac
+
+readonly revisions
+unset -v tmp exc
+
+
+set -o noglob
+# shellcheck disable=SC2086
+commit_hashes="$(git --no-pager rev-list --reverse $revisions && printf x)"
+set +o noglob
+
 commit_hashes="${commit_hashes%x}"
 readonly commit_hashes
 
