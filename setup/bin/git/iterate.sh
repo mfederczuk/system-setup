@@ -3,7 +3,7 @@
 # vim: syntax=sh
 # code: language=shellscript
 
-# Copyright (c) 2023 Michael Federczuk
+# Copyright (c) 2025 Michael Federczuk
 # SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
 
 #region preamble
@@ -96,14 +96,14 @@ ends_with() {
 
 pager_cmd="$(git --no-pager config --get core.pager)"
 pager_cmd="${pager_cmd-"${PAGER-"${SYSTEMD_PAGER-}"}"}"
+pager_cmd="$(printf '%s' "$pager_cmd" | tr -s '[:space:]' ' ')"
 
-if starts_with "$pager_cmd" 'less'; then
-	pager_cmd="$(printf '%s' "$pager_cmd" | sed -e s/'--quit-if-one-screen'/'-+F'/g -e s/'-F'/'-+F'/g)"
-
-	if ends_with "$pager_cmd" '--'; then
-		pager_cmd="${pager_cmd%"--"} -+F --"
+if { printf '%s' "$pager_cmd" | grep -Eq '^less( .*)?$'; }; then
+	# less: The --+ syntax resets the option.
+	if { printf '%s' "$pager_cmd" | grep -Eq ' --$'; }; then
+		pager_cmd="$pager_cmd+quit-if-one-screen --"
 	else
-		pager_cmd="$pager_cmd -+F"
+		pager_cmd="$pager_cmd --+quit-if-one-screen"
 	fi
 fi
 
