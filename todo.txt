@@ -1,0 +1,18 @@
+~/.gradle/gradle.properties
+ ^ Keep the publishing secrets in a private location. (maybe as diff that can be applied to the setup version?)
+ ^ Needs to be generated. Requires to query the total memory of the system.
+
+=== requires root permission ===
+
+	/etc/doas.conf
+	 ^ save as template. requires to insert user name/ID
+
+
+	/etc/hosts
+	 ^ Personal stuff needs to be separate.
+
+
+	Android udev rules <https://github.com/M0Rf30/android-udev-rules>
+
+
+	/etc/dnf/dnf.conf
