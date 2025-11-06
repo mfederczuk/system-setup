@@ -143,24 +143,24 @@ implementations="$(printf '%s\n' $implementations && printf x)"
 implementations="${implementations%x}"
 
 prioritize_implementation() {
-	implementations="$(printf '%s' "$implementations" | sed /"$1"/d)"
-	implementations="$(printf '%s\n%s\nx' "$1" "$implementations")"
+	implementations="$(printf '%s' "$implementations" | sed /"$1"/d)" || return
+	implementations="$(printf '%s\n%s\nx' "$1" "$implementations")" || return
 	implementations="${implementations%x}"
 }
 prioritize_wayland_only() {
 	prioritize_implementation wayland_wl_clipboard
 }
 prioritize_x11_only() {
-	#prioritize_implementation x11_sel
+	#prioritize_implementation x11_sel || return
 	prioritize_implementation x11_xclip
 }
 prioritize_wayland() {
 	# Ghostty has some weirdness with `wl-copy`/`wl-paste`, but seemingly only sometimes?
 	if [ "${TERM-}" != 'xterm-ghostty' ]; then
-		prioritize_x11_only
+		prioritize_x11_only || return
 		prioritize_wayland_only
 	else
-		prioritize_wayland_only
+		prioritize_wayland_only || return
 		prioritize_x11_only
 	fi
 }
@@ -229,8 +229,8 @@ if command_exists xclip; then
 		# Without explicitly passing the option -target, `xclip` will only output plaintext targets and will fail
 		# otherwise.
 
-		set -- "$(xclip -out -target TARGETS -selection clipboard | grep -Ev '^(TARGETS|TIMESTAMP)$')"
-		set -- "$1" "$(printf '%s' "$1" | wc -l)"
+		set -- "$(xclip -out -target TARGETS -selection clipboard | grep -Ev '^(TARGETS|TIMESTAMP)$')" || return
+		set -- "$1" "$(printf '%s' "$1" | wc -l)" || return
 
 		if [ -n "$1" ] && [ $# -eq 0 ]; then
 			# Single target, specify it explicitly so that `xclip` will output it if its non-plaintext.
@@ -321,10 +321,10 @@ is_function() {
 
 run_operation_with_arguments() {
 	for implementation in $implementations; do
-		func="${implementation}__$1"
+		func="${implementation}__$1" || return
 
 		if is_function "$func"; then
-			shift
+			shift || return
 			"$func" "$@"
 			exit
 		fi
