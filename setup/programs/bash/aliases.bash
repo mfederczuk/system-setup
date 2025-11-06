@@ -317,6 +317,23 @@ fi
 
 #endregion
 
+#region FFmpeg
+
+declare __bash_aliases__ff_cmd
+
+for __bash_aliases__ff_cmd in ffmpeg ffprobe ffplay; do
+	if ! command -v $__bash_aliases__ff_cmd > '/dev/null'; then
+		continue
+	fi
+
+	# shellcheck disable=2139
+	alias "$__bash_aliases__ff_cmd=$__bash_aliases__ff_cmd -hide_banner"
+done
+
+unset -v __bash_aliases__ff_cmd
+
+#endregion
+
 #region other
 
 if command -v less > '/dev/null'; then
