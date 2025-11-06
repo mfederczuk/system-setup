@@ -326,12 +326,15 @@ run_operation_with_arguments() {
 		if is_function "$func"; then
 			shift || return
 			"$func" "$@"
-			exit
+			return
 		fi
 
 		unset -v func
 	done
 	unset -v implementation
+
+	printf '%s: system has no clipboard implementation installed\n' "$argv0" >&2
+	return 48
 }
 
 case "$operation" in
