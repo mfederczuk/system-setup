@@ -120,22 +120,20 @@ command_exists() {
 
 #region Clipboard implementations
 
-# TODO: X11 `xsel`
-
 #region Determining implementations priority order
 
 case "$(uname | tr '[:upper:]' '[:lower:]')" in
 	(*'linux'*)
-		implementations="wayland_wl_clipboard x11_xclip termux macos windows"
+		implementations="wayland_wl_clipboard x11_xclip x11_xsel termux macos windows"
 		;;
 	(*'darwin'*)
-		implementations="macos wayland_wl_clipboard x11_xclip termux windows"
+		implementations="macos wayland_wl_clipboard x11_xclip x11_xsel termux windows"
 		;;
 	(*'mingw'*)
-		implementations="windows wayland_wl_clipboard x11_xclip termux macos"
+		implementations="windows wayland_wl_clipboard x11_xclip x11_xsel termux macos"
 		;;
 	(*)
-		implementations="wayland_wl_clipboard x11_xclip macos windows termux"
+		implementations="wayland_wl_clipboard x11_xclip x11_xsel macos windows termux"
 		;;
 esac
 # shellcheck disable=SC2086
@@ -151,7 +149,7 @@ prioritize_wayland_only() {
 	prioritize_implementation wayland_wl_clipboard
 }
 prioritize_x11_only() {
-	#prioritize_implementation x11_sel || return
+	prioritize_implementation x11_xsel || return
 	prioritize_implementation x11_xclip
 }
 prioritize_wayland() {
@@ -240,6 +238,24 @@ if command_exists xclip; then
 			# This can certainly still fail.
 			xclip -out -selection clipboard
 		fi
+	}
+fi
+
+if command_exists xsel; then
+	x11_xsel__copy_from_stdin() {
+		xsel --input --clipboard
+	}
+
+	x11_xsel__copy_string() {
+		printf '%s' "$1" | x11_xsel__copy_from_stdin
+	}
+
+	x11_xsel__clear() {
+		xsel --clear --clipboard
+	}
+
+	x11_xsel__paste_to_stdout() {
+		xsel --output --clipboard
 	}
 fi
 
