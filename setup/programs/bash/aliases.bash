@@ -178,6 +178,7 @@ if command -v git > '/dev/null'; then
 		return 32
 	}
 
+	# Bash completion for these aliases is set up in the file `setup/programs/bash/completions/git/bash-aliases.bash`.
 
 	if __bash_aliases__exists_git_command addall; then
 		alias addall='git addall'

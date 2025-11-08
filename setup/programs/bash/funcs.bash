@@ -49,7 +49,7 @@ function is_truthy() {
 
 	test "${str,,}" = 'true' ||
 		[[ "$str" =~ ^['yY'] ]] ||
-		{ [[ "$str" =~ ^(+)?[0-9]+$ ]] && ((10#$str > 0)); }
+		{ [[ "$str" =~ ^\+?[0-9]+$ ]] && ((10#$str > 0)); }
 }
 complete is_truthy
 
