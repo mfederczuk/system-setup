@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: CC0-1.0
+
+task install_files {
+	copy "cd-dot-dot.bash"        to "$XDG_CONFIG_HOME/bash/lib/cd-dot-dot.bash"
+	copy "check-name.bash"        to "$XDG_CONFIG_HOME/bash/lib/check-name.bash"
+	copy "countfiles.bash"        to "$XDG_CONFIG_HOME/bash/lib/countfiles.bash"
+	copy "curlrr.bash"            to "$XDG_CONFIG_HOME/bash/lib/curlrr.bash"
+	copy "full-reset.bash"        to "$XDG_CONFIG_HOME/bash/lib/full-reset.bash"
+	copy "goodnight.bash"         to "$XDG_CONFIG_HOME/bash/lib/goodnight.bash"
+	copy "gotmp.bash"             to "$XDG_CONFIG_HOME/bash/lib/gotmp.bash"
+	copy "gti.bash"               to "$XDG_CONFIG_HOME/bash/lib/gti.bash"
+	copy "man.bash"               to "$XDG_CONFIG_HOME/bash/lib/man.bash"
+	copy "pkgsup.bash"            to "$XDG_CONFIG_HOME/bash/lib/pkgsup.bash"
+	copy "prompt_command.bash"    to "$XDG_CONFIG_HOME/bash/lib/prompt_command.bash"
+	copy "rmcwd.bash"             to "$XDG_CONFIG_HOME/bash/lib/rmcwd.bash"
+	copy "sequence-commands.bash" to "$XDG_CONFIG_HOME/bash/lib/sequence-commands.bash"
+	copy "ssh-wrapper.bash"       to "$XDG_CONFIG_HOME/bash/lib/ssh-wrapper.bash"
+	copy "unwrap.bash"            to "$XDG_CONFIG_HOME/bash/lib/unwrap.bash"
+	copy "xclip.bash"             to "$XDG_CONFIG_HOME/bash/lib/xclip.bash"
+	copy "yeet.bash"              to "$XDG_CONFIG_HOME/bash/lib/yeet.bash"
+}

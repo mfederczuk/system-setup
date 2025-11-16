@@ -1,0 +1,22 @@
+# SPDX-License-Identifier: CC0-1.0
+
+task install_command_scripts {
+	copy "append.sh"                 to "$HOME/.local/bin/git-append"
+	copy "diff-and-apply.bash"       to "$HOME/.local/bin/git-diff-and-apply"
+	copy "fixup-immediately.sh"      to "$HOME/.local/bin/git-fixup-immediately"
+	copy "ignore.sh"                 to "$HOME/.local/bin/git-ignore"
+	copy "iterate.sh"                to "$HOME/.local/bin/git-iterate"
+	copy "merge-into.sh"             to "$HOME/.local/bin/git-merge-into"
+	copy "prune-local-branches.bash" to "$HOME/.local/bin/git-prune-local-branches"
+	copy "purge.sh"                  to "$HOME/.local/bin/git-purge"
+	copy "run-isolated.sh"           to "$HOME/.local/bin/git-run-isolated"
+	copy "search.bash"               to "$HOME/.local/bin/git-search"
+	copy "sed.bash"                  to "$HOME/.local/bin/git-sed"
+	copy "sync.sh"                   to "$HOME/.local/bin/git-sync"
+	copy "unstage.sh"                to "$HOME/.local/bin/git-unstage"
+	copy "wip-dump.sh"               to "$HOME/.local/bin/git-wip-dump"
+}
+
+task install_preferred_editor_script {
+	copy "preferred-editor.sh" to "$HOME/.local/bin/_git_preferred_editor"
+}

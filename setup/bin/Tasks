@@ -1,0 +1,30 @@
+# SPDX-License-Identifier: CC0-1.0
+
+import "git"
+
+task install_scripts {
+	copy "alert.bash"                   to "$HOME/.local/bin/alert"
+	copy "atype.bash"                   to "$HOME/.local/bin/atype"
+	copy "avdmanager-wrapper.sh"        to "$HOME/.local/bin/avdmanager"
+	copy "clipboard.sh"                 to "$HOME/.local/bin/clipboard"
+	copy "determine-shared-prefix.bash" to "$HOME/.local/bin/determine-shared-prefix"
+	copy "gnome-shell-notify-send.sh"   to "$HOME/.local/bin/gnome-shell-notify-send"
+	copy "ktlint-install.sh"            to "$HOME/.local/bin/ktlint-install"
+	copy "lenny.sh"                     to "$HOME/.local/bin/lenny"
+	copy "mkbak.bash"                   to "$HOME/.local/bin/mkbak"
+	copy "prune-codium-workspaces.sh"   to "$HOME/.local/bin/prune-codium-workspaces"
+	copy "remove-shared-prefix.bash"    to "$HOME/.local/bin/remove-shared-prefix"
+	copy "repeat.sh"                    to "$HOME/.local/bin/repeat"
+	copy "retry.sh"                     to "$HOME/.local/bin/retry"
+	copy "rmtree.sh"                    to "$HOME/.local/bin/rmtree"
+	copy "ruby-bundler-wrapper.sh"      to "$HOME/.local/bin/_ruby_bundler_wrapper"
+	copy "shasum-dir.bash"              to "$HOME/.local/bin/shasum-dir"
+	copy "slugify.sh"                   to "$HOME/.local/bin/slugify"
+	copy "sortfile.sh"                  to "$HOME/.local/bin/sortfile"
+	copy "termfx.bash"                  to "$HOME/.local/bin/termfx"
+	copy "xdg.bash"                     to "$HOME/.local/bin/xdg"
+	copy "zoop.sh"                      to "$HOME/.local/bin/zoop"
+
+	"git"::install_command_scripts
+	"git"::install_preferred_editor_script
+}

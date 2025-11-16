@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: CC0-1.0
+
+task install_scripts {
+	copy "bash-aliases.bash"         to "$XDG_CONFIG_HOME/bash/completions/git-bash-aliases.bash"
+	copy "append.bash"               to "$XDG_CONFIG_HOME/bash/completions/git-append.bash"
+	copy "diff-and-apply.bash"       to "$XDG_CONFIG_HOME/bash/completions/git-diff-and-apply.bash"
+	copy "iterate.bash"              to "$XDG_CONFIG_HOME/bash/completions/git-iterate.bash"
+	copy "merge-into.bash"           to "$XDG_CONFIG_HOME/bash/completions/git-merge-into.bash"
+	copy "prune-local-branches.bash" to "$XDG_CONFIG_HOME/bash/completions/git-prune-local-branches.bash"
+	copy "sync.bash"                 to "$XDG_CONFIG_HOME/bash/completions/git-sync.bash"
+}

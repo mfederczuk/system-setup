@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: CC0-1.0
+
+task install_custom_shell_theme {
+	copy "custom-shell-theme.css" to "$HOME/.themes/custom/gnome-shell/gnome-shell.css"
+}

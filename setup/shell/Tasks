@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: CC0-1.0
+
+task install_startup_files {
+	copy "environment.sh" to "$HOME/.environment.sh"
+	copy "profile.sh" to "$HOME/.profile"
+}

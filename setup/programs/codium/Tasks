@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: CC0-1.0
+
+task install_configuration {
+	copy "custom-cspell-dictionary.txt" to "$XDG_CONFIG_HOME/VSCodium/User/cSpell-dictionaries/public.txt"
+
+	copy "settings.jsonc" to "$XDG_CONFIG_HOME/VSCodium/User/settings.json"
+	copy "keybindings.jsonc" to "$XDG_CONFIG_HOME/VSCodium/User/keybindings.json"
+}

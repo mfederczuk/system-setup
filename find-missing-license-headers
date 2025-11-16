@@ -89,6 +89,8 @@ ignored_pathnames=(
 	'CODE_OF_CONDUCT.md' # copied from <https://www.contributor-covenant.org/version/2/1/code_of_conduct/code_of_conduct.md>
 
 	# already contain license header comments
+	'manager-application/gradlew'
+	'manager-application/gradlew.bat'
 	'setup/bin/atype.bash'
 	'setup/programs/bash/completions/adb.bash'
 	'setup/programs/bash/completions/gradle.bash'
@@ -96,6 +98,13 @@ ignored_pathnames=(
 
 	# other type of attribution found in the file
 	'setup/programs/codium/vscodium.dnf.repo'
+
+	# externally generated
+	'.idea/codeStyles/codeStyleConfig.xml'
+	'.idea/codeStyles/Project.xml'
+	'.idea/runConfigurations/Build___test.xml'
+	'manager-application/gradle/wrapper/gradle-wrapper.jar'
+	'manager-application/gradle/wrapper/gradle-wrapper.properties'
 )
 readonly ignored_pathnames
 

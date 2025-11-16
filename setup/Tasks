@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: CC0-1.0
+
+import "bin"
+import "gnome"
+import "gtk"
+import "programs"
+import "shell"
+
+task install_configurations {
+	"shell"::install_startup_files
+
+	"programs"::install_configurations
+
+	"bin"::install_scripts
+
+	# For desktop environments.
+	"gtk"::install_settings
+	"gnome"::install_custom_shell_theme
+}
