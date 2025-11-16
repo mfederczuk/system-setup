@@ -23,6 +23,7 @@ internal fun interface TokenParser<out N : Node> {
 	 * will be restored back to the iterator with
 	 * the function [BufferedIterator.pushToBuffer()][BufferedIterator.pushToBuffer].
 	 */
+	// none | error | success
 	fun parseNext(tokens: BufferedIterator<Token>): N?
 
 	companion object {

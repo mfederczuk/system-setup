@@ -43,11 +43,14 @@ Changes are primarily made on this branch and then get merged into the active `d
 
 ## Installation ##
 
-The files are installed using the script [`manage`](manage).  
+<!--
+TODO
+The files are installed using the script [`manager`](manager).  
 Passing the command "`install`" or "`uninstall`" will copy all files to the intended locations or
 remove them from there again, respectively.
 
 Where each file will be installed to is declared in the `Instructions.cfg` files.
+-->
 
 ### Custom Locale ###
 

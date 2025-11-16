@@ -3,10 +3,12 @@
 # vim: syntax=sh
 # code: language=shellscript
 
-# Copyright (c) 2023 Michael Federczuk
+# Copyright (c) 2025 Michael Federczuk
 # SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
 
 # TODO: can this be done better with LXC?
+
+#region preamble
 
 case "$-" in
 	(*'i'*)
@@ -21,7 +23,6 @@ set -o nounset
 # enabling POSIX-compliant behavior for GNU programs
 export POSIXLY_CORRECT=yes POSIX_ME_HARDER=yes
 
-
 if [ "${0#/}" = "$0" ]; then
 	argv0="$0"
 else
@@ -30,10 +31,12 @@ else
 fi
 readonly argv0
 
+#endregion
+
 #region checking SHELL environment variable
 
 if [ -z "${SHELL-}" ]; then
-	printf '%s: SHELL environment must not unset or empty\n' "$argv0" >&2
+	printf '%s: SHELL environment variable must not unset nor empty\n' "$argv0" >&2
 	exit 48
 fi
 
@@ -55,17 +58,17 @@ fi
 
 #region setting up variables
 
-root_dir_pathname="$(dirname -- "$0" && printf x)"
-root_dir_pathname="${root_dir_pathname%"$(printf '\nx')"}"
-readonly root_dir_pathname
+script_dir_path="$(dirname -- "$0" && printf x)"
+script_dir_path="${script_dir_path%"$(printf '\nx')"}"
+readonly script_dir_path
 
-test_dir_pathname="$root_dir_pathname/test.d"
-readonly test_dir_pathname
+test_dir_path="$script_dir_path/test.d"
+readonly test_dir_path
 
-test_home_dir_pathname="$test_dir_pathname/root/${HOME#"/"}"
-readonly test_home_dir_pathname
+test_home_dir_path="$test_dir_path/root/${HOME#"/"}"
+readonly test_home_dir_path
 
-new_HOME_value="$test_home_dir_pathname"
+new_HOME_value="$test_home_dir_path"
 
 if [ "${new_HOME_value#"/"}" = "$new_HOME_value" ]; then
 	cwd="$(pwd -L && printf x)"
@@ -82,12 +85,12 @@ readonly new_HOME_value
 
 #endregion
 
-rm -rf -- "$test_dir_pathname"
+rm -rf -- "$test_dir_path"
 
-"$root_dir_pathname/manage" install "$test_dir_pathname/root"
-printf '*\n' > "$test_dir_pathname/.gitignore"
+"$script_dir_path/manager" install "$test_dir_path/root"
+printf '*\n' > "$test_dir_path/.gitignore"
 
-cd "$test_home_dir_pathname"
+cd "$test_home_dir_path"
 
 printf '\nA new shell instance has been started with an (almost) clean environment.\n' >&2
 
