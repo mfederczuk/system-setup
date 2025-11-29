@@ -6,3 +6,6 @@ task install_configuration {
 	copy "settings.jsonc" to "$XDG_CONFIG_HOME/VSCodium/User/settings.json"
 	copy "keybindings.jsonc" to "$XDG_CONFIG_HOME/VSCodium/User/keybindings.json"
 }
+
+# input: system_package_manager
+# only install `vscodium.dnf.repo` if system_package_manager == "dnf"

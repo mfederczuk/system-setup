@@ -7,10 +7,18 @@ import "programs"
 import "shell"
 
 task install_configurations {
+	# input: operating_system
+	# input: init_system
 	"shell"::install_startup_files
 
+	# input: system_package_manager
+	# input: system_bash_rc_file_path
+	# input: bash_logout_clear_console
+	# input: system_git_bash_prompt_file_path
+	# input: operating_system
 	"programs"::install_configurations
 
+	# input: clipboard_supported
 	"bin"::install_scripts
 
 	# For desktop environments.

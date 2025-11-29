@@ -4,13 +4,20 @@ import "completions"
 import "lib"
 
 task install_configuration {
+	# input: system_package_manager
+	# input: operating_system
 	"lib"::install_files
 	copy "funcs.bash" to "$XDG_CONFIG_HOME/bash/funcs.bash"
 
+	# input: system_package_manager
 	copy "aliases.bash" to "$XDG_CONFIG_HOME/bash/aliases.bash"
 
 	"completions"::install_scripts
 
+	# input: operating_system
+	# input: system_bash_rc_file_path
+	# input: system_git_bash_prompt_file_path
 	copy "rc.bash" to "$HOME/.bashrc"
+	# input: bash_logout_clear_console
 	copy "logout.bash" to "$HOME/.bash_logout"
 }

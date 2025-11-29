@@ -10,8 +10,11 @@ task install_files {
 	copy "gotmp.bash"             to "$XDG_CONFIG_HOME/bash/lib/gotmp.bash"
 	copy "gti.bash"               to "$XDG_CONFIG_HOME/bash/lib/gti.bash"
 	copy "man.bash"               to "$XDG_CONFIG_HOME/bash/lib/man.bash"
+	# input: system_package_manager
 	copy "pkgsup.bash"            to "$XDG_CONFIG_HOME/bash/lib/pkgsup.bash"
-	copy "prompt_command.bash"    to "$XDG_CONFIG_HOME/bash/lib/prompt_command.bash"
+	if (operating_system != "android-termux") {
+		copy "prompt_command.bash" to "$XDG_CONFIG_HOME/bash/lib/prompt_command.bash"
+	}
 	copy "rmcwd.bash"             to "$XDG_CONFIG_HOME/bash/lib/rmcwd.bash"
 	copy "sequence-commands.bash" to "$XDG_CONFIG_HOME/bash/lib/sequence-commands.bash"
 	copy "ssh-wrapper.bash"       to "$XDG_CONFIG_HOME/bash/lib/ssh-wrapper.bash"

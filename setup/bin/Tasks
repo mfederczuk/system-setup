@@ -6,7 +6,9 @@ task install_scripts {
 	copy "alert.bash"                   to "$HOME/.local/bin/alert"
 	copy "atype.bash"                   to "$HOME/.local/bin/atype"
 	copy "avdmanager-wrapper.sh"        to "$HOME/.local/bin/avdmanager"
-	copy "clipboard.sh"                 to "$HOME/.local/bin/clipboard"
+	if (clipboard_supported) {
+		copy "clipboard.sh" to "$HOME/.local/bin/clipboard"
+	}
 	copy "determine-shared-prefix.bash" to "$HOME/.local/bin/determine-shared-prefix"
 	copy "gnome-shell-notify-send.sh"   to "$HOME/.local/bin/gnome-shell-notify-send"
 	copy "ktlint-install.sh"            to "$HOME/.local/bin/ktlint-install"

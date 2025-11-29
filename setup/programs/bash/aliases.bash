@@ -145,8 +145,18 @@ fi
 
 #endregion
 
-# BASE: prefixing system's native package manager command with root command
+#% if (operating_system != "android-termux") {
+	if command -v dnf > '/dev/null'; then
+		if command -v try_as_root > '/dev/null'; then
+			alias dnf='try_as_root %{system_package_manager}'
+		elif command -v doas > '/dev/null'; then
+			alias dnf='doas %{system_package_manager}'
+		elif command -v sudo > '/dev/null'; then
+			alias dnf='sudo %{system_package_manager}'
+		fi
+	fi
 
+#%}
 #region Git
 
 if command -v git > '/dev/null'; then

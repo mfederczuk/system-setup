@@ -2,6 +2,10 @@
 
 # SPDX-License-Identifier: CC0-1.0
 
+#% if (operating_system == "android-termux") {
+	export PREFIX="${PREFIX:-"/data/data/com.termux/files/usr"}"
+
+#% }
 #region PATH setup
 
 _add_to_path() {
@@ -42,17 +46,26 @@ _add_to_path() {
 }
 
 # sorted from most to least priority
-_add_to_path back '/usr/local/sbin' \
-                  '/usr/local/bin' \
-                  '/usr/sbin' \
-                  '/usr/bin' \
-                  '/sbin' \
-                  '/bin' \
-                  '/usr/local/games' \
-                  '/usr/games'
+#% if (operating_system != "android-termux") {
+	_add_to_path back '/usr/local/sbin' \
+	                  '/usr/local/bin' \
+	                  '/usr/sbin' \
+	                  '/usr/bin' \
+	                  '/sbin' \
+	                  '/bin' \
+	                  '/usr/local/games' \
+	                  '/usr/games'
 
-# at this point we should have access to `grep`, `id` and `cut`
-export HOME="${HOME:-"$(\command grep -E "^[^:]*:[^:]*:$(id -u):$(\command id -g)" '/etc/passwd' | \command cut -d: -f6)"}"
+	# at this point we should have access to `grep`, `id` and `cut`
+	export HOME="${HOME:-"$(\command grep -E "^[^:]*:[^:]*:$(id -u):$(\command id -g)" '/etc/passwd' | \command cut -d: -f6)"}"
+#% } else {
+	_add_to_path back "$PREFIX/bin" \
+	                  "$PREFIX/local/bin"
+
+	export HOME="${HOME:-"$PREFIX/../home"}"
+#% }
+
+
 
 # sorted from most to least priority
 _add_to_path front '.bin' \
@@ -68,6 +81,18 @@ unset -f _add_to_path
 
 #endregion
 
+#% if (operating_system != "android-termux") {
+	export SHELL="${SHELL:-"$(\command grep -E "^[^:]*:[^:]*:$(id -u):$(id -g)" '/etc/passwd' | \command cut -d: -f7)"}"
+
+	export TMPDIR="${TMPDIR:-"/tmp"}"
+	export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-"/lib:/usr/lib:/usr/local/lib"}"
+#% } else {
+	export SHELL="${SHELL:-"$PREFIX/bin/bash"}"
+
+	export TMPDIR="${TMPDIR:-"$PREFIX/tmp"}"
+	export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-"/lib:/usr/lib:$PREFIX/lib:$PREFIX/local/lib"}"
+#% }
+
 export SHELL="${SHELL:-"$(\command grep -E "^[^:]*:[^:]*:$(id -u):$(id -g)" '/etc/passwd' | \command cut -d: -f7)"}"
 
 export TMPDIR="${TMPDIR:-"/tmp"}"
@@ -82,8 +107,13 @@ export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-"$HOME/.config"}"
 export XDG_STATE_HOME="${XDG_STATE_HOME:-"$HOME/.local/state"}"
 export XDG_CACHE_HOME="${XDG_CACHE_HOME:-"$HOME/.cache"}"
 
-export XDG_DATA_DIRS="${XDG_DATA_DIRS:-"/usr/local/share/:/usr/share/"}"
-export XDG_CONFIG_DIRS="${XDG_CONFIG_DIRS:-"/etc/xdg"}"
+#% if (operating_system != "android-termux") {
+	export XDG_DATA_DIRS="${XDG_DATA_DIRS:-"/usr/local/share/:/usr/share/"}"
+	export XDG_CONFIG_DIRS="${XDG_CONFIG_DIRS:-"/etc/xdg"}"
+#% } else {
+	export XDG_DATA_DIRS="${XDG_DATA_DIRS:-"$PREFIX/local/share/:$PREFIX/share/"}"
+	export XDG_CONFIG_DIRS="${XDG_CONFIG_DIRS:-"$PREFIX/etc/xdg"}"
+#% }
 
 #endregion
 
@@ -108,9 +138,11 @@ fi
 
 export PAGER='less --ignore-case --quit-on-intr --LONG-PROMPT --RAW-CONTROL-CHARS --chop-long-lines -+X'
 
-export SYSTEMD_PAGERSECURE='true'
-export SYSTEMD_PAGER='less --quit-if-one-screen --ignore-case --quit-on-intr --LONG-PROMPT --RAW-CONTROL-CHARS --chop-long-lines -+X --file-size'
+#% if (init_system == "systemd") {
+	export SYSTEMD_PAGERSECURE='true'
+	export SYSTEMD_PAGER='less --quit-if-one-screen --ignore-case --quit-on-intr --LONG-PROMPT --RAW-CONTROL-CHARS --chop-long-lines -+X --file-size'
 
+#% }
 #region programming languages / environments
 
 #region C & C++
@@ -133,22 +165,27 @@ fi
 
 #endregion
 
-# Android
-if [ -d "$HOME/Android/Sdk" ]; then
-	# TODO: move these into $XDG_DATA_HOME ?
-	export ANDROID_HOME="$HOME/Android/Sdk"
-	export ANDROID_USER_HOME="$HOME/.android"
-fi
+#% if (operating_system != "android-termux") {
+	# Android
+	if [ -d "$HOME/Android/Sdk" ]; then
+		# TODO: move these into $XDG_DATA_HOME ?
+		export ANDROID_HOME="$HOME/Android/Sdk"
+		export ANDROID_USER_HOME="$HOME/.android"
+	fi
 
+#% }
 #region Node.js
 
 if command -v node > '/dev/null'; then
-	if [ -d '/usr/lib/node_modules' ]; then
-		export NODE_PATH="${NODE_PATH:-"/usr/lib/node_modules"}"
-	fi
+	#% if (operating_system != "android-termux") {
+		if [ -d '/usr/lib/node_modules' ]; then
+			export NODE_PATH="${NODE_PATH:-"/usr/lib/node_modules"}"
+		fi
 
-	# TODO: these directories must be created manually
+	#% }
+	#% mkdir "$XDG_STATE_HOME/node"
 	export NODE_REPL_HISTORY="$XDG_STATE_HOME/node/repl_history"
+	#% mkdir "$XDG_STATE_HOME/ts-node"
 	export TS_NODE_HISTORY="$XDG_STATE_HOME/ts-node/repl_history"
 fi
 

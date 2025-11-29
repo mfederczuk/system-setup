@@ -13,6 +13,11 @@ import "tmux"
 import "vim"
 
 task install_configurations {
+	# input: system_package_manager
+	# input: operating_system
+	# input: system_bash_rc_file_path
+	# input: bash_logout_clear_console
+	# input: system_git_bash_prompt_file_path
 	"bash"::install_configuration
 
 	"git"::install_configuration
@@ -24,6 +29,7 @@ task install_configurations {
 	"vim"::install_configuration
 
 	# Requires a desktop environment.
+	# input: system_package_manager
 	"codium"::install_configuration
 	"ghostty"::install_configuration
 	"mpv"::install_configuration

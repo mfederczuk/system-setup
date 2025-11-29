@@ -20,3 +20,60 @@ while running:
 
 
 $ task-runner --directory="$script_dir_path/setup" install-configurations
+
+
+----
+
+input parameters:
+	operating_system: string enum { "fedora-41" | "ubuntu-22.04-jammy" | "android-termux" }
+	init_system: string enum { "systemd" }
+	system_package_manager: string enum { "dnf" | "apt" }
+	system_bash_rc_file_path: string
+	bash_logout_clear_console: bool
+	system_git_bash_prompt_file_path: string
+	clipboard_supported: bool
+
+current presets:
+	workstation:
+		operating_system: "fedora-41"
+		init_system: "systemd"
+		system_package_manager: "dnf"
+		system_bash_rc_file_path: "/etc/bashrc"
+		bash_logout_clear_console: false
+		system_git_bash_prompt_file_path: "/usr/share/git-core/contrib/completion/git-prompt.sh"
+		clipboard_supported: true
+
+	work-laptop:
+		operating_system: "fedora-41"
+		init_system: "systemd"
+		system_package_manager: "dnf"
+		system_bash_rc_file_path: "/etc/bashrc"
+		bash_logout_clear_console: false
+		system_git_bash_prompt_file_path: "/usr/share/git-core/contrib/completion/git-prompt.sh"
+		clipboard_supported: true
+
+	remote-server:
+		operating_system: "ubuntu-22.04-jammy"
+		init_system: "systemd"
+		system_package_manager: "apt"
+		system_bash_rc_file_path: "/etc/bash.bashrc"
+		bash_logout_clear_console: true
+		system_git_bash_prompt_file_path: "/usr/lib/git-core/git-sh-prompt"
+		clipboard_supported: false
+
+	android-phone:
+		operating_system: "android-termux"
+		init_system: N/A
+		system_package_manager: "apt"  # also has `pkg`
+		system_bash_rc_file_path: N/A
+		bash_logout_clear_console: false
+		system_git_bash_prompt_file_path: N/A
+		clipboard_supported: true
+
+TODO:
+	diff base remote-server
+	diff base android-phone
+
+additionally planned presets:
+	raspberrypi  debian-11-bullseye
+	mac          macos
