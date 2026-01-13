@@ -38,6 +38,12 @@
 	},
 
 	"cSpell.language": "en,en-US,en-GB,de-AT,de,de-DE",
+	"cSpell.languageSettings": [
+		{
+			"languageId": "shellscript",
+			"allowCompoundWords": true,
+		},
+	],
 	"cSpell.customDictionaries": {
 		"custom-user-public": {
 			"name": "custom-user-public",
