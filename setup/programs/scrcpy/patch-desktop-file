@@ -1,0 +1,80 @@
+#!/bin/sh
+# -*- sh -*-
+# vim: syntax=sh
+# code: language=shellscript
+
+# Copyright (c) 2026 Michael Federczuk
+# SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
+
+#region preamble
+
+case "$-" in
+	(*'i'*)
+		\command printf 'script was called interactively\n' >&2
+		return 124
+		;;
+esac
+
+set -o errexit
+set -o nounset
+
+# enabling POSIX-compliant behavior for GNU programs
+export POSIXLY_CORRECT=yes POSIX_ME_HARDER=yes
+
+if [ "${0#/}" = "$0" ]; then
+	argv0="$0"
+else
+	argv0="$(basename -- "$0" && printf x)"
+	argv0="${argv0%"$(printf '\nx')"}"
+fi
+readonly argv0
+
+#endregion
+
+if [ $# -gt 0 ]; then
+	printf '%s: too many arguments: %d\n' "$argv0" $# >&2
+	exit 2
+fi
+
+system_desktop_file_path='/usr/share/applications/scrcpy.desktop'
+readonly system_desktop_file_path
+
+# shellcheck disable=SC2016
+exec_line='Exec=/bin/sh -c "\\$SHELL -i -c scrcpy"'
+readonly exec_line
+
+user_desktop_file_path="$HOME/.local/share/applications/scrcpy.desktop"
+readonly user_desktop_file_path
+
+# shellcheck disable=SC2016
+patched_exec_line='Exec=/bin/sh -c "\\$SHELL -i -c '\''scrcpy --max-size=1080 --audio-source=playback --audio-dup'\'\"
+readonly patched_exec_line
+
+
+system_desktop_file_contains_exec_line=false
+while read -r line; do
+	if [ "$line" = "$exec_line" ]; then
+		system_desktop_file_contains_exec_line=true
+		break
+	fi
+done < "$system_desktop_file_path"
+readonly system_desktop_file_contains_exec_line
+
+
+if ! $system_desktop_file_contains_exec_line; then
+	printf "The file '%s' does not contain the line '%s'\\n" "$system_desktop_file_path" "$exec_line" >&2
+	exit 1
+fi
+
+
+mkdir -p -- "$(dirname -- "$user_desktop_file_path")"
+
+true > "$user_desktop_file_path"
+
+while read -r line; do
+	if [ "$line" = "$exec_line" ]; then
+		line="$patched_exec_line"
+	fi
+
+	printf '%s\n' "$line" >> "$user_desktop_file_path"
+done < "$system_desktop_file_path"
