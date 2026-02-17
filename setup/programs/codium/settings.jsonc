@@ -26,6 +26,7 @@
 			"activityBar.activeBackground": "#0078d41f",
 		},
 	},
+	"workbench.startupEditor": "none",
 	"workbench.list.openMode": "doubleClick",
 	"workbench.tree.indent": 16,
 	"workbench.editorAssociations": {
