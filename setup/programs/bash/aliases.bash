@@ -39,11 +39,11 @@ function __bash_aliases__is_program_gnu_coreutils() {
 #region POSIX utilities
 
 if __bash_aliases__is_program_gnu_coreutils ls; then
-	alias ls='ls -l       --human-readable --classify --color=auto --group-directories-first'
-	alias la='ls -l --all --human-readable --classify --color=auto --group-directories-first'
+	alias ls='ls -g --no-group       --human-readable --classify --color=auto --group-directories-first'
+	alias la='ls -g --no-group --all --human-readable --classify --color=auto --group-directories-first'
 else
-	alias ls='ls -lF'
-	alias la='ls -laF'
+	alias ls='ls -goF'
+	alias la='ls -goaF'
 fi
 
 #region creating/renaming/deleting file & directory utilities
