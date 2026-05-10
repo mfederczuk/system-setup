@@ -42,8 +42,8 @@ if __bash_aliases__is_program_gnu_coreutils ls; then
 	alias ls='ls -l       --human-readable --classify --color=auto --group-directories-first'
 	alias la='ls -l --all --human-readable --classify --color=auto --group-directories-first'
 else
-	alias ls='ls -laF'
-	alias la='ls -lF'
+	alias ls='ls -lF'
+	alias la='ls -laF'
 fi
 
 #region creating/renaming/deleting file & directory utilities
