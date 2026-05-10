@@ -1,19 +1,33 @@
 # SPDX-License-Identifier: CC0-1.0
 
 apk
+atype
+austrian
+bitbucket
+bruno
+configurator
+coreutils
+doas
+dotnet
 ebnf
 federczuk
 ghostty
+hardlinks
 jetbrains
+kitsune
 ktlint
+linux
 mfederczuk
+mkbak
 modeline
 modelines
 neovim
+nvim
 redhat
 shellcheck
 sideloaded
 spdx
 termux
+ultrakill
 vimrc
 youtube
