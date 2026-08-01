@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: CC0-1.0
+
+import "git"
+
+task install_scripts {
+	copy "adb.bash"       to "$XDG_CONFIG_HOME/bash/completions/adb.bash"
+	copy "alert.bash"     to "$XDG_CONFIG_HOME/bash/completions/alert.bash"
+	copy "clipboard.bash" to "$XDG_CONFIG_HOME/bash/completions/clipboard.bash"
+	copy "doas.bash"      to "$XDG_CONFIG_HOME/bash/completions/doas.bash"
+	copy "gradle.bash"    to "$XDG_CONFIG_HOME/bash/completions/gradle.bash"
+
+	"git"::install_scripts
+}

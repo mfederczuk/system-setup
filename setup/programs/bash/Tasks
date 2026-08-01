@@ -1,0 +1,16 @@
+# SPDX-License-Identifier: CC0-1.0
+
+import "completions"
+import "lib"
+
+task install_configuration {
+	"lib"::install_files
+	copy "funcs.bash" to "$XDG_CONFIG_HOME/bash/funcs.bash"
+
+	copy "aliases.bash" to "$XDG_CONFIG_HOME/bash/aliases.bash"
+
+	"completions"::install_scripts
+
+	copy "rc.bash" to "$HOME/.bashrc"
+	copy "logout.bash" to "$HOME/.bash_logout"
+}

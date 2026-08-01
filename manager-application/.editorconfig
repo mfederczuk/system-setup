@@ -1,0 +1,14 @@
+# SPDX-License-Identifier: CC0-1.0
+
+[*.{kt,kts}]
+# Ordered by their appearance on <https://ktlint.github.io/ktlint/latest/rules/standard/>
+ktlint_standard_chain-method-continuation = disabled
+ktlint_standard_class-signature = disabled
+ktlint_standard_function-expression-body = disabled
+ktlint_standard_no-empty-first-line-in-class-body = disabled
+ktlint_standard_when-entry-bracing = disabled
+ktlint_standard_multiline-expression-wrapping = disabled
+ktlint_function_signature_rule_force_multiline_when_parameter_count_greater_or_equal_than = 5
+
+ij_kotlin_allow_trailing_comma = true
+ij_kotlin_allow_trailing_comma_on_call_site = true

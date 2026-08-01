@@ -1,0 +1,30 @@
+# SPDX-License-Identifier: CC0-1.0
+
+import "bash"
+import "codium"
+import "ghostty"
+import "git"
+import "mpv"
+import "neovim"
+import "npm"
+import "ruby-bundler"
+import "ruby-gem"
+import "tmux"
+import "vim"
+
+task install_configurations {
+	"bash"::install_configuration
+
+	"git"::install_configuration
+	"neovim"::install_configuration
+	"npm"::install_configuration
+	"ruby-bundler"::install_configuration
+	"ruby-gem"::install_configuration
+	"tmux"::install_configuration
+	"vim"::install_configuration
+
+	# Requires a desktop environment.
+	"codium"::install_configuration
+	"ghostty"::install_configuration
+	"mpv"::install_configuration
+}

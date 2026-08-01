@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: CC0-1.0
+
+/.gradle/
+/.kotlin/
+/build/
+
+/system-setup-manager.jar
