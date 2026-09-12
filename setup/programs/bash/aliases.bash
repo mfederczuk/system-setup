@@ -36,11 +36,35 @@ function __bash_aliases__is_program_gnu_coreutils() {
 	__bash_aliases__is_program_gnu "$1" "$1" 'coreutils'
 }
 
+function __bash_aliases__is_program_uutils_coreutils() {
+	local program_name="$1" || return
+
+	if ! command -v "$program_name" > '/dev/null'; then
+		return 32
+	fi
+
+	local program_version_info || return
+	program_version_info="$(command "$program_name" --version 2> '/dev/null')" || return 33
+
+	if [[ ! "$program_version_info" =~ ^"$program_name (uutils coreutils)" ]]; then
+		return 34
+	fi
+
+	return 0
+}
+
+function __bash_aliases__is_program_gnu_or_uutils_coreutils() {
+	__bash_aliases__is_program_gnu_coreutils "$1" || __bash_aliases__is_program_uutils_coreutils "$1"
+}
+
 #region POSIX utilities
 
 if __bash_aliases__is_program_gnu_coreutils ls; then
-	alias ls='ls -l       --human-readable --classify --color=auto --group-directories-first'
-	alias la='ls -l --all --human-readable --classify --color=auto --group-directories-first'
+	alias ls='ls -l           --human-readable --classify --color=auto --group-directories-first'
+	alias la='ls -l     --all --human-readable --classify --color=auto --group-directories-first'
+elif __bash_aliases__is_program_uutils_coreutils ls; then
+	alias ls='ls --long       --human-readable --classify --color=auto --group-directories-first'
+	alias la='ls --long --all --human-readable --classify --color=auto --group-directories-first'
 else
 	alias ls='ls -lF'
 	alias la='ls -laF'
@@ -84,13 +108,13 @@ else
 	fi
 fi
 
-if __bash_aliases__is_program_gnu_coreutils mkdir; then
+if __bash_aliases__is_program_gnu_or_uutils_coreutils mkdir; then
 	alias mkdir='mkdir --verbose --parents'
 else
 	alias mkdir='mkdir -p'
 fi
 
-if __bash_aliases__is_program_gnu_coreutils rmdir; then
+if __bash_aliases__is_program_gnu_or_uutils_coreutils rmdir; then
 	alias rmdir='rmdir --verbose'
 fi
 
@@ -98,15 +122,15 @@ fi
 
 #region permission utilities
 
-if __bash_aliases__is_program_gnu_coreutils chmod; then
+if __bash_aliases__is_program_gnu_or_uutils_coreutils chmod; then
 	alias chmod='chmod --verbose --preserve-root'
 fi
 
-if __bash_aliases__is_program_gnu_coreutils chown; then
+if __bash_aliases__is_program_gnu_or_uutils_coreutils chown; then
 	alias chown='chown --verbose --preserve-root'
 fi
 
-if __bash_aliases__is_program_gnu_coreutils chgrp; then
+if __bash_aliases__is_program_gnu_or_uutils_coreutils chgrp; then
 	alias chgrp='chgrp --verbose --preserve-root'
 fi
 
@@ -139,7 +163,7 @@ else
 	alias df='df -kt'
 fi
 
-if __bash_aliases__is_program_gnu_coreutils du; then
+if __bash_aliases__is_program_gnu_or_uutils_coreutils du; then
 	alias du='du --bytes --total --human-readable'
 fi
 
@@ -362,7 +386,7 @@ if command -v tree > '/dev/null'; then
 	alias tree='tree -I .git -I node_modules -F --dirsfirst'
 fi
 
-if __bash_aliases__is_program_gnu_coreutils shred; then
+if __bash_aliases__is_program_gnu_or_uutils_coreutils shred; then
 	# -u  ->  remove file after shredding
 	alias shred='shred -u --verbose --zero'
 fi

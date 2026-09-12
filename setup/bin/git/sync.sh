@@ -6,6 +6,13 @@
 # Copyright (c) 2023 Michael Federczuk
 # SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
 
+# TODO: add feature to fast-forward local branches (if they can be) with options --ff-all (all local branches) or
+#       --ff-head (only the currently checked out local branch)
+#       usage: git sync [--ff-all|--ff-head] [<remote>]
+# TODO: remove external dependency of prune-local-branches by inlining it
+# TODO: add feature to automatically detach the head if the currently checked out branch would/will be pruned
+#       (this is also why we need prune-local-branches to be inlined)
+
 #region preamble
 
 case "$-" in
