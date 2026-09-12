@@ -44,9 +44,5 @@ private fun Iterator<Token>.thenImportString(): Token.StringLiteral? {
 		return null
 	}
 
-	if (!(token.isTerminated)) {
-		// TODO: report error "unterminated string"
-	}
-
 	return token
 }

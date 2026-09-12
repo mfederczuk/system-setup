@@ -5,6 +5,7 @@
 
 package io.github.mfederczuk.systemsetupmanager.syntax.cst
 
+import io.github.mfederczuk.systemsetupmanager.sourceposition.SourcePosition
 import io.github.mfederczuk.systemsetupmanager.syntax.token.Token
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
@@ -52,6 +53,27 @@ public data class EnclosedNodesList<N : Node> private constructor(
 
 		public fun build(): EnclosedNodesList<N> {
 			return EnclosedNodesList(elements = this.elements.build())
+		}
+	}
+
+	public fun filterNodesWithPosition(begin: SourcePosition = SourcePosition.Begin): Sequence<Pair<SourcePosition, N>> {
+		return sequence {
+			var position: SourcePosition = begin
+
+			for (element: Element<N> in this@EnclosedNodesList.elements) {
+				when (element) {
+					is Element.Node -> {
+						yield(position to element.unwrapped)
+						position += element.unwrapped.toSourceCode()
+					}
+
+					is Element.NonNode -> {
+						for (token: Token in element.tokens) {
+							position += token.toSourceCode()
+						}
+					}
+				}
+			}
 		}
 	}
 

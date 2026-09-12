@@ -1,0 +1,8 @@
+$ ./setup-manager install
+[+] bin::install
+    > Copied the file 'bin/xdg.bin' to '~/.local/bin/xdg' (executable)
+[+] cfg::install
+[+] `-- cfg::ghostty::install
+        > Enabled the COPR 'pgdev/ghostty'
+
+$ task-runner --directory="$script_dir_path/setup" install-configurations

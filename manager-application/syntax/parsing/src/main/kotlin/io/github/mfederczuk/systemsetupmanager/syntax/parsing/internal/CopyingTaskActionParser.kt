@@ -56,10 +56,6 @@ private fun Iterator<Token>.thenSource(): Token.StringLiteral? {
 		return null
 	}
 
-	if (!(token.isTerminated)) {
-		// TODO: report error
-	}
-
 	return token
 }
 
@@ -90,10 +86,6 @@ private fun Iterator<Token>.thenTarget(): Token.StringLiteral? {
 	if (token !is Token.StringLiteral) {
 		// TODO: report error
 		return null
-	}
-
-	if (!(token.isTerminated)) {
-		// TODO: report error
 	}
 
 	return token

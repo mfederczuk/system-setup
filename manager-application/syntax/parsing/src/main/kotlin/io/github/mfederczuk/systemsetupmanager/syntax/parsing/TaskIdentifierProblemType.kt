@@ -10,7 +10,7 @@ import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.adapters.ImmutableSetAdapter
 import java.util.EnumSet
 
-public enum class IllegalTaskIdentifierProblem {
+public enum class TaskIdentifierProblemType {
 	EndsWithUnderscore,
 	StartsWithUnderscore,
 	ContainsDoubleUnderscore,
@@ -24,9 +24,9 @@ public enum class IllegalTaskIdentifierProblem {
 
 	public companion object {
 
-		public fun Identifier.determineIllegalTaskIdentifierProblems(): ImmutableSet<IllegalTaskIdentifierProblem> {
-			val problems: EnumSet<IllegalTaskIdentifierProblem> =
-				EnumSet.noneOf(IllegalTaskIdentifierProblem::class.java)
+		public fun Identifier.determineTaskIdentifierProblems(): ImmutableSet<TaskIdentifierProblemType> {
+			val problems: EnumSet<TaskIdentifierProblemType> =
+				EnumSet.noneOf(TaskIdentifierProblemType::class.java)
 
 			val identifierString: String = this.toString()
 

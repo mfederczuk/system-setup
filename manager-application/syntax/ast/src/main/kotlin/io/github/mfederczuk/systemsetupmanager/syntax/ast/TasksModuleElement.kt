@@ -5,14 +5,18 @@
 
 package io.github.mfederczuk.systemsetupmanager.syntax.ast
 
+import io.github.mfederczuk.systemsetupmanager.sourceposition.SourcePositionRange
 import io.github.mfederczuk.systemsetupmanager.syntax.patterns.Identifier
 import io.github.mfederczuk.systemsetupmanager.utils.quoted
 import io.github.mfederczuk.systemsetupmanager.utils.treeString
 import kotlinx.collections.immutable.ImmutableList
 
-public sealed class TasksModuleElement {
+public sealed class TasksModuleElement : Node {
 
-	public data class ImportStatement(public val string: String) : TasksModuleElement() {
+	public data class ImportStatement(
+		override val sourcePositionRange: SourcePositionRange,
+		public val string: String,
+	) : TasksModuleElement() {
 
 		override fun toString(): String {
 			return treeString(
@@ -23,6 +27,7 @@ public sealed class TasksModuleElement {
 	}
 
 	public data class TaskDefinition(
+		override val sourcePositionRange: SourcePositionRange,
 		public val identifier: Identifier,
 		public val actions: ImmutableList<TaskAction>,
 	) : TasksModuleElement() {

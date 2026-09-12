@@ -6,6 +6,7 @@ plugins {
 }
 
 dependencies {
+	api(projects.sourcePosition)
 	api(projects.syntax.ast)
 
 	implementation(projects.syntax.patterns)

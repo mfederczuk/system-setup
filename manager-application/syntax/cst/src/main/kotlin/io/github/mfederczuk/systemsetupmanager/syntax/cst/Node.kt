@@ -10,7 +10,7 @@ import kotlinx.collections.immutable.ImmutableList
 
 public sealed class Node {
 
-	internal abstract fun combineTokens(): ImmutableList<Token>
+	public abstract fun combineTokens(): ImmutableList<Token>
 
 	public fun toSourceCode(): String {
 		return this.combineTokens().joinToString(separator = "", transform = Token::toSourceCode)
