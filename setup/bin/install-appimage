@@ -1,0 +1,87 @@
+#!/bin/sh
+# -*- sh -*-
+# vim: syntax=sh
+# code: language=shellscript
+
+# Copyright (c) 2025 Michael Federczuk
+# SPDX-License-Identifier: MPL-2.0 AND Apache-2.0
+
+#region preamble
+
+case "$-" in
+	(*'i'*)
+		\command printf 'script was called interactively\n' >&2
+		return 124
+		;;
+esac
+
+set -o errexit
+set -o nounset
+
+# enabling POSIX-compliant behavior for GNU programs
+export POSIXLY_CORRECT=yes POSIX_ME_HARDER=yes
+
+if [ "${0#/}" = "$0" ]; then
+	argv0="$0"
+else
+	argv0="$(basename -- "$0" && printf x)"
+	argv0="${argv0%"$(printf '\nx')"}"
+fi
+readonly argv0
+
+#endregion
+
+base_tmp_dir_path="${TMPDIR:-"${TMP:-"${TEMP:-"${TEMPDIR:-"${TMP_DIR:-"${TEMP_DIR:-"/tmp"}"}"}"}"}"}"
+
+mkdir -p -- "$base_tmp_dir_path"
+
+if command -v mktemp > '/dev/null' &&
+   { mktemp --version 2> '/dev/null' | head -n1 | grep -Eq '^mktemp \(GNU coreutils\)$'; }; then
+	tmp_dir_path="$(mktemp --directory --tmpdir="$base_tmp_dir_path" 'install-appimage-extract-directory.XXXXXXXXXX')"
+else
+	is_m4_ok=false
+
+	if command -v m4 > '/dev/null'; then
+		newline_count="$(printf '%s' "$base_tmp_dir_path" | wc -l)"
+
+		if [ "$newline_count" = '0' ] && { printf '%s' "$base_tmp_dir_path" | grep -Eq '^[[:alnum:]_.+/-]+$'; }; then
+			is_m4_ok=true
+		fi
+	fi
+
+	if $is_m4_ok; then
+		while true; do
+			tmp_dir_path="$(printf 'mkstemp(%s.XXXXXX)' "$base_tmp_dir_path")"
+
+			rm -- "$tmp_dir_path" 1> '/dev/null' 2> '/dev/null' || continue
+
+			mkdir -- "$tmp_dir_path" 1> '/dev/null' 2> '/dev/null' || continue
+
+			break
+		done
+	else
+		: # manual
+	fi
+fi
+
+
+case $# in
+	(0)
+		;;
+	(1)
+		if [ -z "$1" ]; then
+			:
+		fi
+
+		appimage_file_path="$1"
+		;;
+	(*)
+		;;
+esac
+
+readonly appimage_file_path
+
+
+"$appimage_file_path" --appimage-extract
+
+# TODO
