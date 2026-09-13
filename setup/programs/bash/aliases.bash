@@ -422,6 +422,10 @@ if command -v dos2unix > '/dev/null'; then
 	alias dos2unix='dos2unix --keepdate'
 fi
 
+if ! command -v bat > '/dev/null' && command -v batcat > '/dev/null'; then
+	alias bat=batcat
+fi
+
 if command -v cjxl > '/dev/null'; then
 	alias cjxl-ultra='cjxl --distance=0 --effort=9'
 fi
